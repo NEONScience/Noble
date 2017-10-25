@@ -1,0 +1,156 @@
+############################################################################################
+#' @title  Returns PDF(s) of data for the specified site and data product
+
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+
+#' @description For a specified data product ID, a data frame of the availabilty of that product
+#' for all NEON instrumented sites is returned. The output of data product availability is best
+#' interpreted with the base \code{View()} function.
+#'
+#' @param \code{sites.req} The site, or character list of sites to return plots of.
+#' @param \code{bgn.month} The start month to plot data for.
+#' @param \code{end.month} The end month to plot data for.
+#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
+#' @param \code{save.dir} The directory for data files and output PDFs to be saved to.
+#' @param \code{data.field} Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.
+
+#' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
+#'
+
+#' @keywords process quality, data quality, gaps, commissioning
+
+#' @examples
+#' # for a variable, "test.dir", holding a valid file path:
+#' pull.n.plot(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2016-11-07)
+#     original creation
+#
+#   Robert Lee (2017-07-17)
+#     Updating function for Noble integration
+#
+##############################################################################################
+
+pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package, test.qf){
+    require(nneo)
+    require(lubridate)
+
+    kpiList <- data.frame(read.csv("https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv", header = TRUE))
+    time.agr=30
+    #package = "basic"
+    if(missing(test.qf)){
+    test.qf = "finalQF"
+    }
+
+    #auto fill the data field, if not specified
+    if(missing(data.field)){
+        data.field = unlist(kpiList$data.field[match(dpID, kpiList$DPCode)])
+    }
+
+
+    if(missing(package)){
+        package<-"basic"
+    }
+    pack.ctrl<-c("basic", "expanded")
+    if(!package %in% pack.ctrl){
+        package<-"basic"
+        message("Non-standard package requested, defaulting to basic.")
+    }
+
+    DateBgn <- paste0(bgn.month, "-01")
+    end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
+    end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
+    end_temp$mon<-end_temp$mon+1
+    end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
+    DateEnd<-as.Date(end_temp)
+
+    # make the stuff site.cfig() needs
+    # currKPI <- unlist(kpiList$KPI[match(dpID, kpiList$DPCode)])
+    # dataPrd <- unlist(kpiList$DPName[match(dpID, kpiList$DPCode)])
+    # nneoDPs<-data.frame(cbind(name=nneo::nneo_products()$productName, code=nneo::nneo_products()$productCode))
+    # onlyL1<-grep(nneoDPs$code, pattern = "DP1")
+    # prodName<<-nneoDPs[onlyL1,]
+    # prodKpi <<- prodName[grep(pattern = currKPI, prodName$productName, ignore.case = T),]
+
+    s<-1
+    for (s in 1:length(sites.req)){
+
+        domn<-nneo::nneo_site(sites.req[s])$domainCode
+        dataFile<- paste0("NEON.", domn,".", sites.req[s],".", dpID, "_REQ_", DateBgn, "_", DateEnd, "_", time.agr,"min_", package, ".csv.gz")
+        fullPath <- paste0(save.dir, "/", dataFile)
+        if (!file.exists(fullPath)){
+            print(paste("Currently downloading data for:", sites.req[s]))
+
+            sink<-Noble::data.pull(site = sites.req[s], bgn.month = bgn.month, end.month = end.month,
+                                   dpID = dpID, time.agr = time.agr, package = package, save.dir = save.dir)
+            # Get the spatial location list from site.cfig()
+            #CommTis::site.cfig(Site=sites.req[s], Kpi=currKPI)
+
+            # Get the requested data
+
+
+            #CommTis::grabNEON(Site=sites.req[s], time_bgn = bgn.month, time_end = end.month, data_var = dataPrd,
+            #time_agr = TimeAgr, Pack = Pack, dat_dir = save.dir)
+        }
+        rm(sink) # get rid of environment data
+
+        if(is.null(data.field)){stop("No data.field specified or identifiable. Specify this parameter for this DP ID.")}
+        # Read the requested data back in
+        print(paste("Reading and plotting", sites.req[s], "data."))
+        commData <- data.frame(read.csv(fullPath, header = TRUE))
+
+        if(dpID=="DP1.00024.001"){
+            commData=commData[,-which(grepl(pattern = "outPAR*", x = colnames(commData)))]
+        }
+
+        QFindex <- grep(paste0(test.qf,"\\."), colnames(commData), ignore.case = T)
+        dataIndex <- grep(paste0(data.field), colnames(commData), ignore.case = T)
+        timeStmp <- as.POSIXct(strptime(commData[,1], format="%Y-%m-%d %H:%M:%S", tz="UTC"))
+
+        {pdf(file=paste0(save.dir, "/", sites.req[s], "_", dpID, "_", package, "_", data.field, ".pdf", sep=""), paper = "us")}
+
+        niceColors<- c("0"="#41f299", "1"="#f25841", "NA"="black")
+
+        for (idxPlot in 1:length(dataIndex)){
+
+            nameData <- names(commData)[dataIndex[idxPlot]]
+            data <- base::data.frame(time=timeStmp,data=commData[[dataIndex[idxPlot]]],qf=commData[[QFindex[idxPlot]]],
+                                     nameData=nameData)
+            #names(data) <- c("time",nameData,nameQf)
+            nameQf=test.qf
+
+            # Generate data completeness plot
+            dataPlot <- base::data.frame(time=data$time,value=data$data,qfFail=data$qf)
+            # dataPlot$qfFail[data$qf==0] <- NA
+            # dataPlot <- reshape2::melt(dataPlot,id="time")
+
+            if(base::sum(data[[2]],na.rm=TRUE) == 0) {
+                # No non-NA data, generate empty plot
+                plotData <- ggplot2::ggplot(data=data,ggplot2::aes(x=time)) + ggplot2::geom_blank()
+                grobData <- ggplot2::ggplotGrob(plotData)
+            } else {
+                # Data to plot!
+
+                plotData <- ggplot2::ggplot(data=data,ggplot2::aes(x=time,y=data)) +
+                    ggplot2::geom_line() +
+                    ggplot2::geom_point(size=1) +
+                    ggplot2::geom_point(data=dataPlot,ggplot2::aes(x=time, y=value, color=factor(qfFail))) +
+                    ggplot2::scale_color_manual(values = niceColors, name = "Final Quality Flag", limits=c(0, 1, "NA"))+
+                    #ggplot2::scale_colour_continuous(low = "#a50037", high = "#00a560")+
+                    ggplot2::theme_bw() +
+                    ggplot2::labs(x="Date/Time", y=nameData, title=sites.req[s])
+                grobData <- ggplot2::ggplotGrob(plotData) # grab the grob for this plot for later manipulation
+            }
+
+            gridExtra::grid.arrange(grobData,nrow=1) # plot it
+
+        } ##Plotting code
+        {graphics.off()}
+        print(paste(sites.req[s], "complete."))
+    }
+}

@@ -1,0 +1,145 @@
+
+############################################################################################
+#' @title  Tests fan aspiration system performance
+
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+
+#' @description For the specified dates and site, will test and report results in a results.csv file.
+#'
+#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
+#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+#'
+#' @return Writes results file to the specified directory.
+
+#' @keywords process quality, data quality, gaps, commissioning
+
+#' @examples Currently none
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2016-12-12)
+#     Original creation
+#   Robert Lee (2017-07-24)
+#     Updated for Noble
+#
+##############################################################################################
+
+fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, save.dir){
+
+    time.agr<-30
+    bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
+    end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
+    bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
+    end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
+    end_temp$mon<-end_temp$mon+1
+    end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
+
+
+    siteCfig <- Noble::tis_site_config
+    #### Commissioning Test Parameters ####
+
+
+    save.dir<- save.dir #"/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisFanAspirationSystemPerformance/Common/"
+    #### Other Parameters ####
+    package <- "expanded"
+    time.agr = 30
+    Kpi <- "Air Temp"
+    nneoSite <- nneo_site(site)
+
+    dat_dir <- paste(save.dir,"/", nneoSite$domainCode, "-", site, "/", sep="")
+    if(!dir.exists(dat_dir)){
+        dir.create(dat_dir)
+    }
+
+    SAATnumber <- "DP1.00002.001"
+    TAATnumber <- "DP1.00003.001"
+
+    #get the number of measurement levels at the site
+    siteCfigIndx <- grep(siteCfig$SiteID, pattern=site)
+    mlSAAT <- unlist(siteCfig[siteCfigIndx,SAATnumber])
+    mlTAAT <- mlSAAT+1
+
+    #### Expected files for the site and times specified ####
+
+    SAATfile <- paste0(dat_dir, "NEON.", nneoSite$domainCode,".", site,".DP1.00002.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
+    TAATfile <- paste0(dat_dir, "NEON.", nneoSite$domainCode,".", site,".DP1.00003.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
+
+    # Don't download if the file matching specifications exists in the SCA
+    if(!file.exists(SAATfile)){
+
+        sink<-Noble::data.pull(site = site, dpID = SAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
+        rm(sink)
+
+    }
+
+    if(!file.exists(TAATfile)){
+
+        sink<-Noble::data.pull(site = site, dpID = TAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
+        rm(sink)
+    }
+
+    #### Load the files ####
+
+    SAATData<- as.data.frame(read.csv(SAATfile, header = T))
+    TAATData<- as.data.frame(read.csv(TAATfile, header = T))
+
+    #### Scrape relevant Data ####
+    SAATFlowIndx <- grep(pattern = "*flow", colnames(SAATData), ignore.case = T)
+    SAATHeatIndx <- grep("*heat", colnames(SAATData), ignore.case = T)
+    SAATDataIndx <- grep("tempSinglemean", colnames(SAATData), ignore.case = T)
+
+    TAATFlowIndx <- grep("*flow", colnames(TAATData), ignore.case = T)
+    TAATHeatIndx <- grep("*heat", colnames(TAATData), ignore.case = T)
+    TAATDataIndx <- grep("temptriplemean", colnames(TAATData), ignore.case = T)
+
+    #### Store the scraped data ####
+    fanAspData <- as.data.frame(SAATData[,1])
+
+    fanAspData <-cbind(fanAspData, SAATData[SAATDataIndx])
+    fanAspData <-cbind(fanAspData, SAATData[SAATHeatIndx])
+    fanAspData <-cbind(fanAspData, SAATData[SAATFlowIndx])
+
+    fanAspData <-cbind(fanAspData, TAATData[TAATDataIndx])
+    fanAspData <-cbind(fanAspData, TAATData[TAATHeatIndx])
+    fanAspData <-cbind(fanAspData, TAATData[TAATFlowIndx])
+
+    #### Re-index new data frame for correct variables ####
+    allDataIndx <- grep(pattern = "*mean", colnames(fanAspData), ignore.case = T)
+    heatIndx <- grep(pattern = "*heaterPass", colnames(fanAspData), ignore.case = T)
+    flowIndx <- grep(pattern = "*flowPass", colnames(fanAspData), ignore.case = T)
+
+    flowPass<-colSums(fanAspData[flowIndx], na.rm = T)
+    nObs <- 0
+
+    for(i in 1:length(flowIndx)){
+        temp<-na.omit(fanAspData[flowIndx[i]])
+        nObs<-(nObs+length(temp[,1]))
+    }
+    #pcntFlowPass <- round(sum(flowPass)/(length(fanAspData$`SAATData$POSIXseq`)*mlTAAT), digits = 2)
+    # ommmit gapped data, only test the percent passing where data exists:
+    pcntFlowPass <- round(sum(flowPass)/(nObs), digits = 2)
+    print(pcntFlowPass)
+
+    testDate <- as.character(Sys.time())
+
+    userRmrk<-""
+
+    dataRpt <- data.frame(site = site, bgn.month=bgn_temp, end.month=end_temp, pcntPass=pcntFlowPass, testDate = testDate, userRmrk=userRmrk)
+    rslt.dir=paste0(save.dir, "/Common/")
+    if(!dir.exists(rslt.dir)){
+        dir.create(rslt.dir)
+    }
+    ####------####
+    if (file.exists(paste(rslt.dir, "fan_results.csv", sep = ""))) {
+        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), col.names = F, row.names = F, append = T)
+    }
+    else {
+        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
+    }
+    ####------####
+}
+
