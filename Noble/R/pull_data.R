@@ -35,18 +35,30 @@
 #
 ##############################################################################################
 
-data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", end.month = "2017-04", time.agr = 30, package="basic", save.dir){
+
+###TEST BLOCK####
+site="CPER"
+dpID="DP1.00002.001"
+bgn.month="2017-06"
+end.month="2017-06"
+time.agr=30
+package="basic"
+
+
+data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02", end.month = "2017-04", time.agr = 30, package="basic", save.dir){
 
     require(jsonlite)
-    require(nneo)
+    #require(nneo)
     require(lubridate)
 
     #read in current TIS site info
-    tis_site_config<-Noble::tis_site_config
+    is_site_config<-Noble::is_site_config
+    curr_site_config=is_site_config[which(is_site_config$SiteID==site),]
 
     #make sure to request valid packages!
     valid.pack<-c("basic", "expanded")
     save.dir = paste0(save.dir, "/")
+
     if(!dir.exists(save.dir)){stop("Invalid directory specified! Please correct the parameter given to 'save.dir'.")}
 
     if(missing(package)){package<-"basic"}
@@ -57,13 +69,10 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
 
         stop("Please enter a data product code, eg: dpID='DP1.00001.001'.")
     }
-    query<-"code"
+
     # Make a sequence of dates and times for the requested period
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
-
-    date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
-
     bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
     end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
     end_temp$mon<-end_temp$mon+1
@@ -72,123 +81,24 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
     ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp, time.agr = time.agr)
 
     # Get site metadata
-    site_meta<-nneo::nneo_site(site)
+    call.df=Noble:::.gen.call.df(bgn.month=bgn.month,
+                                 end.month=end.month,
+                                 site=site, dpID=dpID,
+                                 time.agr=time.agr,
+                                 package=package)
 
-    # construct a data frame of data product names and their corresponding DP IDs:
-    nneoDPs<-data.frame(cbind(name=nneo::nneo_products()$productName, code=nneo::nneo_products()$productCode))
-    nneoDPs$name<-gsub("\\(||\\)", "", nneoDPs$name)
-    onlyL1<-grep(nneoDPs$code, pattern = "DP1")
-    nneoDPs<-nneoDPs[onlyL1,]
-
-    if(query=="keyword"){
-        # find data products available at the site, that fit the KPI
-        test_data_prods<-site_meta$dataProducts[grep(pattern=dpID, site_meta$dataProducts$dataProductTitle, ignore.case = T),]
-
-        #test_data_prods<-test_data_prods[which(test_data_prods$productCategory=="Level 1 Data Product"),]
-        test_dp_codes<-test_data_prods$dataProductCode
-    }
-    if(query=="code"){
-        test_data_prods<-site_meta$dataProducts[grep(pattern=dpID, site_meta$dataProducts$dataProductCode, ignore.case = T),]
-        test_dp_codes<-site_meta$dataProducts$dataProductCode[grep(pattern=dpID, x=site_meta$dataProducts$dataProductCode, ignore.case = T)]
-    }
-
-    if(length(test_dp_codes)==0){stop(paste0("Data products are missing at ", site))}
-
-    # tower_instances<-(tis_site_config[which(tis_site_config$SiteID==site),which(colnames(tis_site_config) %in% test_dp_codes)])
-    # if(length(tower_instances)==0){
-    #     stop(paste0("Data product is not available at ", site))
-    # }
-
-    all_data_urls <- unlist(unique(test_data_prods$availableDataUrls))
-
-    #construct temporary API call urls
-    url_index<-lapply(date_range, function(x) grep(pattern=x, all_data_urls))
-    temp_data_urls<-all_data_urls[unlist(url_index)]
-
-    if(length(temp_data_urls)==0){stop("No data found within specified date range. Check data product avalability with NEON.avail")}
-
-    #For found DPs, given the Kpi, pull hosted metadata via API
-    api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = x)))
-
-    url_list<-c()
-    i<-1
-    for(i in 1:length(api_data)){
-        tempList<-api_data[[i]]$data$files
-        listLeng<-length(tempList)
-        if(listLeng==0){break()}
-        for(j in 1:listLeng){
-            url_list<-append(url_list, tempList[[j]]$url)
-        }
-    }
-
-
-    url_list=url_list[(!grepl(pattern = "xml", x= url_list))]
-    exceptions=c("DP1.00005.001", "DP1.00041.001")
-
-    if((test_dp_codes %in% exceptions)){ #Why, oh why does bio temp have to be different on the API
-        url_list<-url_list[grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
-    }else{
-
-        url_list=url_list[grepl(pattern = paste0(time.agr,"min*"), x= url_list)]
-
-    }
-
-
-
-
-    #url.parse=unlist(stringr::str_split(url_list, pattern = paste0(dpID, "\\.")))
-
-    loc_list_temp=stringr::str_extract(string=url_list, pattern = paste0(test_dp_codes, "\\.\\d\\d\\d\\.\\d\\d\\d\\.\\d\\d\\d"))
-    loc_list=stringr::str_sub(loc_list_temp, start = 15, end = 21)
-    if(all(is.na(loc_list_temp))){
-        loc_list_temp=stringr::str_extract(string=url_list, pattern ="\\.\\d\\d\\d\\.\\d\\d\\d\\.\\d\\d\\d")
-        loc_list=stringr::str_sub(loc_list_temp, start = 1, end = 8)
-    }
-
-
-
-
-    dp_list<-rep(dpID, times=length(loc_list))
-
-    # if(query=="code" && test_dp_codes=="DP1.00041.001"){
-    #
-    #
-    #     # loc_list<-substr(url_list, 154, 160)
-    #     # loc_list[which(!grepl(loc_list, pattern = "^00"))]=paste0("0", loc_list[which(!grepl(loc_list, pattern = "^00"))])
-    #     # loc_list=substr(loc_list, 0, 7)
-    # }else{
-    #     dp_list<-substr(url_list, 44, 56)
-    #     loc_list<-substr(url_list, 105, 111)
-    #
-    # }
-    call.df<-as.data.frame(cbind(url_list, dp_list, loc_list))
-
-    # Order the call.df by data product, then location
-    call.df<-call.df[order(call.df$dp_list, call.df$url_list),]
-
-    call.df=call.df[which(grepl(x=call.df$url_list, pattern=package)),]
-
-    # if(package=="expanded"){
-    #     call.df$url_list<-gsub(x=call.df$url_list, pattern = "package=basic", replacement = "package=expanded")
-    # }
-    #
-
+    #Make our start timestamps, which data are matched to.
     start_time_stamps<-as.data.frame(ref_seq)
 
     ##### Data Pull section #####
-
-
-
-    #Look only at one DP code at a time
-    temp_dp_code<-test_dp_codes
     #Set the expected data filename for the data product
-    file.name<- paste0("NEON.", site_meta$domainCode,".", site, ".", temp_dp_code, "_REQ_", bgn_temp, "_", as.character(as.Date(end_temp)), "_", time.agr, "min_", package,".csv.gz")
+    file.name<- paste0("NEON.", curr_site_config$Domain,".", site, ".", dpID, "_REQ_", bgn_temp, "_", as.character(as.Date(end_temp)), "_", time.agr, "min_", package,".csv.gz")
 
     #if we're missing the expected file, download the data
     if(!file.exists(paste0(save.dir, file.name))){
 
         #how many locations exist for the product, according to the API? Make a list of those
-        loc_per_dp<-unique(call.df$loc_list[call.df$dp_list==temp_dp_code])
+        loc_per_dp<-unique(call.df$loc_list[call.df$dp_list==dpID])
 
         # if we're going around the loop again, get rid of the previous DP's data
         if(exists("full.df")){
@@ -202,7 +112,7 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
             temp_loc<-loc_per_dp[j]
 
             #pull out all URLs for the DP we need
-            temp_urls_per_dp<-call.df$url_list[which(call.df$loc_list==temp_loc & call.df$dp_list==temp_dp_code)]
+            temp_urls_per_dp<-call.df$url_list[which(call.df$loc_list==temp_loc & call.df$dp_list==dpID)]
 
             if(exists("temp.dp.data")){
                 rm(temp.dp.data)
@@ -225,8 +135,11 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
             # Convert returned data to POSIX
             temp.dp.data$startDateTime<-as.POSIXct(temp.dp.data$startDateTime, format= "%Y-%m-%dT%H:%M:%SZ", tz="UTC")
 
-            # Add loacation data to the column names
+            # Add loacation data to the column names, then clean up the date/time names
             colnames(temp.dp.data)<-paste0(colnames(temp.dp.data),".", temp_loc)
+            colnames(temp.dp.data)[grepl(pattern = "*Time*", x=colnames(temp.dp.data))]=
+                gsub(pattern = "\\d||\\.", replacement = "",
+                     x = colnames(temp.dp.data[,grepl(pattern = "*Time*", x=colnames(temp.dp.data))]))
 
 
             if(!exists("full.df")){
@@ -267,7 +180,6 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
         #Make sure timestamps come out in order
         #full.df<-full.df[order(full.df[,1]),]
 
-        #print(paste("Writing", temp_dp_code))
         file.path<-paste0(save.dir, file.name)
         zip.dir<-gzfile(file.path)
         write.csv(x=full.df, file=zip.dir, row.names = F)
@@ -280,6 +192,3 @@ data.pull = function(site = "JORN", dpID = "Radiation", bgn.month = "2017-02", e
     rm(full.df)
 
 }
-
-
-

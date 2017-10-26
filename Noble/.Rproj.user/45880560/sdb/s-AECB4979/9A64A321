@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#generate call.df\n\n.gen.call.df=function(bgn.month, end.month, site=site, dpID=dpID, time.agr=time.agr, package=package){\n    bgn_temp <- as.Date(paste0(bgn.month, \"-01\"), tz=\"UTC\")\n    end_temp <- as.Date(paste0(end.month, \"-01\"), tz=\"UTC\")\n\n    date_range<-substr(seq.Date(bgn_temp, end_temp, \"month\"), 0, 7)\n\n    site_meta=read_json(paste0(\"http://data.neonscience.org/api/v0/sites/\", site))$data\n    prod_meta=read_json(paste0(\"http://data.neonscience.org/api/v0/products/\", dpID))$data\n\n    site_indx=grep(prod_meta$siteCodes, pattern = site)\n    if(length(site_indx)==0){\n        stop(paste0(dpID, \" is not currently available at \", site, \" via the API.\"))\n    }\n\n    site_options=data.frame(avail_months=unlist(prod_meta$siteCodes[[site_indx]]$availableMonths), urls=unlist(prod_meta$siteCodes[[site_indx]]$availableDataUrls))\n\n    if(length(site_options$avail_months)==0){stop(paste0(dpID, \" is missing at \", site))}\n\n    # tower_instances<-(tis_site_config[which(tis_site_config$SiteID==site),which(colnames(tis_site_config) %in% test_dp_codes)])\n    # if(length(tower_instances)==0){\n    #     stop(paste0(\"Data product is not available at \", site))\n    # }\n\n    all_data_urls <- unlist(unique(site_options$urls))\n\n    #construct temporary API call urls\n    url_index<-lapply(date_range, function(x) grep(pattern=x, all_data_urls))\n    temp_data_urls<-all_data_urls[unlist(url_index)]\n\n    if(length(temp_data_urls)==0){stop(\"Data was missing in specified date range at \", site, \". Check \", dpID, \" avalability with NEON.avail\")}\n\n    #For found DPs, given the Kpi, pull hosted metadata via API\n    api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = x)))\n\n    url_list<-c()\n    i<-1\n    for(i in 1:length(api_data)){\n        tempList<-api_data[[i]]$data$files\n        listLeng<-length(tempList)\n        if(listLeng==0){break()}\n        for(j in 1:listLeng){\n            url_list<-append(url_list, tempList[[j]]$url)\n        }\n    }\n\n\n    url_list=url_list[(!grepl(pattern = \"xml\", x= url_list))]\n    exceptions=c(\"DP1.00005.001\", \"DP1.00041.001\")\n\n    if((dpID %in% exceptions)){ #Why, oh why does bio temp have to be different on the API\n        url_list<-url_list[grepl(pattern = paste0(time.agr, \"_min*\"), x= url_list)]\n    }else{\n        url_list=url_list[grepl(pattern = paste0(time.agr,\"*min*\"), x= url_list)|grepl(pattern = paste0(time.agr, \"_min*\"), x= url_list)]\n    }\n\n    loc_list_temp=stringr::str_extract(string=url_list, pattern = paste0(dpID, \"\\\\.\\\\d\\\\d\\\\d\\\\.\\\\d\\\\d\\\\d\\\\.\\\\d\\\\d\\\\d\"))\n    loc_list=stringr::str_sub(loc_list_temp, start = 15, end = 21)\n    if(all(is.na(loc_list_temp))){\n        loc_list_temp=stringr::str_extract(string=url_list, pattern =\"\\\\.\\\\d\\\\d\\\\d\\\\.\\\\d\\\\d\\\\d\\\\.\\\\d\\\\d\\\\d\")\n        loc_list=stringr::str_sub(loc_list_temp, start = 1, end = 8)\n    }\n\n    dp_list<-rep(dpID, times=length(loc_list))\n\n    call.df<-as.data.frame(cbind(url_list, dp_list, loc_list))\n\n    # Order the call.df by data product, then location\n    call.df<-call.df[order(call.df$dp_list, call.df$url_list),]\n\n    call.df=call.df[which(grepl(x=call.df$url_list, pattern=package)),] #Keep only our package type\n    call.df=call.df[which(grepl(x=call.df$url_list, pattern=\"\\\\.csv\")),] #Keep only CSVs\n    call.df=call.df[which(!grepl(x=call.df$url_list, pattern=\"variables\")),] #weed out varaible tables\n\n    return(call.df)\n\n}\n",
+    "created" : 1509033118975.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3844921920",
+    "id" : "9A64A321",
+    "lastKnownWriteTime" : 1509035887,
+    "last_content_update" : 1509035887579,
+    "path" : "~/Dropbox/GitHub/Noble-Package/Noble/R/gen_call_df.R",
+    "project_path" : "R/gen_call_df.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

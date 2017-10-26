@@ -1,0 +1,10 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : false,
+        "filePatterns" : [
+        ],
+        "path" : "~/Dropbox/GitHub/Noble-Package/Noble",
+        "query" : "paste0(site.dir, list.files(site.dir)[1])",
+        "regex" : false
+    }
+}

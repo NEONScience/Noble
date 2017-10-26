@@ -4,7 +4,7 @@
 \alias{test.sites}
 \title{Returns a list of sites where a given data product exists in a given time range}
 \usage{
-test.sites(dpId, bgn.month, end.month)
+test.sites(dpID, bgn.month, end.month)
 }
 \arguments{
 \item{\code{dpId}}{Parameter of class character. The data product ID of interest, must be in code format, eg. "DP1.00001.001"}
