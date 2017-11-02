@@ -126,7 +126,18 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         }
 
 
-        dq.rslt<-data.frame(site, time_performed=as.character(Sys.time()), begin_month=bgn.month, end_month=end.month, days_tested=days, data_product= dpID, variable_tested=prin.vars[i], data_quantity=data.quant, data_validity=data.valid, quant_threshold= quant_threshold, valid_threshold=valid_threshold)
+        dq.rslt<-data.frame(site=site,
+                            time_performed=as.character(Sys.time()),
+                            begin_month=bgn.month,
+                            end_month=end.month,
+                            days_tested=days,
+                            data_product= dpID,
+                            variable_tested=prin.vars[i],
+                            data_quantity=data.quant,
+                            data_validity=data.valid,
+                            quant_threshold= quant_threshold,
+                            valid_threshold=valid_threshold
+                            )
 
         rslt.dir=paste0(save.dir, "/", "Common/")
         if(!dir.exists(rslt.dir)){

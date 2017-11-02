@@ -59,6 +59,7 @@
 pull.USCRN.data <- function(timeScale, stationID, TimeBgn, TimeEnd) {
   functionStart <<- Sys.time()
   options(stringsAsFactors=FALSE)
+  library(data.table)
   library(stringr)
 
   ## Stop if the entered timeScale isn't valid ##

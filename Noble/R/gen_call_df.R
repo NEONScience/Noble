@@ -6,8 +6,8 @@
 
     date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
 
-    site_meta=read_json(paste0("http://data.neonscience.org/api/v0/sites/", site))$data
-    prod_meta=read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data
+    site_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/sites/", site))$data
+    prod_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data
 
     site_indx=grep(prod_meta$siteCodes, pattern = site)
     if(length(site_indx)==0){
@@ -16,12 +16,8 @@
 
     site_options=data.frame(avail_months=unlist(prod_meta$siteCodes[[site_indx]]$availableMonths), urls=unlist(prod_meta$siteCodes[[site_indx]]$availableDataUrls))
 
+    # Stop if no data
     if(length(site_options$avail_months)==0){stop(paste0(dpID, " is missing at ", site))}
-
-    # tower_instances<-(tis_site_config[which(tis_site_config$SiteID==site),which(colnames(tis_site_config) %in% test_dp_codes)])
-    # if(length(tower_instances)==0){
-    #     stop(paste0("Data product is not available at ", site))
-    # }
 
     all_data_urls <- unlist(unique(site_options$urls))
 

@@ -5,7 +5,7 @@
 \title{Tests fan aspiration system performance}
 \usage{
 fan.test(site = site, bgn.month = bgn.month, end.month = end.month,
-  save.dir)
+  save.dir, pass.th)
 }
 \arguments{
 \item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}

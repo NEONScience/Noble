@@ -28,7 +28,7 @@
 #
 ##############################################################################################
 
-fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, save.dir){
+fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, save.dir, pass.th){
 
     time.agr<-30
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
@@ -38,6 +38,11 @@ fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, sav
     end_temp$mon<-end_temp$mon+1
     end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
 
+    if(missing(pass.th)){
+        pass.th=95
+    }
+
+    days=difftime(end_temp, bgn_temp, units = "days")
 
     siteCfig <- Noble::tis_site_config
     #### Commissioning Test Parameters ####
@@ -124,18 +129,25 @@ fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, sav
     pcntFlowPass <- round(sum(flowPass)/(nObs), digits = 2)
     print(pcntFlowPass)
 
-    testDate <- as.character(Sys.time())
+    dataRpt = data.frame(site=site,
+               time_performed=as.character(Sys.time()),
+               begin_month=bgn.month,
+               end_month=end.month,
+               days_tested=days,
+               percent_pass=pcntFlowPass,
+               pass_threshold=pass.th,
+               user_remark=""
+    )
 
-    userRmrk<-""
-
-    dataRpt <- data.frame(site = site, bgn.month=bgn_temp, end.month=end_temp, pcntPass=pcntFlowPass, testDate = testDate, userRmrk=userRmrk)
     rslt.dir=paste0(save.dir, "/Common/")
     if(!dir.exists(rslt.dir)){
         dir.create(rslt.dir)
     }
     ####------####
-    if (file.exists(paste(rslt.dir, "fan_results.csv", sep = ""))) {
-        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), col.names = F, row.names = F, append = T)
+    if (file.exists(paste(rslt.dir, "results.csv", sep = ""))) {
+        temp=read.csv(file = paste0(rslt.dir, "results.csv"))
+        dataRpt=rbind(temp, dataRpt)
+        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), col.names = F, row.names = F)
     }
     else {
         write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
