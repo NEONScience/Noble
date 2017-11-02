@@ -2,6 +2,7 @@
 #' @title  Returns PDF(s) of data for the specified site and data product
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
+#' @author Cove Sturdevant
 
 #' @description For a specified data product ID, a data frame of the availabilty of that product
 #' for all NEON instrumented sites is returned. The output of data product availability is best
@@ -36,30 +37,34 @@
 #
 ##############################################################################################
 
-pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package, test.qf){
+pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package){
     require(nneo)
     require(lubridate)
 
-    kpiList <- data.frame(read.csv("https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv", header = TRUE))
+    #kpiList <- data.frame(read.csv("https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv", header = TRUE))
     time.agr=30
-    #package = "basic"
-    if(missing(test.qf)){
-    test.qf = "finalQF"
-    }
 
+
+    test.qf = "finalQF"
+    #ENTRY CONTROL
     #auto fill the data field, if not specified
     if(missing(data.field)){
-        data.field = unlist(kpiList$data.field[match(dpID, kpiList$DPCode)])
+        data.field = Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dpID==dpID]
     }
 
+    if(interactive()&length(data.field)==0){
+        data.field = readline(prompt = "No valid data field found, please enter one: ")
+    }else if(!interactive()){stop("No valid data.field found, please enter one.")}
 
     if(missing(package)){
         package<-"basic"
     }
+
     pack.ctrl<-c("basic", "expanded")
+
     if(!package %in% pack.ctrl){
         package<-"basic"
-        message("Non-standard package requested, defaulting to basic.")
+        message("Invalid package type requested, defaulting to basic.")
     }
 
     DateBgn <- paste0(bgn.month, "-01")
@@ -68,14 +73,6 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
     end_temp$mon<-end_temp$mon+1
     end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
     DateEnd<-as.Date(end_temp)
-
-    # make the stuff site.cfig() needs
-    # currKPI <- unlist(kpiList$KPI[match(dpID, kpiList$DPCode)])
-    # dataPrd <- unlist(kpiList$DPName[match(dpID, kpiList$DPCode)])
-    # nneoDPs<-data.frame(cbind(name=nneo::nneo_products()$productName, code=nneo::nneo_products()$productCode))
-    # onlyL1<-grep(nneoDPs$code, pattern = "DP1")
-    # prodName<<-nneoDPs[onlyL1,]
-    # prodKpi <<- prodName[grep(pattern = currKPI, prodName$productName, ignore.case = T),]
 
     s<-1
     for (s in 1:length(sites.req)){
@@ -88,18 +85,11 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
 
             sink<-Noble::data.pull(site = sites.req[s], bgn.month = bgn.month, end.month = end.month,
                                    dpID = dpID, time.agr = time.agr, package = package, save.dir = save.dir)
-            # Get the spatial location list from site.cfig()
-            #CommTis::site.cfig(Site=sites.req[s], Kpi=currKPI)
-
-            # Get the requested data
-
-
-            #CommTis::grabNEON(Site=sites.req[s], time_bgn = bgn.month, time_end = end.month, data_var = dataPrd,
-            #time_agr = TimeAgr, Pack = Pack, dat_dir = save.dir)
         }
         rm(sink) # get rid of environment data
 
         if(is.null(data.field)){stop("No data.field specified or identifiable. Specify this parameter for this DP ID.")}
+
         # Read the requested data back in
         print(paste("Reading and plotting", sites.req[s], "data."))
         commData <- data.frame(read.csv(fullPath, header = TRUE))
@@ -108,7 +98,14 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
             commData=commData[,-which(grepl(pattern = "outPAR*", x = colnames(commData)))]
         }
 
-        QFindex <- grep(paste0(test.qf,"\\."), colnames(commData), ignore.case = T)
+        QFindex <- grep(pattern = "*finalQF\\.", colnames(commData), ignore.case = T)
+        if(dpID=="DP1.00001.001"){
+            if(grepl(pattern = "*speed*", data.field, ignore.case = T)){
+                QFindex = grep(pattern = "windSpeedFinalQF\\.", colnames(commData), ignore.case = T)
+            }else if(grepl(pattern = "*dir*", data.field, ignore.case = T)){
+                QFindex = grep(pattern = "windDirFinalQF\\.", colnames(commData), ignore.case = T)
+                }
+        }
         dataIndex <- grep(paste0(data.field), colnames(commData), ignore.case = T)
         timeStmp <- as.POSIXct(strptime(commData[,1], format="%Y-%m-%d %H:%M:%S", tz="UTC"))
 
@@ -121,13 +118,12 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
             nameData <- names(commData)[dataIndex[idxPlot]]
             data <- base::data.frame(time=timeStmp,data=commData[[dataIndex[idxPlot]]],qf=commData[[QFindex[idxPlot]]],
                                      nameData=nameData)
-            #names(data) <- c("time",nameData,nameQf)
+
             nameQf=test.qf
 
             # Generate data completeness plot
             dataPlot <- base::data.frame(time=data$time,value=data$data,qfFail=data$qf)
-            # dataPlot$qfFail[data$qf==0] <- NA
-            # dataPlot <- reshape2::melt(dataPlot,id="time")
+
 
             if(base::sum(data[[2]],na.rm=TRUE) == 0) {
                 # No non-NA data, generate empty plot

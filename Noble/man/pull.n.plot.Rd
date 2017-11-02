@@ -5,7 +5,7 @@
 \title{Returns PDF(s) of data for the specified site and data product}
 \usage{
 pull.n.plot(sites.req, bgn.month, end.month, dpID, save.dir, data.field,
-  package, test.qf)
+  package)
 }
 \arguments{
 \item{\code{sites.req}}{The site, or character list of sites to return plots of.}
