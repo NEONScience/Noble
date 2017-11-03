@@ -37,6 +37,8 @@ Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
+
+Cove Sturdevant
 }
 \keyword{commissioning}
 \keyword{data}
