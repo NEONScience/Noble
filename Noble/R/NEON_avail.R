@@ -39,11 +39,13 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     library(utils)
 
     #once complete, move into the package as data frame
-    dpInfo <- base::data.frame(utils::read.csv(
-        "https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv",
-        header = TRUE))
+    tis_pri_vars=Noble::tis_pri_vars
+
+    # dpInfo <- base::data.frame(utils::read.csv(
+    #     "https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv",
+    #     header = TRUE))
     # The earliest start date. May want to swithc to earliest date found via API.
-    NEONstrt <- base::as.POSIXct("2015-01-01",tz="GMT",format="%Y-%m-%d")
+    NEONstrt <- base::as.POSIXct("2014-01-01",tz="GMT",format="%Y-%m-%d")
 
     # Date of the function call, endcap on returned data frame
     currMon <- base::as.POSIXct(base::Sys.Date(),tz="GMT")
@@ -57,7 +59,7 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     # Return the availaiblity of a data product, as far as the API is concerned
     availability<-nneo::nneo_product(dpID)$siteCodes
     availDF <-data.frame(refMonths)
-    dataPrd <- base::unlist(dpInfo$DPName[match(dpID, dpInfo$DPCode)])
+    dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dpID, tis_pri_vars$dpID)])
     dfNames <- c("Month", unlist(availability$siteCode))
 
     #Wrap around the API availability by site, to make data frame

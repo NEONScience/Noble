@@ -173,6 +173,10 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     # b. Ratio is within ±15% for 93° > solar zenith angle > 75°
     set2=DirDif[which(DirDif$SZA>75&&DirDif$SZA<93),]
 
+
+
+
+
     ########### WRITE TO RESULTS FILE ###########
 
     if(file.exists(paste(rslt.dir,"results.csv",sep = "/"))){

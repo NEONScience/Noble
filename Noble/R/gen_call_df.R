@@ -30,6 +30,7 @@
     #For found DPs, given the Kpi, pull hosted metadata via API
     api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = x)))
 
+    # build a list of URLs served by the API
     url_list<-c()
     i<-1
     for(i in 1:length(api_data)){
@@ -41,16 +42,19 @@
         }
     }
 
-
+    # Weed out XML links
     url_list=url_list[(!grepl(pattern = "xml", x= url_list))]
+
+    #Try to handle name excpetions
     exceptions=c("DP1.00005.001", "DP1.00041.001")
 
     if((dpID %in% exceptions)){ #Why, oh why does bio temp have to be different on the API
         url_list<-url_list[grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
     }else{
-        url_list=url_list[grepl(pattern = paste0(time.agr,"*min*"), x= url_list)|grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
+        url_list=url_list[grepl(pattern = paste0(time.agr,"*min*"), x= url_list)|grepl(pattern = paste0(time.agr, "_min*"), x= url_list)] #should catch unknown exceptions
     }
 
+    #Looking for location info
     loc_list_temp=stringr::str_extract(string=url_list, pattern = paste0(dpID, "\\.\\d\\d\\d\\.\\d\\d\\d\\.\\d\\d\\d"))
     loc_list=stringr::str_sub(loc_list_temp, start = 15, end = 21)
     if(all(is.na(loc_list_temp))){

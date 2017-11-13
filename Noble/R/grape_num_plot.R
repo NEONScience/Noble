@@ -14,7 +14,7 @@
     melt.num.grapes = data.frame(date=rownames(melt.num.grapes), grape.count=melt.num.grapes$value)
     melt.num.grapes$date<-as.Date(melt.num.grapes$date)
     plot<-ggplot2::ggplot(data=melt.num.grapes, aes(x=date, y=num.grapes))+
-        ggplot2::geom_line()+
+        ggplot2::geom_line(colour="#5a58e2")+
         ggplot2::theme_bw()+
         ggplot2::labs(x="Date", y="Number of Grapes", title=site)+
         ggplot2::scale_y_continuous(limits = c(0, max(melt.num.grapes$grape.count)))

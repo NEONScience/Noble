@@ -58,7 +58,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
     valid_threshold=v.th
     }
 
-
+    #Make domain-specific directory
     domn=Noble::tis_site_config$Domain[which(Noble::tis_site_config$SiteID==site)]
     site.dir=paste0(save.dir, "/", domn, "-", site, "/")
 
@@ -66,6 +66,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         dir.create(site.dir)
     }
 
+    #pull data
     test.data<-Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir)
 
     for(i in 1:length(prin.vars)){
@@ -81,7 +82,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         #special case for precip
         if(prin.vars[i]=="priPrecipBulk"){
             data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i]))
-            qf.indx<-grep(x=colnames(test.data), pattern=("FinalQF"), ignore.case = T)
+            qf.indx<-grep(x=colnames(test.data), pattern=("priPrecipFinalQF\\."), ignore.case = T)
         }
 
 
