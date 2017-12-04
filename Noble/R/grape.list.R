@@ -7,7 +7,10 @@
             site<-unlist(file.meta[[1]][1])
             #print(site)
             date<-as.POSIXct(unlist(file.meta[[1]][2]), format ="%Y%m%d")-(3600*24)
-            tempCSV<-read.csv(file=paste0(list.test.dirs[l], "/", test.files[o]))
+            file=paste0(list.test.dirs[l], "/", test.files[o])
+            if(file.size(file) > 0){
+                tempCSV<-read.csv(file = file)
+            }
             foundGrapes<-trimws(tempCSV[which(trimws(tempCSV[,2], "both")==trimws(tempCSV[,5], "both")),2], which = "both")
             foundGrapes<-data.frame(unique(foundGrapes))
             names(foundGrapes)<-"x"
@@ -25,7 +28,6 @@
                 names(foundGrapes)<-"x"
                 write.csv(foundGrapes, file =paste0(list.test.dirs[l], "/", site, "-Grapes.csv"),  row.names = F)
             }
-
         }
     }
 }

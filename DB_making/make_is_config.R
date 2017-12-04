@@ -16,4 +16,4 @@ is_site_config=data.frame(
     Core.Relocatable=c(TIS$Core.Relocatable, AIS$Core.Relocatable)
 )
 
-save(is_site_config, file = "./data/is_site_config.rda")
+save(is_site_config, file = "../Noble/data/is_site_config.rda")

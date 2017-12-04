@@ -38,7 +38,7 @@
 ##############################################################################################
 
 pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package){
-    require(nneo)
+    #require(nneo)
     require(lubridate)
 
     #kpiList <- data.frame(read.csv("https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv", header = TRUE))
@@ -77,7 +77,7 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
     s<-1
     for (s in 1:length(sites.req)){
 
-        domn<-nneo::nneo_site(sites.req[s])$domainCode
+    domn<-Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==sites.req[s]]
         dataFile<- paste0("NEON.", domn,".", sites.req[s],".", dpID, "_REQ_", DateBgn, "_", DateEnd, "_", time.agr,"min_", package, ".csv.gz")
         fullPath <- paste0(save.dir, "/", dataFile)
         if (!file.exists(fullPath)){

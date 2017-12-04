@@ -1,5 +1,5 @@
 ############################################################################################
-#' @title  Downloads and performs process quality checks on NEON data
+#' @title  Downloads and performs process quality checks on NEON data, given specifc dates
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
@@ -10,12 +10,13 @@
 #' @param \code{dpID} Parameter of class character. The name of the data product to pull data, or a
 #' keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
 #' @param \code{prin.vars} The principle variables to test (variable names, such as 'windSpeed'). Omit the term 'Mean'.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
+#' @param \code{bgn.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the start of the period of interest.
+#' @param \code{end.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the end of the period of interest.
+#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.
 #' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
 #' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
-#'
+#' @param \code{q.th} Parameter of class character. Optional. Alows the user to directly set the Quality threshold (nominal percent.)
+#' @param \code{v.th} Parameter of class character. Optional. Alows the user to directly set the Validity threshold (nominal percent.)
 #' @return Writes data files to the specified directory.
 
 #' @keywords process quality, data quality, gaps, commissioning
@@ -44,7 +45,10 @@
 ##############################################################################################
 
 
-tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.month = "2017-05", end.month = "2017-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
+.tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.date = "2017-05-15", end.date = "2017-06-15", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
+
+    bgn.month=substr(bgn.date, 0, 7)
+    end.month=substr(bgn.date, 0, 7)
 
     quant_threshold=q.th
     valid_threshold=v.th
@@ -55,7 +59,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
     }
     if(missing(v.th)){
         v.th=90
-    valid_threshold=v.th
+        valid_threshold=v.th
     }
 
     #Make domain-specific directory
@@ -67,7 +71,8 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
     }
 
     #pull data
-    test.data<-Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir)
+    test.data=Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir)
+    test.data=Noble::date.extract(data=test.data, bgn.date = bgn.date, end.date = end.date)
 
     for(i in 1:length(prin.vars)){
         data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))
@@ -91,7 +96,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         end.day=as.POSIXct(end.day)
 
 
-        days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
+        days=round(difftime(end.date, bgn.date, units="days"), digits = 2)
         end.day=lubridate::round_date(end.day, "day")
 
         pq.data<-test.data[,data.indx]
@@ -109,14 +114,14 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         data.valid<-round(100*(num.qf.pass/(num.qf.pass+num.qf.fail+num.qf.na)), digits = 2)
 
 
-#Set passing thresholds, based on var tested. Add to this area as functions or conditions are added
+        #Set passing thresholds, based on var tested. Add to this area as functions or conditions are added
         ## direct radiation has an ATBD implementation error- revert to full thresholds.
         # if(prin.vars[i]=="dirRad"){
         #     #direct and diffuse caluculated values
         #     quant_threshold=Noble::dirRad.threshold(site = site, bgn.month = bgn.month, end.month = end.month, excuse = 5)
         #     valid_threshold=Noble::dirRad.threshold(site = site, bgn.month = bgn.month, end.month = end.month, excuse = 10)
         #}
-    if(prin.vars[i]=="SHF"){
+        if(prin.vars[i]=="SHF"){
             #Soil heat flux specific values
             quant_threshold=95
             valid_threshold=(90-15.38)
@@ -129,8 +134,8 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
 
         dq.rslt<-data.frame(site=site,
                             time_performed=as.character(Sys.time()),
-                            begin_month=bgn.month,
-                            end_month=end.month,
+                            begin_month=bgn.date,
+                            end_month=end.date,
                             days_tested=days,
                             data_product= dpID,
                             variable_tested=prin.vars[i],
@@ -138,7 +143,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                             data_validity=data.valid,
                             quant_threshold= quant_threshold,
                             valid_threshold=valid_threshold
-                            )
+        )
 
         rslt.dir=paste0(save.dir, "/", "Common/")
         if(!dir.exists(rslt.dir)){

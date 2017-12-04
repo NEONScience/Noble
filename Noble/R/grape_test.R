@@ -64,9 +64,10 @@
             meta<-strsplit(test.files[q], split = "_")
             site<-unlist(meta[[1]][1])
             date<-as.POSIXct(unlist(meta[[1]][2]), format ="%Y%m%d")-(3600*24)
-            tempCSV<-read.csv(file=paste0(list.test.dirs[l], "/", test.files[q]))
-
-            tempCSV<-read.csv(file=paste0(list.test.dirs[l], "/", test.files[q]))
+            file=paste0(list.test.dirs[l], "/", test.files[q])
+            if(file.size(file)>0){
+                tempCSV<-read.csv(file=file)
+                }
             uptime<-append(uptime, round(sum(tempCSV[which(grepl(pattern = "7CE*", x=tempCSV[,2])),4]), digits = 2))
         }
 

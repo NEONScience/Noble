@@ -37,12 +37,12 @@
 
 
 ###TEST BLOCK####
-site="CPER"
-dpID="DP1.00002.001"
-bgn.month="2017-06"
-end.month="2017-06"
-time.agr=30
-package="basic"
+# site="CPER"
+# dpID="DP1.00002.001"
+# bgn.month="2017-06"
+# end.month="2017-06"
+# time.agr=30
+# package="basic"
 
 
 data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02", end.month = "2017-04", time.agr = 30, package="basic", save.dir){
@@ -59,7 +59,7 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02
     valid.pack<-c("basic", "expanded")
     save.dir = paste0(save.dir, "/")
 
-    if(!dir.exists(save.dir)){stop("Invalid directory specified! Please correct the parameter given to 'save.dir'.")}
+    #if(!dir.exists(save.dir)){stop("Invalid directory specified! Please correct the parameter given to 'save.dir'.")}
 
     if(missing(package)){package<-"basic"}
     if(!package %in% valid.pack){stop("Please specify a package of 'basic' or 'expaned'")}

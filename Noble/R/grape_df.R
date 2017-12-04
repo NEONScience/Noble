@@ -64,15 +64,15 @@
     if(system=="AIS"){
         site.meta = Noble::ais_site_config
     }
-print(system)
+    #print(system)
     #site.meta<-data.frame(read.csv(paste0(comm.dir, "TIS_site_config.csv"), header = T))
     site.list<-as.character(site.meta$SiteID)
     site.list=append(site.list, as.character(Noble::ais_site_config$SiteID))
     if(!site %in% site.list){stop("'site' is invalid. Please enter a valid TIS site code.")}
     domn<-site.meta$Domain[which(site.meta$SiteID==site)]
-print(domn)
+    #print(domn)
     site.dir<-paste0(test.dir, "/", domn,"-",site,"/")
-message(site.dir)
+    #message(site.dir)
     #if(!dir.exists(site.dir)){stop("Specified log.dir invalid!")}
 
     grapes<-read.csv(file = paste0(site.dir, site,"-Grapes.csv"))
@@ -83,10 +83,14 @@ message(site.dir)
 
     grape.df<-data.frame(`Grape MAC Address`=grapes$x)
     for(i in 1:length(grape.logs)){
+        #print(i)
         start.col.names<-colnames(grape.df)
         temp.meta<-unlist(strsplit(grape.logs[i], split = "\\_"))
         date<-as.Date(temp.meta[2], format = "%Y%m%d")
-        log.data<-read.csv(file=paste0(site.dir, grape.logs[i]))
+        file=paste0(site.dir, grape.logs[i])
+        if(file.size(file)>0){
+            log.data<-read.csv(file=file)
+        }
         found.macs<-trimws(log.data[which(trimws(log.data[,2], "both")==trimws(log.data[,5], "both")),2])
         found.uptimes<-log.data[which(trimws(log.data[,2], "both")==trimws(log.data[,5], "both")),4]
 
