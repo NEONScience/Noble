@@ -5,8 +5,7 @@
     return(data.route)
 }
 
-.result.route=function(site, save.dir){
-    domn=Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site]
+.result.route=function(save.dir){
     result.dir=paste0(save.dir, "/Common/")
     if(!dir.exists(result.dir)){dir.create(result.dir)}
     result.route=paste0(result.dir, "results.csv")

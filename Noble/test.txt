@@ -1,0 +1,8 @@
+TITLE
+TISRadiationcommissioning test anomaly @ D02-SCBI: Data Quantity insufficient
+
+BODY
+At SCBI, commissioning testing resulted in a failure, due to low data quanitity. DP1.00022.001 (70.79%),  and DP1.00023.001 (87.37%) were all below the testing threshold over the test period (2017-10 through 2017-11). Attached are summary figures of data product health, and CSVs showing when gaps in data begin and end.
+
+STAKEHOLDERS
+rlee, gwirth, jcrow, lmorgan, nvandenhul

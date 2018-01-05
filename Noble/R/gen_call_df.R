@@ -48,10 +48,11 @@
     #Try to handle name excpetions
     exceptions=c("DP1.00005.001", "DP1.00041.001")
 
+
     if((dpID %in% exceptions)){ #Why, oh why does bio temp have to be different on the API
         url_list<-url_list[grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
     }else{
-        url_list=url_list[grepl(pattern = paste0(time.agr,"*min*"), x= url_list)|grepl(pattern = paste0(time.agr, "_min*"), x= url_list)] #should catch unknown exceptions
+        url_list=url_list[grepl(pattern = paste0(time.agr,"min*"), x= url_list)|grepl(pattern = paste0(time.agr, "_min*"), x= url_list)] #should catch unknown exceptions
     }
 
     #Looking for location info

@@ -31,7 +31,7 @@
 #
 ##############################################################################################
 
-plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
+.plot.qf.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     time.agr = 30
     ml.case=missing(ml)
 
@@ -49,7 +49,7 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     if(as.numeric(difftime(end_temp, bgn_temp))>=92){message("More than 3 months of data requested, may take a long time...")}
 
     # Return data
-    data<-data.pull(site = site, dpID = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package="basic", save.dir = tempdir())
+    data<-data.pull(site = site, dpID = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package="basic", save.dir = tempdir())
 
     # Set default bin breakdowns
     if(missing(speed.bins)){speed.bins=10}
@@ -59,7 +59,7 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     temp<-(strsplit(colnames(data[,3:length(colnames(data))]), split = "\\."))
     temp=do.call(rbind, temp)
     #temp<-data.frame(temp[-1], stringsAsFactors=F)
-   #temp<-unlist((temp[3,]))
+    #temp<-unlist((temp[3,]))
     mls<-unique(temp[,3])
     clean.mls<-gsub(x=mls, pattern = "0", replacement = "")
 
@@ -78,6 +78,7 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
         data.by.ml<- data[,which(grepl(colnames(data), pattern=mls[n]))]
 
         dir.indx<- as.numeric(grep(x=colnames(data.by.ml), pattern = "windDirMean", ignore.case = T))
+        dir.qf.index = as.numeric(grep(x=colnames(data.by.ml), pattern = "windDirFinalQF\\.", ignore.case = T))
         speed.indx <- as.numeric(grep(x=colnames(data.by.ml), pattern = "windSpeedMean", ignore.case = T))
 
         if(length(speed.indx)==0){stop("No wind data found!")}
@@ -85,9 +86,10 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
 
         direct<-data.by.ml[,dir.indx]
         speed<-data.by.ml[,speed.indx]
+        qf=paste0("QF=",data.by.ml[,dir.qf.index])
 
 
-        temp.df<-as.data.frame(cbind("Dir"=as.numeric(direct), "Speed"=as.numeric(speed), "ML"=rep(mls[n], length(direct))))
+        temp.df<-as.data.frame(cbind("Dir"=as.numeric(direct), "Speed"=as.numeric(speed), "QualityFlag"=qf, "ML"=rep(mls[n], length(direct))))
         temp.df<-temp.df[temp.df$Dir>=0,]
         all<-rbind(all, temp.df)
     }
@@ -104,8 +106,8 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     endLabels<- unique((dir.bin.seq+(degreeSteps/2))%%360)
     dirLabels<-paste0(bgnLabels, "-", endLabels)
     if(ml.case){titleString =paste0(site, " wind data from ", bgn.month, " through ", end.month)}else{
-    titleString<-paste0("ML", ml, "-", site, " wind data from ", bgn.month, " through ", end.month)
-}
+        titleString<-paste0("ML", ml, "-", site, " wind data from ", bgn.month, " through ", end.month)
+    }
     #Make and prettify the plot
     plot<-ggplot2::ggplot(data = all.binned, ggplot2::aes(x=DirCut, fill=SpeedCut, colors=factor(SpeedCut)))+
         ggplot2::geom_bar(width = .95, show.legend = T)+
@@ -115,11 +117,12 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
         ggplot2::ylab("Count")+
         ggplot2::labs(title=titleString)+
         ggplot2::scale_x_discrete(labels=endLabels)+
-        ggplot2::scale_fill_discrete(h = c(0, 240), l=65, c=100, name="Wind Speed, m/s")
+        ggplot2::scale_fill_discrete(h = c(0, 240), l=65, c=100, name="Wind Speed, m/s")+
+        ggplot2::facet_wrap(~QualityFlag)
 
     # If we didn't get ml specified, make a faceted plot
     if(ml.case){
-        plot<-plot+ggplot2::facet_wrap(~ML)
+        plot<-plot+ggplot2::facet_grid(QualityFlag~ML)
     }
     return(plot)
 }

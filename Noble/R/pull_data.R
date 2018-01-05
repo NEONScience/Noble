@@ -46,12 +46,16 @@
 
 
 data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02", end.month = "2017-04", time.agr = 30, package="basic", save.dir){
-
     require(jsonlite)
-    #require(nneo)
     require(lubridate)
 
-    #read in current TIS site info
+    bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
+    end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
+
+     #Make a list of months to get data for
+    date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
+
+    #read in current IS site info
     is_site_config<-Noble::is_site_config
     curr_site_config=is_site_config[which(is_site_config$SiteID==site),]
 
@@ -71,14 +75,13 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02
     }
 
     # Make a sequence of dates and times for the requested period
-    bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
-    end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
     bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
     end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
     end_temp$mon<-end_temp$mon+1
     end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
 
-    ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp, time.agr = time.agr)
+    # make a reference sequence
+    ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp+lubridate::seconds(1), time.agr = time.agr)
 
     # Get site metadata
     call.df=Noble:::.gen.call.df(bgn.month=bgn.month,
@@ -94,101 +97,40 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02
     #Set the expected data filename for the data product
     file.name<- paste0("NEON.", curr_site_config$Domain,".", site, ".", dpID, "_REQ_", bgn_temp, "_", as.character(as.Date(end_temp)), "_", time.agr, "min_", package,".csv.gz")
 
-    #if we're missing the expected file, download the data
+    ## If the file isn't there, get it
     if(!file.exists(paste0(save.dir, file.name))){
+        data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)], function(l) read.csv(as.character(l), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
+        data.lump=do.call(rbind, data.wad) #make into data frame of lists, with dimensions nrow=n_months, ncol=n_measurementLocations
+        data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(rbind, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
 
-        #how many locations exist for the product, according to the API? Make a list of those
-        loc_per_dp<-unique(call.df$loc_list[call.df$dp_list==dpID])
-
-        # if we're going around the loop again, get rid of the previous DP's data
-        if(exists("full.df")){
-            rm(full.df)
+        ## Clean up column naming (apply location info to measurement columns)
+        for(i in 1:length(data.chunk)){
+            colnames(data.chunk[[i]])[which(!grepl(x = colnames(data.chunk[[i]]), pattern = "time", ignore.case = T))]=
+                paste0(colnames(data.chunk[[i]][which(!grepl(x = names(data.chunk[[i]]), pattern = "time", ignore.case = T))]), ".", unique(call.df$loc_list)[i])
+            data.chunk[[i]]$startDateTime=as.POSIXct(data.chunk[[i]]$startDateTime, format="%Y-%m-%dT%H:%M:%SZ")
         }
 
-        # Loop for gettng one location's DP data- (eg. ML1's data)
-        for(j in 1:length(loc_per_dp)){
+        # Make a reference sequence to match to
+        dates=data.frame(startDateTime=ref_seq)
 
-            #set location to first in list
-            temp_loc<-loc_per_dp[j]
+        #Perform the matching
+        data.raw=data.frame(lapply(data.chunk, function(x) dplyr::left_join(x=dates, y=x, by="startDateTime")))
 
-            #pull out all URLs for the DP we need
-            temp_urls_per_dp<-call.df$url_list[which(call.df$loc_list==temp_loc & call.df$dp_list==dpID)]
-
-            if(exists("temp.dp.data")){
-                rm(temp.dp.data)
-            }
-
-            for(k in 1:length(temp_urls_per_dp)){
-
-                #clear out our temp dp data object, before adding to it.
-                if(!exists("temp.dp.data")){
-                    temp.dp.data<-read.csv(file=as.character(temp_urls_per_dp[k]), stringsAsFactors = F)
-
-                    #
-                }else{
-                    #Read in a month's worth of data
-                    temp.data<-read.csv(file=as.character(temp_urls_per_dp[k]), stringsAsFactors = F)
-                    temp.dp.data<-try(rbind(temp.dp.data, temp.data))
-                }
-
-            }
-            # Convert returned data to POSIX
-            temp.dp.data$startDateTime<-as.POSIXct(temp.dp.data$startDateTime, format= "%Y-%m-%dT%H:%M:%SZ", tz="UTC")
-
-            # Add loacation data to the column names, then clean up the date/time names
-            colnames(temp.dp.data)<-paste0(colnames(temp.dp.data),".", temp_loc)
-            colnames(temp.dp.data)[grepl(pattern = "*Time*", x=colnames(temp.dp.data))]=
-                gsub(pattern = "\\d||\\.", replacement = "",
-                     x = colnames(temp.dp.data[,grepl(pattern = "*Time*", x=colnames(temp.dp.data))]))
-
-
-            if(!exists("full.df")){
-                full.df<-data.frame(matrix(NA, nrow = length(ref_seq), ncol = length(colnames(temp.dp.data))))
-                names(full.df)<-colnames(temp.dp.data)
-                full.df[,1]<- as.POSIXct(ref_seq)
-
-
-                #print(length(full.df[,1]))
-
-                # New fix?
-                full.df[which(full.df[,1] %in% temp.dp.data$startDateTime),]<-temp.dp.data[which(temp.dp.data$startDateTime %in% full.df[,1]),]
-
-                # The old way of adding to frame, might be broken
-                #full.df[which(full.df[,1] %in% temp.dp.data$startDateTime),]<-temp.dp.data[which(full.df[,1] %in% temp.dp.data$startDateTime),]
-
-
-                #print(length(full.df[,1]))
-            }else{
-                temp.full.df<-data.frame(matrix(NA, nrow = length(ref_seq), ncol = length(colnames(temp.dp.data))))
-                names(temp.full.df)<-colnames(temp.dp.data)
-                temp.full.df[,1]<-as.POSIXct(ref_seq)
-
-                #New way?
-                #temp.full.df[which(full.df[,1] %in% temp.dp.data$startDateTime),]<-temp.dp.data[which(temp.dp.data$startDateTime %in% full.df[,1]),]
-
-                # The old way of adding to frame, might be broken
-                temp.full.df[which(full.df[,1] %in% temp.dp.data$startDateTime),]<-temp.dp.data[which(full.df[,1] %in% temp.dp.data$startDateTime),]
-
-                rm<-c(1,2)
-                full.df<-cbind(full.df, temp.full.df[,-rm])
-                #print(length(full.df[,1]))
-            }
+        #strip out unneeded datetime columns
+        time.index=grep(x = colnames(data.raw), pattern = "time", ignore.case = T)
+        if(length(time.index)>2){
+            data.out=data.raw[,-(time.index[3:length(time.index)])]
+        }else{
+            data.out=data.raw
         }
-        #remove randow all na rows (artefacts, not gaps)
-        #full.df<-full.df[-which(is.na(full.df[,1])),]
 
-        #Make sure timestamps come out in order
-        #full.df<-full.df[order(full.df[,1]),]
-
+        #Zip and write the files
         file.path<-paste0(save.dir, file.name)
         zip.dir<-gzfile(file.path)
-        write.csv(x=full.df, file=zip.dir, row.names = F)
-        return(full.df)
-
-    }else{
-        full.df<-read.csv(paste0(save.dir, file.name))
-        return(full.df)
+        write.csv(x=data.out, file=zip.dir, row.names = F)
+    }else{#if the file is there, read it
+        data.out<-read.csv(paste0(save.dir, file.name))
     }
-    rm(full.df)
-
+    ## Return to parent environment
+    return(data.out)
 }

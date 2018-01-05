@@ -1,0 +1,35 @@
+#Make is_site_config
+library(Noble)
+TIS=tis_site_config
+AIS=ais_site_config
+
+
+TIS=data.frame(System=rep("TIS", times=length(TIS[,1])), TIS)
+AIS=data.frame(System=rep("AIS", times=length(AIS[,1])), AIS)
+
+
+is_site_config=data.frame(
+    System=c(TIS$System, AIS$System),
+    SiteID=c(TIS$SiteID, AIS$SiteID),
+    Domain=c(TIS$Domain, AIS$Domain),
+    Site.Type=c(rep(NA, times=length(TIS[,1])), AIS$Site.Type),
+    Core.Relocatable=c(TIS$Core.Relocatable, AIS$Core.Relocatable)
+)
+
+save(is_site_config, file = "../Noble/data/is_site_config.rda")
+
+## Make the TIS_pri_vars DB, from the CSV
+
+tis_pri_vars=data.frame(read.csv(file="../DB_making/raw_DBs/tis_pri_vars.csv"))
+save(tis_pri_vars, file = "../Noble/data/tis_pri_vars.rda")
+
+
+## Make the TIS_pri_vars DB, from the CSV
+
+wind_thresholds=data.frame(read.csv(file="../DB_making/raw_DBs/ATBD_thresholds_2Dwind.csv"))
+save(wind_thresholds, file = "./Noble/data/wind_thresholds.rda")
+
+
+## Make the radiation DQ testing info DB
+rad_dq_info=data.frame(read.csv(file="../DB_making/raw_DBs/rad_dq_info.csv"))
+save(rad_dq_info, file = "../Noble/data/rad_dq_info.rda")

@@ -29,36 +29,36 @@
 #
 ##############################################################################################
 
-
-
-
 air.temp.cnst.plot=function(site, bgn.month, end.month, save.dir){
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
-    airTemp=Noble::data.pull(site=site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "expanded", save.dir = tempdir())
+    saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+    taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+
+    airTemp=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
 
     plots=lapply(
-        seq(num.mls-2),
+        seq(num.mls-1),
         function(i){
 
             first=Noble::ml.extract(airTemp, ml=i)
             second=Noble::ml.extract(airTemp, ml=i+1)
             data=data.frame(T1=first[,3], T2=second[,3])
 
-            ggplot(data, aes(x=T1, y=T2))+
-                geom_point(colour="#18e068")+
-                geom_abline(slope = 1, intercept = 0, color='#6818e0', size=0.75)+
-                theme_bw()+
-                xlab(paste0("ML", i))+
-                ylab(paste0("ML", i+1))+
+            ggplot2::ggplot(data, ggplot2::aes(x=T1, y=T2))+
+                ggplot2::geom_point(colour="#18e068")+
+                ggplot2::geom_abline(slope = 1, intercept = 0, color='#6818e0', size=0.75)+
+                ggplot2::theme_bw()+
+                ggplot2::xlab(paste0("ML", i))+
+                ggplot2::ylab(paste0("ML", i+1))+
                 ggplot2::ggtitle(paste0("ML-", i, " vs ML-", i+1, " Air Temperature"), subtitle = paste0(site, ", ", zoo::as.yearmon(bgn.month), " to ", zoo::as.yearmon(end.month)))
            # graphics.off()
         }
 
     )
-    combo=do.call(gridExtra::grid.arrange, lapply(plots, ggplotGrob))
+    combo=do.call(gridExtra::grid.arrange, lapply(plots, ggplot2::ggplotGrob))
     graphics.off()
 
-        ggsave(filename = paste0(site, "_ML_AT_comparisons.png"), plot = combo, device = "png", path = save.dir, width = 7.5, height = 10, units = "in")
+        ggsave(filename = paste0(site, "_", bgn.month,"-", end.month,  "_ML_AT_comparisons.png"), plot = combo, device = "png", path = save.dir, width = 7.5, height = 10, units = "in")
 
 }

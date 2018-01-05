@@ -1,3 +1,4 @@
+
 ## Private function, because it requires being on the NEON intranet
 
 .grape.check<- function(gap.df, site){

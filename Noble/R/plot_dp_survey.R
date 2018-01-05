@@ -45,6 +45,7 @@
 ##############################################################################################
 plot.dp.survey=function(dpID, save.dir, site, pri.var){
     require(zoo)
+    require(ggplot2)
     if(missing(pri.var)){
         pri.var=Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dpID==dpID]
     }
@@ -66,8 +67,8 @@ plot.dp.survey=function(dpID, save.dir, site, pri.var){
 
         melt.health=reshape2::melt(data=health.data, id.vars="Month")
 
-        plot=ggplot2::ggplot(data=melt.health, aes(x = Month, y = value))+
-            ggplot2::geom_col(aes(fill=variable), position = position_identity())+
+        plot=ggplot2::ggplot(data=melt.health, ggplot2::aes(x = Month, y = value))+
+            ggplot2::geom_col(ggplot2::aes(fill=variable), position = ggplot2::position_identity())+
             ggplot2::scale_fill_manual(values = c("#062372", "#5483c4"), name="Metric")+ # Availability then Validity
             ggplot2::theme_bw()+
             ggplot2::scale_x_date(date_breaks = "1 month", date_labels = "%b %Y")+
