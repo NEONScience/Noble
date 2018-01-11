@@ -1,6 +1,7 @@
 #generate call.df
 
 .gen.call.df=function(bgn.month, end.month, site=site, dpID=dpID, time.agr=time.agr, package=package){
+    require(hellno)
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
