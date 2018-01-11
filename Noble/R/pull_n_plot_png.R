@@ -1,32 +1,29 @@
 ############################################################################################
-#' @title  Returns PDF(s) of data for the specified site and data product
+# title  Returns PDF(s) of data for the specified site and data product
 
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr
-#' @author Cove Sturdevant
+# author Robert Lee \email{rlee@battelleecology.org}\cr
+# author Cove Sturdevant
 
-#' @description For a specified data product ID, a data frame of the availabilty of that product
-#' for all NEON instrumented sites is returned. The output of data product availability is best
-#' interpreted with the base \code{View()} function.
-#'
-#' @param \code{sites.req} The site, or character list of sites to return plots of.
-#' @param \code{bgn.month} The start month to plot data for.
-#' @param \code{end.month} The end month to plot data for.
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
-#' @param \code{save.dir} The directory for data files and output PDFs to be saved to.
-#' @param \code{data.field} Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.
+# description For a specified data product ID, a data frame of the availabilty of that product
+# for all NEON instrumented sites is returned. The output of data product availability is best
+# interpreted with the base \code{View()} function.
+#
+# param \code{sites.req} The site, or character list of sites to return plots of.
+# param \code{bgn.month} The start month to plot data for.
+# param \code{end.month} The end month to plot data for.
+# param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
+# param \code{save.dir} The directory for data files and output PDFs to be saved to.
+# param \code{data.field} Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.
 
-#' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
-#'
+# return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
 
-#' @keywords process quality, data quality, gaps, commissioning
+# keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#' # for a variable, "test.dir", holding a valid file path:
-#' Noble:::.pull.n.plot.png(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
+# examples
+# # for a variable, "test.dir", holding a valid file path:
+# Noble:::.pull.n.plot.png(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
 
-#' @seealso Currently none
-
-#' @export
+# seealso Currently none
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2016-11-07)

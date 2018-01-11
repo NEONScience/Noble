@@ -1,25 +1,21 @@
 ############################################################################################
-#' @title  Generate a Data Frame of all Grape uptimes by Date
+# title:  Generate a Data Frame of all Grape uptimes by Date
 
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+# author: Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description Private function, which only works with NEON Engineering Grape logs.
-#' For all Grapes at a site, a large data frame of uptimes is returned.
-#'
-#' @param \code{site} A NEON TIS site
-#' @param \code{log.dir} The directory storing NEON ENG-formatted sensor log files. If not specified, defaults to grape test directory in the SCA.
+# description: Private function, which only works with NEON Engineering Grape logs.
+# For all Grapes at a site, a large data frame of uptimes is returned.
+#
+# param \code{site} A NEON TIS site
+# param \code{log.dir} The directory storing NEON ENG-formatted sensor log files. If not specified, defaults to grape test directory in the SCA.
 
-#' @return Outputs a data frame of uptimes as a decimal percent, by grape MAC address and date.
-#'
+# return: Outputs a data frame of uptimes as a decimal percent, by grape MAC address and date.
 
-#' @keywords process quality, data quality, gaps, commissioning
+# keywords: process quality, data quality, gaps, commissioning
 
-#' @examples
-#'
+# examples
 
-#' @seealso \function{.grape.scrape}, a function to copy files from the Engineering log directory to a specified output directory.
-
-#' @export
+# seealso: \function{.grape.scrape}, a function to copy files from the Engineering log directory to a specified output directory.
 
 # changelog and author contributions / copyrights
 #

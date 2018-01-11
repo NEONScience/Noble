@@ -35,8 +35,6 @@
 #'
 #' @seealso Currently none
 
-#' @export
-
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-20)
 #     original creation

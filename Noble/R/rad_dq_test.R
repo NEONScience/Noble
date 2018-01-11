@@ -16,22 +16,32 @@
 # testFullDir=paste0(dirCommBase, testSubDir, "/")
 # save.dir=testFullDir
 
-
-
-
-
 ## Function start
 rad.dq.test=function(site, save.dir, bgn.month, end.month){
+
     ########### GENERAL PARAMETERS ###########
+    if(!(site %in% Noble::rad_dq_info$Site)){
+        message("Site is not in the current DQ test list. Please select from:")
+        stop(paste0(Noble::rad_dq_info$Site))
+    }
+
+    library(magrittr)
+    library(data.table)
+    library(dplyr)
+
     #Define directories
     domn=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
-    site.dir=paste0(save.dir, "/", domn, "-", site, "/")
+    site.dir=Noble:::.data.route(site, save.dir)
 
-    rslt.dir=paste0(save.dir, "/", "Common/")
+    rslt.dir=paste0(save.dir, "/Common/")
     if(!dir.exists(rslt.dir)){
         dir.create(rslt.dir)
     }
 
+    raw.dir=paste0(site.dir, "/rawData/")
+    if(!dir.exists(raw.dir)){
+        dir.create(raw.dir)
+    }
 
     #set up DP info
     test.dpIDs=c("DP1.00014.001",
@@ -89,9 +99,10 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     f.test=stats::var.test(unlist(as.list(first.pop[,(2:length(colnames(first.pop)))])),# ------>f.test results####
                            unlist(as.list(last.pop[,(2:length(colnames(last.pop)))])))
 
-    if(f.test$statistic>1.05|f.test$statistic<0.95){f.test.result="Fail"}else{f.test.result="Pass"}
+    if(f.test$statistic>1.05|f.test$statistic<0.95){f.test.result="Fail"}else{f.test.result="Pass"} ################################################################
 
     message(paste0("Variance Stability Test: ", f.test.result))
+    write.csv(x = data.frame(value=unlist(f.test)),file = paste0(raw.dir, "variance_stats.csv"))
 
     ########### INTERNAL CONSISTENCY ###########
     ########### PAR and QL PAR ONLY ############
@@ -121,30 +132,27 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     PAR=PAR[,grepl(pattern = "^PARMean", x = colnames(PAR))]
     QL.PAR=QL.PAR[,grepl(pattern = "linePARMean", x = colnames(QL.PAR))]
 
-    PAR.rho=unlist(lapply(PAR.pairwise, function(x) cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman")$estimate))
-    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman")$estimate))
+    PAR.rho=unlist(lapply(PAR.pairwise, function(x) cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman", exact = F)$estimate))
+    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman", exact = F)$estimate))
 
     names(PAR.rho)=paste0("PAR-", PAR.pairwise)
     names(QL.PAR.rho)=c("QL PAR 1-3", "QL PAR 3-5")
 
     if(any(PAR.rho<rho.TH)==F){PAR.rho.test="Pass"}else{PAR.rho.test="Fail"} # ------>PAR rho results####
     if(any(QL.PAR.rho<rho.TH)==F){QL.PAR.rho.test="Pass"}else{QL.PAR.rho.test="Fail"} # ------>QL PAR rho results####
-    #WHERE TO DUMP?
-    #write.csv(x = raw.stats, file = paste(site.dir,"rawStats.csv",sep = "/"), col.names = T, row.names = F)
-
+    ### Write stats out ###
     raw.stats=data.frame(rho.estimate=append(PAR.rho, QL.PAR.rho))
+    write.csv(x = raw.stats, file = paste0(raw.dir,"par_rho_stats.csv"), row.names = T)
 
+
+    ### Final Results ###
     if(PAR.rho.test=="Fail"|QL.PAR.rho.test=="Fail"){
         internal.compair.result="Fail"
     }else{internal.compair.result="Pass"}
 
     message(
-        paste0("Internal Comparison Test: ", internal.compair.result)
+        paste0("Internal Comparison Test: ", internal.compair.result) ###############################################################################################
     )
-
-    ########## WRITE TO RAW STATS FILE ##########
-
-
 
     ########### TOWER-TOP CONSISTENCY ###########
     ########### Direct & Diffuse ONLY ###########
@@ -173,7 +181,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     DirDif$startDateTime=as.POSIXct(format(DirDif$startDateTime, tz=time.zone, usetz = T), tz=time.zone, usetz = T)
 
     #Only rows with greater than 5 W/m^2 get tested
-    DirDif=DirDif[DirDif$total>50,]
+    DirDif=DirDif[DirDif$total>50&!is.na(DirDif$total),]
 
     DirDif$SZA=RAtmosphere::SZA(timein = DirDif$startDateTime,
                                 Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site],
@@ -201,23 +209,29 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         ratio.result="Fail"
     }else{ratio.result="Pass"}
 
+    ### Raw data out
+    tower.top=data.frame(sets=c("SZA<75", "75<SZA<93"), ratio=c(ratio1, ratio2), result=c(rat1Result, rat2Result))
+    write.csv(x = tower.top, file = paste0(raw.dir,"tower_top_ratios.csv"), row.names = F)
 
     message(
-        paste0("Tower Top Consistency Test: ", internal.compair.result)
+        paste0("Tower Top Consistency Test: ", ratio.result) ##############################################################################################################
     )
 
     ########### EXTERNAL CONSISTENCY ###########
     ######## ALL GLORAD DATA ########
 
-    if(site="BART"){
+    if(site=="BART"){
         time.zone=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]
 
-        ext.data=RNRCS::grabNRCS.data(network = "SCAN",
-                                      site_id = 2069,
-                                      timescale = "hourly",
-                                      DayBgn =paste0(bgn.month, "-01"),
-                                      DayEnd =stringr::str_sub(string =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1)), start = 1, end = 10)
+        offset=difftime(time1 = as.POSIXct("2018-01-01", tz=time.zone), time2=as.POSIXct("2018-01-01", tz="UTC"))
+
+        temp=RNRCS::grabNRCS.data(network = "SCAN",
+                                  site_id = 2069,
+                                  timescale = "hourly",
+                                  DayBgn =paste0(bgn.month, "-01"),
+                                  DayEnd =stringr::str_sub(string =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1)), start = 1, end = 10)
         )
+        ext.data=temp
         ext.data$Date=as.POSIXct(ext.data$Date, tz=time.zone)
 
         int.data=try(Noble::data.pull(site = site,
@@ -227,49 +241,75 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
                                       time.agr = 30,
                                       package = "basic",
                                       save.dir = Noble:::.data.route(site, save.dir = save.dir))
-                     )
-        int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
-        int.data$startDateTime=as.POSIXct(format(int.data$startDateTime, tz=time.zone, usetz = T), tz=time.zone, usetz = T)
+        )
+        int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")#-lubridate::hours(offset+2)
 
-        all.data=merge(x=ext.data, y=int.data, by.x = "Date", by.y = "startDateTime")
+        int.rad<-data.frame(int.data %>%
+                                group_by(startDateTime = cut(startDateTime, breaks="60 min")) %>%
+                                summarize(gloRadMean.000.060 = mean(gloRadMean.000.060)))
+        int.rad$startDateTime=as.POSIXct(int.rad$startDateTime, tz="UTC")
 
+        all.data=merge(x=int.rad, y=ext.data, by.y = "Date", by.x = "startDateTime")
 
-
-
-
-
-
-        qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
-
-
-        int.data=int.data[grepl(x=int.data$startDateTime, pattern = ":00:00"),]
+        #qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
+        ext.consist=cor.test(x=all.data$Solar.Radiation.Average..watt.m2., y = all.data$gloRadMean.000.060, conf.level = 0.95, method = "spearman", exact = F)$estimate
 
 
-        ext.data=ext.data[ext.data$Date %in% int.data$startDateTime,]
+    }else{
 
+        uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
+        temp=Noble::pull.USCRN.data(timeScale = "subhourly",
+                                    stationID = uscrn.site,
+                                    TimeBgn = paste0(bgn.month, "-01"),
+                                    TimeEnd =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1))
+        )
+        ext.data=temp
+        write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
 
-        ggplot2::qplot(x = ext.data$Solar.Radiation.Average..watt.m2., y = int.data$dirRadMean)
+        int.data=try(Noble::data.pull(site = site,
+                                      dpID = "DP1.00014.001",
+                                      bgn.month = bgn.month,
+                                      end.month = end.month,
+                                      time.agr = 30,
+                                      package = "basic",
+                                      save.dir = Noble:::.data.route(site, save.dir = save.dir))
+        )
 
-        gplot=reshape2::melt(data.frame(Time=int.data$startDateTime, SCAN=ext.data$Solar.Radiation.Average..watt.m2., NEON=int.data$difRadMean.000.060), id.vars="Time")
-        plotly::ggplotly(ggplot2::ggplot(data=gplot, ggplot2::aes(x = Time, y = value, color=variable))+ggplot2::geom_path())
+        extRad<-data.frame(ext.data %>%
+                               group_by(UTC_DATE = cut(UTC_DATE, breaks="30 min")) %>%
+                               summarize(SOLAR_RADIATION = mean(SOLAR_RADIATION)))
 
-        ext.consist=cor.test(x=ext.data$Solar.Radiation.Average..watt.m2., y = int.data$difRadMean.000.060, method = "spearman")$estimate
-        length(int.data$difRadMean.000.060)
-        length(ext.data$Solar.Radiation.Average..watt.m2.)
+        bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
+        colnames(bothRad)<-c("UTC_Date", "ExtRad", "NEONRad")
+        spearman.results=cor.test(bothRad$ExtRad, bothRad$NEONRad, method = "spearman", conf.level = 0.95, exact = F)
+        ext.consist=spearman.results$estimate
+        write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
+    }
+    if(ext.consist>0.95){external.test="Pass"}else{external.test="Fail"}
+    message(
+        paste0("External Consistency Test: ", external.test)
+    )
+
+    dq.rslt=data.frame(site=site,
+                       variance.stability = f.test.result,
+                       internal.consistency=internal.compair.result,
+                       tower.top.consistency=ratio.result,
+                       external.consistency=external.test)
+
+    ########### WRITE TO RESULTS FILE ###########
+
+    if(file.exists(paste(rslt.dir,"results.csv",sep = "/"))){
+        dq.rpt <- read.csv(file = paste(rslt.dir,"results.csv",sep = "/"), header = T, stringsAsFactors = T)
+        dq.rpt <- rbind(dq.rpt, dq.rslt)
+        write.csv(x = dq.rpt, file = paste(rslt.dir,"results.csv",sep = "/"), row.names = F)
+    }
+    else{
+        write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
     }
 
-    #
-    #     ########### WRITE TO RESULTS FILE ###########
-    #
-    #     if(file.exists(paste(rslt.dir,"results.csv",sep = "/"))){
-    #         dq.rpt <- read.csv(file = paste(rslt.dir,"results.csv",sep = "/"), header = T, stringsAsFactors = T)
-    #         dq.rpt <- rbind(dq.rpt, dq.rslt)
-    #         write.csv(x = dq.rpt, file = paste(rslt.dir,"results.csv",sep = "/"), row.names = F)
-    #     }
-    #     else{
-    #         write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
-    #     }
-
-
-
 }
+
+
+
+
+

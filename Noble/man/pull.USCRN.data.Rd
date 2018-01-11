@@ -7,31 +7,32 @@
 pull.USCRN.data(timeScale, stationID, TimeBgn, TimeEnd)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
+\item{\code{stationID}}{The WBAN ID of a valid USCRN site.}
 
-\item{\code{dp.name}}{Parameter of class character. The name of the data product to pull data, or a keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.}
+\item{\code{TimeBgn}}{A YYYY-MM-DD hh:mm:ss formated start time, in UTC.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
+\item{\code{TimeEnd}}{A YYYY-MM-DD hh:mm:ss formated end time, in UTC.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
-
-\item{\code{time.agr}}{Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.}
-
-\item{\code{package}}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
-
-\item{\code{save.dir}}{Parameter of class character. The local directory where data files should be saved.}
+\item{\code{timeScale}}{The time scale of measurements to return.
+Enter 'monthly', 'daily', 'hourly', or 'subhourly'.}
 }
 \value{
-Writes data files to the specified directory.
+Data frame of USCRN data.
 }
 \description{
-For the specified dates, site, package parameters, and data product or name of family of data products,
-data are downloaded and saved to the specifed directory.
+Provide a valid GHCND or WBAN ID for a site in the USCRN, the desired
+timescale of measurements, and requested begin and end times in POSIX format,
+and a data frame will be returned to the global environment.
 }
 \examples{
-#Make a temporary direcotry for the example:
-tempDir<- tempdir()
-data.pull(site = "CPER", dp.name = "Radiation", bgn.month = "2017-02", end.month = "2017-03", time.agr = 30, package="expanded", save.dir = tempDir)
+\dontrun{
+timeScale <- "subhourly"
+stationID <- "USW00003047"
+TimeBgn <- as.POSIXct("2014-04-01 00:00:01", format="\%Y-\%m-\%d \%H:\%M:\%S", tz="UTC")
+TimeEnd <- as.POSIXct("2015-02-01 00:00:00", format = "\%Y-\%m-\%d \%H:\%M:\%S", tz="UCT")
+
+grabUSCRN(timeScale = timeScale, TimeBgn = TimeBgn, TimeEnd = TimeEnd, stationID = stationID)
+}
 }
 \seealso{
 Currently none
@@ -39,8 +40,10 @@ Currently none
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
 }
+\keyword{USCRN,}
 \keyword{commissioning}
 \keyword{data}
+\keyword{data,}
 \keyword{gaps,}
 \keyword{process}
 \keyword{quality,}

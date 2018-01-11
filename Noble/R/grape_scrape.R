@@ -1,30 +1,28 @@
 ############################################################################################
-#' @title  Copies grape logs from NEON Engineering to a specified local directory
+# title  Copies grape logs from NEON Engineering to a specified local directory
 
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+# author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description Copies grape log files from Common/ENG/Sites/Sensors/data/ on the NEON internal server
-#' to a specified directory.
-#' Only logs from a specified site and within the specified date range are coppied to the local directory
-#'
-#'
-#' @param \code{bgn.date} The fisrt date for grape logs to be copied (as YYYYMMDD).
-#' @param \code{end.date} The last date for grape logs to be copied (as YYYYMMDD).
-#' @param \code{system} The type of instrumented system to copy logs for, either TIS or AIS.
-#' @param \code{test.sites} A list of 4-letter NEON site codes representing the sites to copy grape data for.
-#' @param \code{save.dir} The final save directory of the logs.
-#'
-#' @return A time sequence over the specified interval.
-#'
-#'
-#' @keywords process quality, data quality, gaps, commissioning
+# description Copies grape log files from Common/ENG/Sites/Sensors/data/ on the NEON internal server
+# to a specified directory.
+# Only logs from a specified site and within the specified date range are coppied to the local directory
+#
+#
+# param \code{bgn.date} The fisrt date for grape logs to be copied (as YYYYMMDD).
+# param \code{end.date} The last date for grape logs to be copied (as YYYYMMDD).
+# param \code{system} The type of instrumented system to copy logs for, either TIS or AIS.
+# param \code{test.sites} A list of 4-letter NEON site codes representing the sites to copy grape data for.
+# param \code{save.dir} The final save directory of the logs.
+#
+# return A time sequence over the specified interval.
+#
+#
+# keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#'
+# examples
+#
 
-#' @seealso Currently none
-
-#' @export
+# seealso Currently none
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)

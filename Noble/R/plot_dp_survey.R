@@ -29,8 +29,6 @@
 #' dp.survey(dpID = "DP1.00001.001", save.dir = getwd())
 
 #' @seealso Currently none
-#'
-#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2016-07-017)

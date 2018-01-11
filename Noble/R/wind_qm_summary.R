@@ -3,7 +3,13 @@
 # site="GRSM"
 .wind.qm.summary=function(site, bgn.month, end.month, save.dir){
     if(missing(save.dir)){save.dir=tempdir()}
-    data<-data.pull(site = site, dpID = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package="expanded", save.dir = save.dir)
+    data<-data.pull(site = site,
+                    dpID = "DP1.00001.001",
+                    bgn.month = bgn.month,
+                    end.month = end.month,
+                    time.agr = time.agr,
+                    package="expanded",
+                    save.dir = save.dir)
 
     dir.QM.only=data[,(grepl(colnames(data), pattern = "windDir") & grepl(x=colnames(data), pattern = "QM"))]
 

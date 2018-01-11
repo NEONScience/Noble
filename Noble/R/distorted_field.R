@@ -1,3 +1,27 @@
+#' @title Distorted Field Calculations
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+#'
+#' @description Produces the boundaries of the distorted flow fields for 2D Wind Speed and Direction at
+#' TIS sites
+#' @param \code{site} The NEON TIS site of interest
+#'
+#' @return A list of distorted field mins and maxes, as well as the corresponding upper and lower
+#' buffer field mins and maxes.
+#'
+#' @keywords 2D wind, distorted flow, data quality
+#'
+#' @examples
+#' \dontrun{
+#' out=distorted.field("CPER")
+#' }
+#' @seealso
+#'
+# # changelog and author contributions / copyrights
+#   Robert Lee (2017-12-05)
+#     original creation
+#
+##############################################################################################
+
 distorted.field=function(site){
     thresholds=Noble::wind_thresholds
 

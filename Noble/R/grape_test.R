@@ -6,7 +6,7 @@
 # test.sites<-c("LENO", "RMNP")
 
 #require dates in YYYYMMDD format
-#' @export
+
 #FUCNTION START#####
 .grape.test<-function(bgn.date, end.date, system, test.sites, num.grapes){
 

@@ -1,29 +1,27 @@
 ############################################################################################
-#' @title  Create wind roses for NEON instrumented sites
+# title  Create wind roses for NEON instrumented sites
 
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+# author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description For a spceified site and time range, produce a wind rose plot. If the "ml" (measurement level)
-#' parameter is specified, a ggplot2 object for that measurement level is produced. Otherwise, a ggplot2 object of a
-#' faceted plot of all available measurement levels is returned.
-#'
-#' @param \code{site} NEON site to produce the wind rose plot.
-#' @param \code{bgn.month} The start month for wind data to plot.
-#' @param \code{end.month} The end month for wind data to plot.
-#' @param \code{ml} Optional. Used to specifiy what measurement level should be plotted.
-#' @param \code{speed.bins} Optional. The number of bins for wind speed to be plotted in.
-#' @param \code{dir.bins} Optional. The number of bins for wind directions to be plotted in.
-#'
-#' @return Outputs a ggplot2 object of the generated wind roses
+# description For a spceified site and time range, produce a wind rose plot. If the "ml" (measurement level)
+# parameter is specified, a ggplot2 object for that measurement level is produced. Otherwise, a ggplot2 object of a
+# faceted plot of all available measurement levels is returned.
+#
+# param \code{site} NEON site to produce the wind rose plot.
+# param \code{bgn.month} The start month for wind data to plot.
+# param \code{end.month} The end month for wind data to plot.
+# param \code{ml} Optional. Used to specifiy what measurement level should be plotted.
+# param \code{speed.bins} Optional. The number of bins for wind speed to be plotted in.
+# param \code{dir.bins} Optional. The number of bins for wind directions to be plotted in.
+#
+# return Outputs a ggplot2 object of the generated wind roses
 
-#' @keywords process quality, data quality, gaps, commissioning
+# keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#' CPER<-plot.wind.rose(site="CPER", bgn.month="2017-01", end.month="2017-02", ml=2, speed.bins=10, dir.bins=36)
+# examples
+# CPER<-plot.wind.rose(site="CPER", bgn.month="2017-01", end.month="2017-02", ml=2, speed.bins=10, dir.bins=36)
 
-#' @seealso Currently none
-
-#' @export
+# seealso Currently none
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-10)

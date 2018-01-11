@@ -1,9 +1,15 @@
-bgn.month="2017-07"
-end.month="2017-08"
-site="CPER"
-save.dir=tempdir()
+# bgn.month="2017-07"
+# end.month="2017-08"
+# site="CPER"
+# save.dir=tempdir()
 
-wind.dq.test<-function(data.dir){
+# changelog and author contributions / copyrights
+#   Robert Lee (2017-12-14)
+#     original creation
+#
+##############################################################################################
+
+.wind.dq.test<-function(data.dir){
 
     test.data=Noble::data.pull(site = site, dpID = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
     test.data$startDateTime=as.POSIXct(test.data$startDateTime, tz="UTC")

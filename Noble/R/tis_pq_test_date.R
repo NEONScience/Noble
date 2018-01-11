@@ -1,42 +1,39 @@
 ############################################################################################
-#' @title  Downloads and performs process quality checks on NEON data, given specifc dates
+# title: Downloads and performs process quality checks on NEON data, given specifc dates
 
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+# author: Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description For the specified dates, site, variables, and data product or name of family of data products,
-#' data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
-#'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{dpID} Parameter of class character. The name of the data product to pull data, or a
-#' keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
-#' @param \code{prin.vars} The principle variables to test (variable names, such as 'windSpeed'). Omit the term 'Mean'.
-#' @param \code{bgn.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the start of the period of interest.
-#' @param \code{end.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the end of the period of interest.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.
-#' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
-#' @param \code{q.th} Parameter of class character. Optional. Alows the user to directly set the Quality threshold (nominal percent.)
-#' @param \code{v.th} Parameter of class character. Optional. Alows the user to directly set the Validity threshold (nominal percent.)
-#' @return Writes data files to the specified directory.
+# description: For the specified dates, site, variables, and data product or name of family of data products,
+# data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
+#
+# param \code{site} Parameter of class character. The NEON site data should be downloaded for.
+# param \code{dpID} Parameter of class character. The name of the data product to pull data, or a
+# keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
+# param \code{prin.vars} The principle variables to test (variable names, such as 'windSpeed'). Omit the term 'Mean'.
+# param \code{bgn.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the start of the period of interest.
+# param \code{end.date} Parameter of class character. The year-month-day (e.g. "2017-01-01") value for the end of the period of interest.
+# param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.
+# param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
+# param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+# param \code{q.th} Parameter of class character. Optional. Alows the user to directly set the Quality threshold (nominal percent.)
+# param \code{v.th} Parameter of class character. Optional. Alows the user to directly set the Validity threshold (nominal percent.)
+# return Writes data files to the specified directory.
 
-#' @keywords process quality, data quality, gaps, commissioning
+# keywords: process quality, data quality, gaps, commissioning
 
-#' @examples
-#' site = "CPER"
-#' dpID = "DP1.00001.001"
-#' prin.vars<-c("windSpeed", "windDir")
-#' bgn.month = "2017-05"
-#' end.month = "2017-06"
-#' time.agr = 30
-#' package="basic"
-#' save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-#' Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
-#' time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
+# examples:
+# site = "CPER"
+# dpID = "DP1.00001.001"
+# prin.vars<-c("windSpeed", "windDir")
+# bgn.month = "2017-05"
+# end.month = "2017-06"
+# time.agr = 30
+# package="basic"
+# save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
+# Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
+# time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
 
-#'
-#' @seealso Currently none
-
-#' @export
+# seealso: Currently none
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-20)

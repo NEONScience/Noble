@@ -18,7 +18,6 @@
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
 #' #Make a temporary direcotry for the example:
 #' tempDir<- tempdir()
 #' data.pull(site = "CPER", dpID = "Radiation", bgn.month = "2017-02", end.month = "2017-03", time.agr = 30, package="expanded", save.dir = tempDir)
@@ -26,8 +25,6 @@
 
 
 #' @seealso Currently none
-
-#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
@@ -107,7 +104,7 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02
         for(i in 1:length(data.chunk)){
             colnames(data.chunk[[i]])[which(!grepl(x = colnames(data.chunk[[i]]), pattern = "time", ignore.case = T))]=
                 paste0(colnames(data.chunk[[i]][which(!grepl(x = names(data.chunk[[i]]), pattern = "time", ignore.case = T))]), ".", unique(call.df$loc_list)[i])
-            data.chunk[[i]]$startDateTime=as.POSIXct(data.chunk[[i]]$startDateTime, format="%Y-%m-%dT%H:%M:%SZ")
+            data.chunk[[i]]$startDateTime=as.POSIXct(data.chunk[[i]]$startDateTime, format="%Y-%m-%dT%H:%M:%SZ", tz="UTC")
         }
 
         # Make a reference sequence to match to

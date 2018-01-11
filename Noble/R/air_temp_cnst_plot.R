@@ -21,8 +21,6 @@
 
 #' @seealso Currently none
 
-#' @export
-
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-11-15)
 #     original creation

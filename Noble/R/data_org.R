@@ -1,6 +1,6 @@
 # Puts data into a tidy file structure by site.
 
-data.org=function(dir){
+.data.org=function(dir){
 
     site.extract=function(file.name){
         site=stringr::str_extract(

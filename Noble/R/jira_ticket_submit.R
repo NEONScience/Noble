@@ -1,5 +1,7 @@
+
+#Experimental function. Do not use yet.
 .ticket.submit=function(username, password){
-    require(base64enc)
+    #require(base64enc)
     require(httr)
     require(jsonlite)
     #login for a session

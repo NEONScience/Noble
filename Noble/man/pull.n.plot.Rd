@@ -28,10 +28,6 @@ For a specified data product ID, a data frame of the availabilty of that product
 for all NEON instrumented sites is returned. The output of data product availability is best
 interpreted with the base \code{View()} function.
 }
-\examples{
-# for a variable, "test.dir", holding a valid file path:
-pull.n.plot(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
-}
 \seealso{
 Currently none
 }
@@ -40,8 +36,30 @@ Robert Lee \email{rlee@battelleecology.org}\cr
 
 Cove Sturdevant
 }
+\keyword{"2017-04",}
+\keyword{"2017-05",}
+\keyword{"BLAN",}
+\keyword{"DP1.00001.001",}
+\keyword{"test.dir",}
+\keyword{"windDirMean")}
+\keyword{#}
+\keyword{=}
+\keyword{a}
 \keyword{commissioning}
 \keyword{data}
+\keyword{data.field}
+\keyword{dpID}
+\keyword{end.month}
+\keyword{file}
+\keyword{for}
 \keyword{gaps,}
+\keyword{getwd(),}
+\keyword{holding}
+\keyword{path:}
 \keyword{process}
+\keyword{pull.n.plot(bgn.month}
 \keyword{quality,}
+\keyword{save.dir}
+\keyword{sites.req}
+\keyword{valid}
+\keyword{variable,}

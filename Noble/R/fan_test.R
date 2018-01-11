@@ -1,4 +1,3 @@
-
 ############################################################################################
 #' @title  Tests fan aspiration system performance
 
@@ -7,9 +6,14 @@
 #' @description For the specified dates and site, will test and report results in a results.csv file.
 #'
 #' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first
+#' month to get data for.
+#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last
+#'  month to get data for.
+#' @param \code{save.dir} Parameter of class character. The local directory where data files should be
+#' saved.
+#' @param \code{pass.th} Optional, defaults to 95. The percent of data that must be unflagged for the
+#' site to pass the test.
 #'
 #' @return Writes results file to the specified directory.
 
@@ -17,8 +21,6 @@
 
 #' @examples Currently none
 #' @seealso Currently none
-
-#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2016-12-12)
@@ -28,7 +30,7 @@
 #
 ##############################################################################################
 
-fan.test<- function(site=site, bgn.month = bgn.month, end.month = end.month, save.dir, pass.th){
+fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
 
     time.agr<-30
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")

@@ -3,58 +3,37 @@
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description For the specified dates, site, package parameters, and data product or name of family of data products,
-#' data are downloaded and saved to the specifed directory.
+#' @description Provide a valid GHCND or WBAN ID for a site in the USCRN, the desired
+#' timescale of measurements, and requested begin and end times in POSIX format,
+#' and a data frame will be returned to the global environment.
 #'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{dp.name} Parameter of class character. The name of the data product to pull data, or a keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
-#' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+#' @param \code{stationID} The WBAN ID of a valid USCRN site.
+#' @param \code{TimeBgn} A YYYY-MM-DD hh:mm:ss formated start time, in UTC.
+#' @param \code{TimeEnd} A YYYY-MM-DD hh:mm:ss formated end time, in UTC.
+#' @param \code{timeScale} The time scale of measurements to return.
+#' Enter 'monthly', 'daily', 'hourly', or 'subhourly'.
 #'
-#' @return Writes data files to the specified directory.
+#' @return Data frame of USCRN data.
 
-#' @keywords process quality, data quality, gaps, commissioning
+#' @keywords USCRN, data, process quality, data quality, gaps, commissioning
 
 #' @examples
-#' #Make a temporary direcotry for the example:
-#' tempDir<- tempdir()
-#' data.pull(site = "CPER", dp.name = "Radiation", bgn.month = "2017-02", end.month = "2017-03", time.agr = 30, package="expanded", save.dir = tempDir)
-
+#' \dontrun{
+# Example inputs:
+#' timeScale <- "subhourly"
+#' stationID <- "USW00003047"
+#' TimeBgn <- as.POSIXct("2014-04-01 00:00:01", format="%Y-%m-%d %H:%M:%S", tz="UTC")
+#' TimeEnd <- as.POSIXct("2015-02-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz="UCT")
+#'
+#' grabUSCRN(timeScale = timeScale, TimeBgn = TimeBgn, TimeEnd = TimeEnd, stationID = stationID)
+#' }
 #' @seealso Currently none
-
-#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
 #     original creation
 #
 ##############################################################################################
-
-
-# A function to grab data from the USCRN network.
-#
-# Provide a valid GHCND or WBAN ID for a site in the USCRN, the desired
-# timescale of measurements, and requested begin and end times in POSIX format,
-# and a data frame called USCRNData will be returned to the global environment.
-# Another data frame called unitsByColumn is also returned to the golobal
-# environment.
-#
-# Example inputs:
-# timeScale <- "subhourly"
-# stationID <- "USW00003047"
-# TimeBgn <- as.POSIXct("2014-04-01 00:00:01", format="%Y-%m-%d %H:%M:%S", tz="UTC")
-# TimeEnd <- as.POSIXct("2015-02-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz="UCT")
-#
-# grabUSCRN(timeScale = timeScale, TimeBgn = TimeBgn, TimeEnd = TimeEnd, stationID = stationID)
-#
-#------------------------------------------------------------------------------#
-
-# library(readr)
-# GHCNDstations <- data.frame(readr::read_delim("/Users/rlee/Dropbox/stations.csv", "\t", escape_double = FALSE, col_names = TRUE, trim_ws = TRUE))
-#
 
 pull.USCRN.data <- function(timeScale, stationID, TimeBgn, TimeEnd) {
   functionStart <<- Sys.time()
@@ -108,9 +87,9 @@ pull.USCRN.data <- function(timeScale, stationID, TimeBgn, TimeEnd) {
   siteLat <- station.Info$LATITUDE[grep(wban, station.Info$WBAN)]
   siteLong <- station.Info$LONGITUDE[grep(wban, station.Info$WBAN)]
 
-  siteTZInfo<-readLines(paste0("https://maps.googleapis.com/maps/api/timezone/json?location=", siteLat, ",", siteLong, "&timestamp=1458000000"))
-  siteTZID <- unlist(strsplit(siteTZInfo[grep(siteTZInfo, pattern ="timeZoneId")], "\""))
-  siteTZID <<- siteTZID[4]
+  # siteTZInfo<-readLines(paste0("https://maps.googleapis.com/maps/api/timezone/json?location=", siteLat, ",", siteLong, "&timestamp=1458000000"))
+  # siteTZID <- unlist(strsplit(siteTZInfo[grep(siteTZInfo, pattern ="timeZoneId")], "\""))
+  # siteTZID <<- siteTZID[4]
 
   ##########################################
   ####  For dates within the same year  ####

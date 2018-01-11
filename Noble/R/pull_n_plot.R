@@ -20,13 +20,10 @@
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
 #' # for a variable, "test.dir", holding a valid file path:
 #' pull.n.plot(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
 
 #' @seealso Currently none
-
-#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2016-11-07)

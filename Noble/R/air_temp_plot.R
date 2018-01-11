@@ -1,16 +1,33 @@
-# dir="/Users/rlee/Dropbox/NEON/Commissioning/AirTempCorrelation/"
-# if(!dir.exists(dir)){dir.create(dir)}
+#' @title Air Temperature Plot
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+#'
+#' @description Plots and saves all temperature measurements at a site for a given date range.
+#' @param \code{site} The NEON TIS site to generate plots for.
+#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to plot.
+#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to plot.
+#' @param \code{save.dir} Directory where plots should be written.
+#'
+#' @return A data frame with data collected between \code{bgn.time} and \code{end.time}.
+#'
+#' @keywords data, subset, date,
+#'
+#' @examples
+#' \dontrun{
+#' save.dir=getwd()
+#' bgn.month<-"2016-01"
+#' end.month<-"2016-04"
+#' }
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2017-12-14)
+#     original creation
 #
-# save.dir=dir
-# bgn.month<-"2016-01"
-# end.month<-"2016-04"
-#
+##############################################################################################
 
 
 
-air.temp.plot=function(bgn.month, end.month, site, save.dir, interactive){
+air.temp.plot=function(bgn.month, end.month, site, save.dir){
 
-    if(missing(interactive)){interactive=F}
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
     saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)

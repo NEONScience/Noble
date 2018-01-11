@@ -4,7 +4,7 @@
         "filePatterns" : [
         ],
         "path" : "~/Dropbox/GitHub/Noble-Package/Noble",
-        "query" : "is_site_config$SiteID == site",
+        "query" : "tz=",
         "regex" : false
     }
 }
