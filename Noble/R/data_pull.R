@@ -20,7 +20,6 @@
 
 #' #Make a temporary direcotry for the example:
 #' tempDir<- tempdir()
-#' data.pull(site = "CPER", dpID = "Radiation", bgn.month = "2017-02", end.month = "2017-03", time.agr = 30, package="expanded", save.dir = tempDir)
 #' data.pull(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
 
 
@@ -42,7 +41,7 @@
 # package="basic"
 
 
-data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02", end.month = "2017-04", time.agr = 30, package="basic", save.dir){
+data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11", end.month = "2017-11", time.agr = 30, package="basic", save.dir){
     require(jsonlite)
     require(lubridate)
 
@@ -123,8 +122,9 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02
 
         #Zip and write the files
         file.path<-paste0(save.dir, file.name)
-        zip.dir<-gzfile(file.path)
+        zip.dir<-base::gzfile(file.path, open = "wb")
         write.csv(x=data.out, file=zip.dir, row.names = F)
+        close(zip.dir)
     }else{#if the file is there, read it
         data.out<-read.csv(paste0(save.dir, file.name))
     }

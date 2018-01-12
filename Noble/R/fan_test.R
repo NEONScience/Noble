@@ -27,7 +27,8 @@
 #     Original creation
 #   Robert Lee (2017-07-24)
 #     Updated for Noble
-#
+#   Robert Lee (2018-01-12)
+#     Remove nneo code
 ##############################################################################################
 
 fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
@@ -55,12 +56,9 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     package <- "expanded"
     time.agr = 30
     Kpi <- "Air Temp"
-    nneoSite <- nneo_site(site)
+    domn= Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site]
 
-    dat_dir <- paste(save.dir,"/", nneoSite$domainCode, "-", site, "/", sep="")
-    if(!dir.exists(dat_dir)){
-        dir.create(dat_dir)
-    }
+    dat_dir=Noble:::.data.route(site = site, save.dir = save.dir)
 
     SAATnumber <- "DP1.00002.001"
     TAATnumber <- "DP1.00003.001"
@@ -72,8 +70,8 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
 
     #### Expected files for the site and times specified ####
 
-    SAATfile <- paste0(dat_dir, "NEON.", nneoSite$domainCode,".", site,".DP1.00002.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
-    TAATfile <- paste0(dat_dir, "NEON.", nneoSite$domainCode,".", site,".DP1.00003.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
+    SAATfile <- paste0(dat_dir, "NEON.", domn,".", site,".DP1.00002.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
+    TAATfile <- paste0(dat_dir, "NEON.", domn,".", site,".DP1.00003.001", "_REQ_",as.Date(bgn_temp),"_",as.character(as.Date(end_temp)),"_",time.agr,"min_",package,".csv",".gz")
 
     # Don't download if the file matching specifications exists in the SCA
     if(!file.exists(SAATfile)){

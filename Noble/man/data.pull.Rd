@@ -4,8 +4,8 @@
 \alias{data.pull}
 \title{Downloads data for a specified data product or products, and saves the data to a specified directory}
 \usage{
-data.pull(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-02",
-  end.month = "2017-04", time.agr = 30, package = "basic", save.dir)
+data.pull(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11",
+  end.month = "2017-11", time.agr = 30, package = "basic", save.dir)
 }
 \arguments{
 \item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
@@ -35,13 +35,10 @@ Currently none
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
 }
-\keyword{"2017-02",}
-\keyword{"2017-03",}
 \keyword{"2017-04",}
 \keyword{"2017-05",}
 \keyword{"CPER",}
 \keyword{"DP1.00002.001",}
-\keyword{"Radiation",}
 \keyword{#Make}
 \keyword{30,}
 \keyword{=}
@@ -57,10 +54,8 @@ Robert Lee \email{rlee@battelleecology.org}\cr
 \keyword{for}
 \keyword{gaps,}
 \keyword{package="basic",}
-\keyword{package="expanded",}
 \keyword{process}
 \keyword{quality,}
-\keyword{save.dir}
 \keyword{save.dir=}
 \keyword{tempDir)}
 \keyword{tempDir<-}

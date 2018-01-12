@@ -42,8 +42,8 @@
 ##############################################################################################
 
 
-tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.month = "2017-05", end.month = "2017-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
-
+tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90)
+{
     quant_threshold=q.th
     valid_threshold=v.th
 
@@ -53,68 +53,84 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
     }
     if(missing(v.th)){
         v.th=90
-    valid_threshold=v.th
+        valid_threshold=v.th
     }
 
     #Make domain-specific directory
-    domn=Noble::tis_site_config$Domain[which(Noble::tis_site_config$SiteID==site)]
-    site.dir=paste0(save.dir, "/", domn, "-", site, "/")
-
-    if(!dir.exists(site.dir)){
-        dir.create(site.dir)
-    }
+    site.dir=Noble:::.data.route(site = site, save.dir = save.dir)
 
     #pull data
-    test.data<-Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir)
+    test.data=data.frame()
+    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir))
+    if(length(test.data)>1){
+        for(i in 1:length(prin.vars)){
+            data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))
 
-    for(i in 1:length(prin.vars)){
-        data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))
+            qf.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "FinalQF*"))
+            qf.indx<-append(qf.indx, grep(x=colnames(test.data), pattern="^finalQF*"))
 
-        qf.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "FinalQF*"))
-        qf.indx<-append(qf.indx, grep(x=colnames(test.data), pattern="^finalQF*"))
+            if(prin.vars[i]=="inSW"){
+                data.indx=data.indx[-which(grepl(x=colnames(test.data[,data.indx]), pattern = "003.000"))]
+                qf.indx=qf.indx[-which(grepl(x=colnames(test.data[,qf.indx]), pattern = "003.000"))]
+            }
+            #special case for precip
+            if(prin.vars[i]=="priPrecipBulk"){
+                data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i]))
+                qf.indx<-grep(x=colnames(test.data), pattern=("priPrecipFinalQF\\."), ignore.case = T)
+            }
 
-        if(prin.vars[i]=="inSW"){
-            data.indx=data.indx[-which(grepl(x=colnames(test.data[,data.indx]), pattern = "003.000"))]
-            qf.indx=qf.indx[-which(grepl(x=colnames(test.data[,qf.indx]), pattern = "003.000"))]
+            bgn.day=as.Date(paste0(bgn.month, "-01"))
+            end.day=as.POSIXct(Noble::end.day.time(end.month = end.month, time.agr = 1440))
+
+            days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
+            end.day=lubridate::round_date(end.day, "day")
+
+            num.nas<-sum(is.na(test.data[,data.indx]))
+            num.data<-sum(!is.na(test.data[,qf.indx]))
+
+            data.quant<-round(100*(num.data/(num.nas+num.data)), digits = 2)
+
+            num.qf.fail<-sum(test.data[,qf.indx]==1, na.rm=TRUE)
+            num.qf.pass<-sum(test.data[,qf.indx]==0, na.rm = TRUE)
+            num.qf.na<-sum(is.na(test.data[,qf.indx]))
+
+            data.valid<-round(100*(num.qf.pass/(num.qf.pass+num.qf.fail+num.qf.na)), digits = 2)
+
+            if(prin.vars[i]=="SHF"){
+                #Soil heat flux specific values
+                quant_threshold=95
+                valid_threshold=(90-15.38)
+            }
+            if(prin.vars[i]=="soilTemp"){
+                quant_threshold=94.6
+                valid_threshold=89.87
+            }
+            ##### WRITE RESULTS
+            dq.rslt<-data.frame(site=site,
+                                time_performed=as.character(Sys.time()),
+                                begin_month=bgn.month,
+                                end_month=end.month,
+                                days_tested=days,
+                                data_product= dpID,
+                                variable_tested=prin.vars[i],
+                                data_quantity=data.quant,
+                                data_validity=data.valid,
+                                quant_threshold= quant_threshold,
+                                valid_threshold=valid_threshold
+            )
+
+            if(file.exists(Noble:::.result.route(save.dir))){
+                dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+                dq.rpt <- rbind(dq.rpt, dq.rslt)
+                write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+            }
+            else{
+                write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+            }
         }
-        #special case for precip
-        if(prin.vars[i]=="priPrecipBulk"){
-            data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i]))
-            qf.indx<-grep(x=colnames(test.data), pattern=("priPrecipFinalQF\\."), ignore.case = T)
-        }
-
-
-        bgn.day=as.Date(paste0(bgn.month, "-01"))
-        end.day=Noble::end.day.time(end.month = end.month, time.agr = 1440)
-        end.day=as.POSIXct(end.day)
-
-
-        days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
-        end.day=lubridate::round_date(end.day, "day")
-
-        pq.data<-test.data[,data.indx]
-        qf.data<-test.data[,qf.indx]
-
-        num.nas<-sum(is.na(pq.data))
-        num.data<-sum(!is.na(pq.data))
-
-        data.quant<-round(100*(num.data/(num.nas+num.data)), digits = 2)
-
-        num.qf.fail<-sum(qf.data==1, na.rm=TRUE)
-        num.qf.pass<-sum(qf.data==0, na.rm = TRUE)
-        num.qf.na<-sum(is.na(qf.data))
-
-        data.valid<-round(100*(num.qf.pass/(num.qf.pass+num.qf.fail+num.qf.na)), digits = 2)
-
-
-#Set passing thresholds, based on var tested. Add to this area as functions or conditions are added
-        ## direct radiation has an ATBD implementation error- revert to full thresholds.
-        # if(prin.vars[i]=="dirRad"){
-        #     #direct and diffuse caluculated values
-        #     quant_threshold=Noble::dirRad.threshold(site = site, bgn.month = bgn.month, end.month = end.month, excuse = 5)
-        #     valid_threshold=Noble::dirRad.threshold(site = site, bgn.month = bgn.month, end.month = end.month, excuse = 10)
-        #}
-    if(prin.vars[i]=="SHF"){
+    }else{
+        for(i in 1:length(prin.vars)){
+        if(prin.vars[i]=="SHF"){
             #Soil heat flux specific values
             quant_threshold=95
             valid_threshold=(90-15.38)
@@ -124,7 +140,11 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
             valid_threshold=89.87
         }
 
+        bgn.day=as.Date(paste0(bgn.month, "-01"))
+        end.day=as.POSIXct(Noble::end.day.time(end.month = end.month, time.agr = 1440))
 
+        days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
+        ##### WRITE RESULTS
         dq.rslt<-data.frame(site=site,
                             time_performed=as.character(Sys.time()),
                             begin_month=bgn.month,
@@ -132,26 +152,20 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                             days_tested=days,
                             data_product= dpID,
                             variable_tested=prin.vars[i],
-                            data_quantity=data.quant,
-                            data_validity=data.valid,
+                            data_quantity=0,
+                            data_validity=0,
                             quant_threshold= quant_threshold,
                             valid_threshold=valid_threshold
-                            )
+        )
 
-        rslt.dir=paste0(save.dir, "/", "Common/")
-        if(!dir.exists(rslt.dir)){
-            dir.create(rslt.dir)
-        }
-
-        if(file.exists(paste(rslt.dir,"results.csv",sep = "/"))){
-            dq.rpt <- data.frame(read.csv(file = paste(rslt.dir,"results.csv",sep = "/"), header = T, stringsAsFactors = T))
+        if(file.exists(Noble:::.result.route(save.dir))){
+            dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = paste(rslt.dir,"results.csv",sep = "/"), row.names = F)
+            write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
         }
         else{
-            write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
-        }
-
-
+            write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+        }}
     }
 }
+

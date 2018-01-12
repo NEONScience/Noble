@@ -5,7 +5,7 @@
 \title{Downloads and performs process quality checks on NEON data}
 \usage{
 tis.pq.test(site = "CPER", dpID = "DP1.00001.001", prin.vars,
-  bgn.month = "2017-05", end.month = "2017-06", time.agr = 30,
+  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30,
   package = "basic", save.dir, q.th = 95, v.th = 90)
 }
 \arguments{

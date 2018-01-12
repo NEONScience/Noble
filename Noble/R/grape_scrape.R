@@ -28,6 +28,8 @@
 #   Robert Lee (2017-07-18)
 #     original creation
 #
+#   Robert Lee (2018-01-12)
+#     Remove nneo code
 ##############################################################################################
 
 .grape.scrape=function(bgn.date, end.date, system, test.sites, save.dir){
@@ -80,7 +82,7 @@
         temp.log.name<-strsplit(temp.logs, split = "\\_")
         temp.date.indx<-c()
 
-        temp.domn<-nneo::nneo_site(test.sites[i])$domainCode
+        temp.domn=Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==test.sites[i]]
 
         for(j in 1:length(temp.logs)){
             if(dplyr::between(x=as.Date(temp.log.name[[j]][2], format="%Y%m%d"), left=bgn.date, right=end.date)){

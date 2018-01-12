@@ -10,12 +10,16 @@
     site_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/sites/", site))$data
     prod_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data
 
+    prod_indx=grep(site_meta$dataProducts, pattern = dpID)
     site_indx=grep(prod_meta$siteCodes, pattern = site)
-    if(length(site_indx)==0){
+
+    if(length(prod_indx)==0){
         stop(paste0(dpID, " is not currently available at ", site, " via the API."))
     }
 
-    site_options=data.frame(avail_months=unlist(prod_meta$siteCodes[[site_indx]]$availableMonths), urls=unlist(prod_meta$siteCodes[[site_indx]]$availableDataUrls))
+    site_options=data.frame(avail_months=unlist(site_meta$dataProducts[[prod_indx]]$availableMonths), urls= unlist(site_meta$dataProducts[[prod_indx]]$availableDataUrls))
+
+    #####
 
     # Stop if no data
     if(length(site_options$avail_months)==0){stop(paste0(dpID, " is missing at ", site))}
@@ -29,7 +33,7 @@
     if(length(temp_data_urls)==0){stop("Data was missing in specified date range at ", site, ". Check ", dpID, " avalability with NEON.avail")}
 
     #For found DPs, given the Kpi, pull hosted metadata via API
-    api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = x)))
+    api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = as.character(x))))
 
     # build a list of URLs served by the API
     url_list<-c()
@@ -48,7 +52,6 @@
 
     #Try to handle name excpetions
     exceptions=c("DP1.00005.001", "DP1.00041.001")
-
 
     if((dpID %in% exceptions)){ #Why, oh why does bio temp have to be different on the API
         url_list<-url_list[grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
@@ -70,7 +73,6 @@
 
     # Order the call.df by data product, then location
     call.df<-call.df[order(call.df$dp_list, call.df$url_list),]
-
     call.df=call.df[which(grepl(x=call.df$url_list, pattern=package)),] #Keep only our package type
     call.df=call.df[which(grepl(x=call.df$url_list, pattern="\\.csv")),] #Keep only CSVs
     call.df=call.df[which(!grepl(x=call.df$url_list, pattern="variables")),] #weed out varaible tables
