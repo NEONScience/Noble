@@ -45,7 +45,7 @@
 .tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.date = "2017-05-15", end.date = "2017-06-15", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
 
     bgn.month=substr(bgn.date, 0, 7)
-    end.month=substr(bgn.date, 0, 7)
+    end.month=substr(end.date, 0, 7)
 
     quant_threshold=q.th
     valid_threshold=v.th

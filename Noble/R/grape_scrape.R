@@ -61,7 +61,7 @@
         site.list<-site.meta$SiteID
     }else if(system=="AIS"){
         test.dir<-paste0(comm.dir,"AisGrapeFaultRateSystemPerformance/")
-        site.meta<-data.frame(read.csv(paste0(comm.dir, "AIS_site_config.csv"), header = T))
+        site.meta=Noble::ais_site_config
         site.list<-site.meta$SiteID
     }
 
@@ -82,7 +82,7 @@
         temp.log.name<-strsplit(temp.logs, split = "\\_")
         temp.date.indx<-c()
 
-        temp.domn=Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==test.sites[i]]
+        temp.domn=site.meta$Domain[site.meta$SiteID==test.sites[i]]
 
         for(j in 1:length(temp.logs)){
             if(dplyr::between(x=as.Date(temp.log.name[[j]][2], format="%Y%m%d"), left=bgn.date, right=end.date)){

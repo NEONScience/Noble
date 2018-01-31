@@ -2,7 +2,8 @@
 
 ##
 .grape.num.plot <- function(site, system, log.dir, save.dir){
-    Mode <- function(x) {
+    library(ggplot2)
+      Mode <- function(x) {
         ux <- unique(x)
         ux[which.max(tabulate(match(x, ux)))]
     }
@@ -38,12 +39,13 @@
     max=max(melt.num.grapes$grape.count, na.rm=T)
 
 
-    plot<-ggplot2::ggplot(data=melt.num.grapes, aes(x=date, y=num.grapes))+
+    plot<-ggplot2::ggplot(data=melt.num.grapes, ggplot2::aes(x=date, y=num.grapes))+
         ggplot2::geom_path(colour="#2c47cc", size=1)+
         #ggplot2::geom_point(colour="#e22522")+
         ggplot2::theme_bw()+
         ggplot2::labs(x="Date", y="Number of Grapes")+
         ggplot2::ggtitle(label=paste0(site, " Grapes"), subtitle = paste0("Mode: ", mode, ", Max: ", max) )+
+        ggplot2::geom_hline(yintercept = mode, color="red")+
         ggplot2::scale_y_continuous(limits = round(c(0, max(melt.num.grapes$grape.count, na.rm=T)+1), digits = 0))
 
 

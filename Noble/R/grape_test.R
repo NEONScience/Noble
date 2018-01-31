@@ -38,7 +38,7 @@
         site.list<-site.meta$SiteID
     }else if(system=="AIS"){
         test.dir<-paste0(comm.dir,"AisGrapeFaultRateSystemPerformance/")
-        site.meta<-data.frame(read.csv(paste0(comm.dir, "AIS_site_config.csv"), header = T))
+        site.meta=Noble::ais_site_config# data.frame(read.csv(paste0(comm.dir, "AIS_site_config.csv"), header = T))
         site.list<-site.meta$SiteID
     }
 

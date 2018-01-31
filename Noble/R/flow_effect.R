@@ -20,13 +20,13 @@
 
     #flags=ggplot(melt.flags, aes(x = Date, y = value, fill=factor(variable)))+geom_bar(stat = 'identity')
 
-    plot=ggplot(melt.flow, aes(x=Date, y = value/3, fill=factor(variable)))+
-        theme_bw()+
-        geom_bar(stat = 'identity', width = 10000)+
-        scale_y_continuous(limits = c(0,100))+
-        theme(axis.text.x =element_blank())+
+    plot=ggplot2::ggplot(melt.flow, ggplot2::aes(x=Date, y = value/3, fill=factor(variable)))+
+        ggplot2::theme_bw()+
+        ggplot2::geom_bar(stat = 'identity', width = 10000)+
+        ggplot2::scale_y_continuous(limits = c(0,100))+
+        ggplot2::theme(axis.text.x =element_blank())+
         ggplot2::scale_fill_manual(name = "Flow Quality Metrics", values=niceColors)+
-        labs(x=paste0(zoo::as.yearmon(bgn.month, format="%Y-%m"), " to ", zoo::as.yearmon(end.month, format="%Y-%m")), y="Flagging distribution (% of measuremnts)", title=paste0(domn, "-", site))
+        ggplot2::labs(x=paste0(zoo::as.yearmon(bgn.month, format="%Y-%m"), " to ", zoo::as.yearmon(end.month, format="%Y-%m")), y="Flagging distribution (% of measuremnts)", title=paste0(domn, "-", site))
 
     ggplot2::ggsave(filename = paste0(site, "_", bgn.month, "-", end.month, "_flow.png"), path = paste0(save.dir, "/"), plot = plot, device = 'png', width = 5, height = 3.5, units = "in", dpi=300)
 

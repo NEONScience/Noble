@@ -7,7 +7,9 @@
 #' data are downloaded and saved to the specifed directory.
 #'
 #' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{dpID} Parameter of class character. The name of the data product to pull data, or a keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
+#' @param \code{dpID} Parameter of class character. The data product code in question. See
+#' \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
+#' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
 #' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
 #' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
 #' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
@@ -42,9 +44,6 @@
 
 
 data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11", end.month = "2017-11", time.agr = 30, package="basic", save.dir){
-    require(jsonlite)
-    require(lubridate)
-
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 

@@ -30,11 +30,6 @@
 ##############################################################################################
 
 NEON.avail<-function(dpID = "DP1.00001.001") {
-
-    # use all these libraries
-    library(zoo)
-    library(utils)
-
     # dpInfo <- base::data.frame(utils::read.csv(
     #     "https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv",
     #     header = TRUE))
@@ -54,7 +49,7 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     availability=data.frame(do.call(rbind, jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data$siteCodes))
 
     availDF <-data.frame(refMonths)
-    dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dpID, Noble::tis_pri_vars$dpID)])
+    dataPrd <- base::unlist(Noble::tis_pri_vars$dp.name[match(dpID, Noble::tis_pri_vars$dpID)])
     dfNames <- c("Month", unlist(availability$siteCode))
 
     #Wrap around the API availability by site, to make data frame

@@ -42,7 +42,7 @@
 #
 ##############################################################################################
 dp.survey=function(dpID, save.dir, site, pri.var){
-    require(zoo)
+
     if(missing(pri.var)){
         pri.var=Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dpID==dpID]
     }

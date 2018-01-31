@@ -24,8 +24,6 @@
 #
 ##############################################################################################
 
-
-
 air.temp.plot=function(bgn.month, end.month, site, save.dir){
 
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
@@ -43,6 +41,11 @@ air.temp.plot=function(bgn.month, end.month, site, save.dir){
         ggplot2::theme_bw()+
         ggplot2::ggtitle(site)+
         ggplot2::ylab("Temperature (Degrees C)")
+
+    if(!missing(save.dir)){
+        ggplot2::ggsave(filename = paste0(site, "_AAT_", bgn.month, "_", end.month, ".png"), plot = plot, device = "png", path = save.dir, units = "in", width = 8, height = 4)
+    }
+
     return(plot)
 }
 

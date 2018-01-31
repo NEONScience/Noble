@@ -18,7 +18,7 @@
                                   package = 'expanded',
                                   save.dir = save.dir)
 
-    example.data=Noble::un.ml.ize(example.data)
+    example.data=Noble:::.un.ml.ize(example.data)
 
     DF.info=Noble::distorted.field(site=site)
     message("Site: ", site, ". DFF low: ", DF.info$distortedField[1], ", DFF high: ", DF.info$distortedField[2])

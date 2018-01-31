@@ -1,4 +1,4 @@
-# Puts data into a tidy file structure by site.
+# Puts free-range data into a tidy file structure by site.
 
 .data.org=function(dir){
 

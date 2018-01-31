@@ -31,11 +31,11 @@ The package has some dependencies which may not be installed. If you haven't ins
  `install.packages("data.table")   # Data manipulation for plotting`  
  `install.packages("jsonlite")     # Package to parse JSON objects`  
  
- Once the package is successfully installed in can be loaded to the global environment via the standard `library(Noble)` command.
+Once the package is successfully installed in can be loaded to the global environment via the standard `library(Noble)` command.
 \newpage
 
 ## Downloading Data
-Constant changes in NEON's data products and the NEON API have rendered other packages unable to download data- *Noble* was created to address these issues and allow for reliable downloading. The only function in *Noble* is to return data is `pull.data()`, which retrieves data in 1 month chunks for all locations (tower levels and/or soil plots) at a given site. Data are stored to the user specified directory, and are also returned to the Global Environment. This allows for either storing data locally, or simply loading data temporarily. To save data, specify a valid local directory in the  **save.dir** parameter:
+Changes in NEON's data products and the NEON API have rendered other packages unable to download data- *Noble* was created to address these issues and allow for reliable downloading. The only function in *Noble* is to return data is `pull.data()`, which retrieves data in 1 month chunks for all locations (tower levels and/or soil plots) at a given site. Data are stored to the user specified directory, and are also returned to the Global Environment. This allows for either storing data locally, or simply loading data temporarily. To save data, specify a valid local directory in the  **save.dir** parameter:
 
 ```{r save_to_file, message=FALSE, warning=FALSE, include=TRUE, eval=FALSE}
 Noble::data.pull(site = "CPER", dpID = "DP1.00001.001", bgn.month = "2017-06", 

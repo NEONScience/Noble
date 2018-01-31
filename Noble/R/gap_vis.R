@@ -1,10 +1,10 @@
 ############################################################################################
-#' @title  Generate and Write Data Product Gap Summaries
+#' @title  Generate Data Product Gap Visualization
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description For a specified data product ID, this function will produce summary CSVs of data
-#' and quality flag gaps for their period of record at a site.
+#' @description For a specified data product ID, this function will produce a visual representation of
+#' data and quality flag gaps for their period of record at a site.
 #'
 #' @param \code{site} A NEON TIS site
 #' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
@@ -13,18 +13,22 @@
 #' @param \code{save.dir} The directory to write data files to.
 
 
-#' @return Writes two CSVs of the start end times of gaps, one CSV for data gaps, the other for quality flag gaps.
+#' @return Writes a PNG showing the starts and ends of gaps, by ML and gap type
 
 #' @keywords process quality, data quality, gaps, commissioning, data product, health
 
 #' @examples
+#' \dontrun{
 #' # For 2d Wind, save files to the current working directory:
-#' gap.report(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+#' gap.vis(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+#' }
 
-#' @seealso gap.find
+#' @seealso gap.find, gap.report
 #'
 ############################################################################################
-gap.report=function(site, bgn.month, end.month, dpID, save.dir){
+
+gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
+    require(ggplot2)
 
     data=Noble::data.pull(dpID = dpID, site = site, bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
     short.name=Noble::tis_pri_vars$short.name[Noble::tis_pri_vars$dpID==dpID]
@@ -71,7 +75,35 @@ gap.report=function(site, bgn.month, end.month, dpID, save.dir){
     no.data.times=do.call(rbind, no.data)
     no.qf.times=do.call(rbind, no.qf)
 
-    write.csv(x = no.data.times, file = paste0(save.dir, "/", site, "_", bgn.month, "-", end.month, "_", short.name, "_NO_DATA.csv"),row.names = F)
-    write.csv(x = no.qf.times, file = paste0(save.dir, "/", site, "_", bgn.month, "-", end.month,  "_", short.name, "_NO_QF.csv"))
+    no.data.times=data.frame(no.data.times, gap.type=rep("No Data", times=length(no.data.times[,1])))
+    no.qf.times=data.frame(no.qf.times, gap.type=rep("No QFs", times=length(no.qf.times[,1])))
+    gaps=rbind(no.data.times, no.qf.times)
 
+
+    gaps$ML=paste0("ML-", gaps$ML)
+
+
+    gap.vis=ggplot2::ggplot(gaps,
+                            ggplot2::aes(x=factor(ML),
+                                         ymin=as.POSIXct(gap.start),
+                                         ymax=as.POSIXct(gap.end),
+                                         color=factor(ML)
+                            )
+    )+
+        ggplot2::geom_linerange(size=2.5)+
+        ggplot2::facet_grid(gap.type+ML~., scales="free_x", switch = "y")+
+        ggplot2::coord_flip()+
+        ggplot2::scale_x_discrete(name="", breaks=NULL)+
+        ggplot2::theme_minimal()+
+        ggplot2::guides(fill=FALSE)+
+        ggplot2::ggtitle(label = site, subtitle = paste0(dpID, " Gaps"))+
+        ggplot2::theme(legend.position="none")
+
+    ggplot2::ggsave(filename = paste0(short.name, "_", site, "_Gaps","_", bgn.month, "-", end.month, ".png"),
+           plot = gap.vis,
+           device = "png",
+           path = save.dir,
+           width = 8,
+           height = 5,
+           units = "in")
 }

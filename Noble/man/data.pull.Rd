@@ -10,7 +10,9 @@ data.pull(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11",
 \arguments{
 \item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{\code{dpID}}{Parameter of class character. The name of the data product to pull data, or a keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.}
+\item{\code{dpID}}{Parameter of class character. The data product code in question. See
+\code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
+\url{http://data.neonscience.org/data-product-catalog} for a complete list.}
 
 \item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
 

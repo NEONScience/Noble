@@ -1,20 +1,50 @@
-# #Test Block
-# site="BART"
+############################################################################################
+#' @title  Execute Radiation Data Quality Testing
+
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+
+#' @description Run 4 checks on radiation data quality for TIS sites: (1) Internal Correlation,
+#' (2) Tower-Top Sensor Agreement, (3) Variance Stability, and
+#' (4) External Correlation with a Non-NEON Site. Test results are written as simple pass/fail entries
+#' in the results.csv files, however expanded test resullts are written in a site-specific folder in
+#' the save directory.
+#'
+#' @param \code{site} The TIS site of interest, as a 4-letter code.
+#' @param \code{save.dir} The save directory for data, results, and other files.
+#' @param \code{bgn.month} The first month of testing, as "YYYY-MM".
+#' @param \code{end.month} The last month of testing, as "YYYY-MM".
+#'
+#' @return Site results in 'results.csv', and raw
+
+#' @keywords process quality, data quality, gaps, commissioning
+
+#' @examples
+#' \dontrun{
+#' site="BART"
+#' bgn.month="2017-06"
+#' end.month="2017-07"
+#'
+#' testSubDir = ""
+#' if(grepl("darwin", version$os))
+#' {
+#'     mountPoint<-"/Volumes/neon/" #Mac
+#' }else{
+#'     mountPoint<-"N:/" #Windows
+#' }
+#' testFullDir =  paste0(mountPoint, "Science/Science Commissioning Archive/SiteAndPayload/TisRadiationDataQuality/")
+
+#' rad.dq.test(site=site, save.dir=testFullDir, bgn.month=bgn.month, end.month=end.month)
+#' }
+
+#'
+#' @seealso Currently none
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2018-01-03)
+#     Re-wrote from earlier script (original creation)
 #
-# bgn.month="2017-06"
-# end.month="2017-07"
-#
-# test = "TIS Radiation Data Quality "
-# testSubDir = "TisRadiationDataQuality"
-# if(grepl("darwin", version$os))
-# {
-#     mountPoint<-"/Volumes/neon/" #Mac
-# }else{
-#     mountPoint<-"N:/" #Windows
-# }
-# dirCommBase = paste0(mountPoint, "Science/Science Commissioning Archive/SiteAndPayload/")
-# testFullDir=paste0(dirCommBase, testSubDir, "/")
-# save.dir=testFullDir
+##############################################################################################
+
 
 ## Function start
 rad.dq.test=function(site, save.dir, bgn.month, end.month){
@@ -24,14 +54,11 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         message("Site is not in the current DQ test list. Please select from:")
         stop(paste0(Noble::rad_dq_info$Site))
     }
-
-    library(magrittr)
-    library(data.table)
-    library(dplyr)
+    message(paste0("Testing ", site))
 
     #Define directories
     domn=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
-    site.dir=Noble:::.data.route(site, save.dir)
+    site.dir=Noble:::.data.route(site=site, save.dir=save.dir)
 
     rslt.dir=paste0(save.dir, "/Common/")
     if(!dir.exists(rslt.dir)){
@@ -172,8 +199,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
                       gloRadMean=DirDif[,grepl(colnames(DirDif), pattern = "gloRadMean")]
     )
 
-    # Sum up the direct and diffuse rad
-    DirDif$total=DirDif$dirRadMean+DirDif$difRadMean
+
 
     # Convert to local time
     time.zone=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]
@@ -181,12 +207,16 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     DirDif$startDateTime=as.POSIXct(format(DirDif$startDateTime, tz=time.zone, usetz = T), tz=time.zone, usetz = T)
 
     #Only rows with greater than 5 W/m^2 get tested
-    DirDif=DirDif[DirDif$total>50&!is.na(DirDif$total),]
+
 
     DirDif$SZA=RAtmosphere::SZA(timein = DirDif$startDateTime,
                                 Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site],
                                 Lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site]
     )
+
+    # Sum up the direct and diffuse rad
+    DirDif$total=DirDif$dirRadMean*cos(DirDif$SZA/180*pi)+DirDif$difRadMean
+    DirDif=DirDif[DirDif$total>50&!is.na(DirDif$total),]
 
     # A. Ratio is within ±8% for solar zenith angle < 75°
     set1=DirDif[which(DirDif$SZA<75),]
@@ -263,8 +293,11 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
                                     TimeBgn = paste0(bgn.month, "-01"),
                                     TimeEnd =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1))
         )
+
         ext.data=temp
         write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
+
+    ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")-lubridate::minutes(30)
 
         int.data=try(Noble::data.pull(site = site,
                                       dpID = "DP1.00014.001",
@@ -274,14 +307,21 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
                                       package = "basic",
                                       save.dir = Noble:::.data.route(site, save.dir = save.dir))
         )
-
-        extRad<-data.frame(ext.data %>%
+        int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
+        int.rad=data.frame(startDateTime=int.data$startDateTime, NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
+        ext.rad<-data.frame(ext.data %>%
                                group_by(UTC_DATE = cut(UTC_DATE, breaks="30 min")) %>%
                                summarize(SOLAR_RADIATION = mean(SOLAR_RADIATION)))
 
-        bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
-        colnames(bothRad)<-c("UTC_Date", "ExtRad", "NEONRad")
-        spearman.results=cor.test(bothRad$ExtRad, bothRad$NEONRad, method = "spearman", conf.level = 0.95, exact = F)
+        ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
+
+        all.data=merge(x=int.rad, y=ext.rad, by.y = "UTC_DATE", by.x = "startDateTime")
+
+
+
+        #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
+
+        spearman.results=cor.test(all.data$NEON.rad, all.data$SOLAR_RADIATION, method = "spearman", conf.level = 0.95, exact = F)
         ext.consist=spearman.results$estimate
         write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }

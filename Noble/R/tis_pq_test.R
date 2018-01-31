@@ -85,18 +85,20 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
             days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
             end.day=lubridate::round_date(end.day, "day")
 
-            num.nas<-sum(is.na(test.data[,data.indx]))
-            num.data<-sum(!is.na(test.data[,qf.indx]))
+            all.data=length(data.indx)*length(test.data[,1])
 
-            data.quant<-round(100*(num.data/(num.nas+num.data)), digits = 2)
+            num.nas<-sum(is.na(test.data[,data.indx]))
+            num.data<-sum(!is.na(test.data[,data.indx]))
+
+            data.quant<-round(100*(num.data/(all.data)), digits = 2)
 
             num.qf.fail<-sum(test.data[,qf.indx]==1, na.rm=TRUE)
             num.qf.pass<-sum(test.data[,qf.indx]==0, na.rm = TRUE)
             num.qf.na<-sum(is.na(test.data[,qf.indx]))
 
-            data.valid<-round(100*(num.qf.pass/(num.qf.pass+num.qf.fail+num.qf.na)), digits = 2)
+            data.valid<-round(100*(num.qf.pass/(all.data)), digits = 2)
 
-            if(prin.vars[i]=="SHF"){
+             if(prin.vars[i]=="SHF"){
                 #Soil heat flux specific values
                 quant_threshold=95
                 valid_threshold=(90-15.38)
