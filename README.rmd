@@ -3,7 +3,7 @@ Noble-Package
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- ****** Description ****** -->
-This repository is for housing the Noble package, used in TIS, AIS and MDP commissioning. Noble contains functions used in downloading data, 
+This repository is for housing the Noble package, used in TIS, AIS and MDP commissioning. Noble contains functions used in downloading, plotting, and quality checking data. 
 
 <!-- ****** Usage ****** -->
 Usage
