@@ -33,7 +33,7 @@
 
 fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
 
-    time.agr<-30
+    time.agr=30
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
     bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
@@ -54,7 +54,6 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     save.dir<- save.dir #"/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisFanAspirationSystemPerformance/Common/"
     #### Other Parameters ####
     package <- "expanded"
-    time.agr = 30
     Kpi <- "Air Temp"
     domn= Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site]
 
@@ -147,7 +146,7 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     if (file.exists(paste(rslt.dir, "results.csv", sep = ""))) {
         temp=read.csv(file = paste0(rslt.dir, "results.csv"))
         dataRpt=rbind(temp, dataRpt)
-        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), col.names = F, row.names = F)
+        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
     }
     else {
         write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)

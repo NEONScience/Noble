@@ -4,7 +4,7 @@
 \alias{health.data}
 \title{Produce a Summary Table of Data Product Health by Month}
 \usage{
-health.data(site, dpID)
+health.data(site, dpID, bgn.month, end.month, save.dir)
 }
 \arguments{
 \item{\code{dpID}}{Parameter of class character. The NEON data product code of the data product of

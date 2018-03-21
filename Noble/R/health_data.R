@@ -33,18 +33,15 @@
 #
 ##############################################################################################
 
+health.data= function(site, dpID, bgn.month, end.month, save.dir){
 
-
-health.data= function(site, dpID){
+if(missing(save.dir)){save.dir=tempdir()}
 
     pri.var=Noble::tis_pri_vars$data.field[which(Noble::tis_pri_vars$dpID==dpID)]
     var.name=gsub(pattern = "mean", replacement = "", x = pri.var, ignore.case = T)
 
-
     dp.avail = NEON.avail(dpID = dpID)
     dp.avail = cbind(Month=dp.avail[,1],  dp.avail[,which(colnames(dp.avail) %in% Noble::tis_site_config$SiteID)])
-
-    message(paste0("Working on ", site, "..."))
 
     temp.dates = zoo::as.Date(dp.avail$Month[
         which(
@@ -52,14 +49,29 @@ health.data= function(site, dpID){
         )
         ]
     )
-    run.dates = substr(temp.dates, start = 0, stop = 7)
 
-    health.data=data.frame(Month=run.dates, Availability=rep(0, times=length(run.dates)), Validity =rep(0, times=length(run.dates)))
+    if(missing(bgn.month)&missing(end.month)){
+        run.dates = substr(temp.dates, start = 0, stop = 7)
+        info.dates=run.dates
+    }else if(missing(end.month)){
+        end.month=Sys.Date()
+        info.dates=seq.Date(from=as.Date(paste0(bgn.month, "-01")), to=end.month, by="1 month")
+        run.dates=sunstr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
+    }else if(missing(bgn.month)){
+        info.dates=seq.Date(from=as.Date("2014-01-01"), to=end.month, by="1 month")
+        run.dates=substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
+    }else{
+        info.dates=seq.Date(from=as.Date(paste0(bgn.month, "-01")), to=as.Date(paste0(end.month, "-01")), by="1 month")
+        run.dates=substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
+    }
 
+    health.data=data.frame(Month=substr(info.dates,0, 7), Availability=rep(0, times=length(info.dates)), Validity =rep(0, times=length(info.dates)))
 
+    message(paste0("Working on ", site, "..."))
+if(length(run.dates)>0){
     for(d in 1:length(run.dates)){
         message(paste0("Downloading ", run.dates[d]))
-        month.data<-try(Noble::data.pull(site = site, dpID = dpID, bgn.month = run.dates[d], end.month = run.dates[d], time.agr = 30, package = "basic", save.dir = tempdir()))
+        month.data<-try(Noble::data.pull(site = site, dpID = dpID, bgn.month = run.dates[d], end.month = run.dates[d], time.agr = 30, package = "basic", save.dir = save.dir))
 
         if(!length(month.data)==0){
             priData=data.frame(month.data[,grepl(pattern = pri.var, x = colnames(month.data), ignore.case = T)])
@@ -80,6 +92,6 @@ health.data= function(site, dpID){
                 health.data$Availability[which(health.data$Month==run.dates[d])]=pcntData
                 health.data$Validity[which(health.data$Month==run.dates[d])]=pcntValid}
         }
-    }
+    }}
     return(health.data)
 }

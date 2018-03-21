@@ -1,0 +1,35 @@
+"SiteID","Domain","Site.Type","Site.Long.Name","Core.Relocatable","Site.Heating","Permafrost.Site.","Met.Station.","Precipitaiton.Sensor","Wet.Dep.Collector.","Num.of.GroundwaterWells","Num.of.PressureSensors","Num.of.TempSensors","Num.of.PARSensors","Num.of.UPARSensors","Num.of.Multisondes","Num.of.NitrateSensors","Num.of.DepthsTchain","Num.of.GRAPES","PM.Code","DP1.20217.001","DP1.20033.001","DP1.20042.001","DP1.20015.001","DP1.20264.001","DP1.20032.001","DP1.20100.001","DP1.20016.001","DP1.20261.001","DP1.20053.001","DP1.20288.001","DP1.20267.001","DP1.20002.001","DP1.20271.001","DP1.20059.001","DP1.20004.001","DP1.20046.001","Latitude","Longitude"
+"ARIK","D10","Stream","Arikaree River","Core","Heated","No","Yes","Primary","Yes",6,2,2,2,0,2,1,0,14,"D10C",6,1,2,6,0,0,6,2,0,2,2,1,1,0,0,0,0,39.75825,-102.4471
+"BARC","D03","Lake","Barco Lake","Core","Non-heated","No","Yes","No","No",8,2,1,1,3,1,1,7,13,"D03C1",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,29.67647,-82.00909
+"BIGC","D17","Stream","Upper Big Creek","Relocatable","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D17R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,37.058,-119.256
+"BLDE","D12","Stream","Blacktail Deer Creek","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D12C1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,44.95011,-110.58715
+"BLUE","D11","Stream","Blue River","Relocatable","Heated","No","Yes","Primary","Yes",8,2,2,2,0,2,1,0,16,"D11R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,34.44422,-96.6242
+"BLWA","D08","River","Black Warrior River","Relocatable","Non-heated","No","No","No","No",3,1,1,1,0,1,1,10,4,"D08R1",3,1,1,3,0,0,3,1,0,0,1,1,1,0,0,0,0,32.54153,-87.79815
+"CARI","D19","Stream","Caribou Creek","Core","Heated","Yes","Yes","No","No",8,2,2,2,0,2,1,0,14,"D19C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,65.15306,-147.50246
+"COMO","D13","Stream","Como Creek","Core","Heated","No","Yes","No","No",4,2,2,2,0,2,1,0,10,"D13C",4,1,2,4,0,0,4,2,0,2,2,1,1,0,0,0,0,40.03496,-105.54487
+"CRAM","D05","Lake","Crampton Lake","Core","Heated","No","Yes","No","No",8,2,1,1,3,1,1,7,13,"D05C",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,46.21111,-89.47825
+"CUPE","D04","Stream","Rio Cupeyes","Core","Non-heated","No","Yes","Secondary","Yes",7,2,2,2,0,2,1,0,14,"D04C",7,1,2,7,0,0,7,2,0,2,2,1,1,0,0,0,0,18.11352,-66.98676
+"FLNT","D03","River","Flint River","Relocatable","Non-heated","No","Yes","No","No",7,1,1,1,0,1,1,4,11,"D03R1",7,1,1,7,0,0,7,1,0,0,1,1,1,0,0,0,0,31.18542,-84.4374
+"GUIL","D04","Stream","Rio Guilarte","Relocatable","Non-heated","No","Yes","Secondary","Yes",6,2,2,2,0,2,1,0,13,"D04R1",6,1,2,6,0,0,6,2,0,2,2,1,1,0,0,0,0,18.1741,-66.79851
+"HOPB","D01","Stream","Upper Hop Brook","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D01C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,42.47179,-72.32963
+"KING","D06","Stream","Kings Creek","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D06C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,39.10506,-96.60336
+"LECO","D07","Stream","LeConte Creek","Relocatable","Heated","No","Yes","No","No",0,2,2,2,0,2,1,0,6,"D07R1",0,1,2,0,0,0,0,2,0,2,2,1,1,0,0,0,0,35.69043,-83.50379
+"LIRO","D05","Lake","Little Rock Lake","Relocatable","Heated","No","Yes","No","No",8,2,1,1,3,1,1,10,13,"D05R1",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,45.998269,-89.704767
+"LEWI","D02","Stream","Lewis Run","Relocatable","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D02R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,39.09564,-77.98322
+"MART","D16","Stream","Martha Creek","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D16C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,45.79125,-121.93196
+"MAYF","D08","Stream","Mayfield Creek","Core","Non-heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D08C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,32.95966,-87.40813
+"MCDI","D06","Stream","McDiffitt Creek","Relocatable","Heated","No","Yes","Secondary","No",8,2,2,2,0,2,1,0,14,"D06R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,38.94428,-96.44197
+"MCRA","D16","Stream","McRae Creek","Relocatable","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D16R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,44.2596,-122.16555
+"OKSR","D18","Stream","Oksurkuyik Creek","Core","Heated","Yes","Yes","No","No",8,2,2,2,0,2,1,0,14,"D18C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,68.66975,-149.14302
+"POSE","D02","Stream","Posey Creek","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D02C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,38.89332,-78.14678
+"PRIN","D11","Stream","Pringle Creek","Core","Non-heated","No","Yes","Primary","Yes",6,2,2,2,0,2,1,0,14,"D11C",6,1,2,6,0,0,6,2,0,2,2,1,1,0,0,0,0,33.37859,-97.78226
+"PRLA","D09","Lake","Prarie Lake","Relocatable","Heated","No","Yes","No","No",8,2,1,1,3,1,1,9,13,"D09R1",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,47.15909,-99.11388
+"PRPO","D09","Lake","Prarie Pothole","Core","Heated","No","Yes","No","No",8,2,1,1,3,1,1,5,13,"D09C",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,47.12999,-99.25055
+"REDB","D15","Stream","Redbutte Creek","Core","Heated","No","Yes","Primary","Yes",7,2,2,2,0,2,1,0,15,"D15C",7,1,2,7,0,0,7,2,0,2,2,1,1,0,0,0,0,40.78374,-111.79765
+"SUGG","D03","Lake","Suggs Lake","Core","Non-heated","No","Yes","No","No",8,2,1,1,3,1,1,5,13,"D03C2",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,29.68705,-82.01617
+"SYCA","D14","Stream","Sycamore Creek","Core","Non-heated","No","Yes","Secondary","Yes",8,2,2,2,0,2,1,0,15,"D14C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,33.74906,-111.5069
+"TECR","D17","Stream","Teakettle 2 Creek","Core","Heated","No","Yes","No","No",8,2,2,2,0,2,1,0,14,"D17C",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,36.95528,-119.02699
+"TOMB","D08","River","Lower Tombigbee River","Relocatable","Non-heated","No","No","No","No",3,1,1,1,0,1,1,10,4,"D08R2",3,1,1,3,0,0,3,1,0,0,1,1,1,0,0,0,0,31.8521,-88.16107
+"TOOK","D18","Lake","Toolik Lake","Relocatable","Heated","Yes","Yes","Secondary","No",8,2,1,1,3,1,1,10,13,"D18R1",8,1,1,8,1,1,8,2,3,0,1,1,1,1,1,1,1,68.62956,-149.61051
+"WALK","D07","Stream","Walker Branch","Core","Heated","No","Yes","No","No",3,2,2,2,0,2,1,0,9,"D07C",3,1,2,3,0,0,3,2,0,2,2,1,1,0,0,0,0,35.95947,-84.28041
+"WLOU","D13","Stream","West Saint Louis Creek","Relocatable","Heated","No","Yes","Secondary","No",8,2,2,2,0,2,1,0,14,"D13R1",8,1,2,8,0,0,8,2,0,2,2,1,1,0,0,0,0,39.89137,-105.9154

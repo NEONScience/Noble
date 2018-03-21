@@ -42,7 +42,7 @@
 #
 ##############################################################################################
 
-find.gap<-function(data, time.agr, return = `("index" OR "times")`){
+find.gap<-function(data, time.agr, return){
     # example dataset, pulled from the IS SOM tool for HARV. It is L1 2D wind and direction data from ML1
     #  data <- read.csv(file = "/Users/rlee/Dropbox/Downloads/D01.HARV.DP1.00001.001.csv", row.names = F)
     # 1  POSIX sequence (POS.seq) generated based on bookends of data

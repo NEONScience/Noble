@@ -1,10 +1,47 @@
-bgn.month="2017-07"
-end.month="2017-08"
-site="CPER"
-save.dir=tempdir()
+############################################################################################
+#' @title  Test NEON Air Temperature data for Stability of Variance, Internal Consistency,
+#' and External Consistency.
+
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+
+#' @description For the specified dates and site, the function will perform variance stability testing
+#'  on overnight data (midnight to 4:00 local time), internal consistency checks on adjacent
+#'  measurement locations, and external consistency checks with the closest NRCS or USCRN site.
+#'
+#'
+#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
+#' @param \code{dpID} Parameter of class character. The data product code in question. See
+#' \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
+#' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
+#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
+#' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
+#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+#'
+#' @return Writes data files to the specified directory.
+
+#' @keywords process quality, data quality, gaps, commissioning
+
+#' #Make a temporary direcotry for the example:
+#' tempDir<- tempdir()
+#' data.pull(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
+
+
+#' @seealso Currently none
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2017-07-18)
+#     original creation
+#
+##############################################################################################
+
+# bgn.month="2017-07"
+# end.month="2017-08"
+# site="CPER"
+# save.dir=tempdir()
 
 air.temp.dq.test<-function(data.dir){
-
     ## PART 1: Variance Stability
     saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
     taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
@@ -42,6 +79,76 @@ air.temp.dq.test<-function(data.dir){
 
     ## PART 3: External Consistancy
 
-    out=c("Variance"=f.test, "Internal"=spearman)
+    ext.sites=metScanR::getNearby(siteID = paste0("NEON:", site), radius = 5)
+
+    ref.sites=character(0)
+    if(length(ext.sites)>0){
+        ref.sites=metScanR::getNetwork(ext.sites , network = c("NRCS", "USCRN"))
+    }
+    rho="NA"
+    if(length(ref.sites>0)){
+        ext.loc.info=do.call(rbind, lapply(ref.sites, "[[", "location"))
+
+
+        closest.index=which.min(unlist(lapply(seq(length(ext.loc.info[,1])), function(i)
+            geosphere::distm(c(ext.loc.info$longitude_dec[i], ext.loc.info$latitude_dec[i]),
+                             c(Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site], Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site])))))
+
+        ref.site=ref.sites[[closest.index]]
+
+        if(ref.site$platform=="USCRN"){
+            ref.data=Noble::pull.USCRN.data(timeScale = "subhourly",
+                                            stationID = ref.site$identifiers$id[ref.site$identifiers$idType=="WBAN"],
+                                            TimeBgn = bgn_temp,
+                                            TimeEnd = end_temp,
+                                            saveDir = save.dir)
+            ref.data$Date=as.POSIXct(ref.data$UTC_DATE, tz="UTC")
+
+            ## Make 30 min direction data from refs
+            ref.data=data.frame(ref.data %>%
+                                    dplyr::group_by(Date = cut(Date, breaks="30 min")) %>%
+                                    dplyr::summarize(airTemp = mean(AIR_TEMPERATURE)))
+
+            neon.data=data.frame(Date=as.POSIXct(saat.test.data$startDateTime, format="%Y-%m-%dT%H:%M:%SZ", tz = "UTC"), neon.temp=saat.test.data$tempSingleMean.000.020)
+
+            ref.data$Date=as.POSIXct(ref.data$Date, tz="UTC")
+            neon.data$Date=as.POSIXct(neon.data$Date, tz="UTC")
+
+
+            comp.data=merge(neon.data, ref.data)
+            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman", conf.level = 0.95)
+            rho=correlation$estimate
+        }
+        if(ref.site$platform="NRCS"){
+            ref.data=RNRCS::grabNRCS.data(network = "SCAN",
+                                          site_id = ref.site$identifiers$id[ref.site$identifiers$idType=="SCAN"],
+                                          timescale = "hourly",
+                                          DayBgn = bgn_temp,
+                                          DayEnd = end_temp)
+
+            simple.data=data.frame(
+                Date=as.POSIXlt(ref.data$Date, tz=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]),
+                airTemp=ref.data$Air.Temperature.Average..degF.)
+
+
+            simple.data$Date=format(simple.data$Date, tz="UTC", usetz = T)
+
+
+            neon.data=data.frame(Date=as.POSIXct(saat.test.data$startDateTime, format="%Y-%m-%dT%H:%M:%SZ", tz = "UTC"), neon.temp=saat.test.data$tempSingleMean.000.020)
+
+            neon.data=data.frame(neon.data %>%
+                                     dplyr::group_by(Date = cut(Date, breaks="60 min")) %>%
+                                     dplyr::summarize(neon.temp = mean(neon.temp)))
+            neon.data$Date=as.POSIXct(neon.data$Date)-lubridate::hours(1) #align with SCAN timing
+
+            simple.data$Date=as.POSIXct(simple.data$Date)
+
+            comp.data=merge(neon.data, simple.data)
+            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman", conf.level = 0.95)
+            rho=correlation$estimate
+        }
+    }
+
+    out=c("Variance"=f.test, "Internal"=spearman, External=rho)
     return(out)
 }

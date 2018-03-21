@@ -4,7 +4,7 @@
 \alias{find.gap}
 \title{Returns indicies for missing NEON data}
 \usage{
-find.gap(data, time.agr, return = `("index" OR "times")`)
+find.gap(data, time.agr, return)
 }
 \arguments{
 \item{\code{data}}{A data frame of NEON data returned from the API or SOM tool.}

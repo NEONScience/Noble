@@ -48,12 +48,13 @@
 
 ## Function start
 rad.dq.test=function(site, save.dir, bgn.month, end.month){
+    library(magrittr)
 
     ########### GENERAL PARAMETERS ###########
-    if(!(site %in% Noble::rad_dq_info$Site)){
-        message("Site is not in the current DQ test list. Please select from:")
-        stop(paste0(Noble::rad_dq_info$Site))
-    }
+    # if(!(site %in% Noble::rad_dq_info$Site)){
+    #     message("Site is not in the current DQ test list. Please select from:")
+    #     stop(paste0(Noble::rad_dq_info$Site))
+    # }
     message(paste0("Testing ", site))
 
     #Define directories
@@ -131,6 +132,48 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     message(paste0("Variance Stability Test: ", f.test.result))
     write.csv(x = data.frame(value=unlist(f.test)),file = paste0(raw.dir, "variance_stats.csv"))
 
+
+    ############################################
+    #If variance has failed, make a plot of all variances for the full testg period
+
+    if(f.test.result=="Fail"){
+
+        night.data=var.data[which(strftime(var.data$startDateTime, format="%H:%M:%S", tz=time.zone) %in% test.time),]
+        m.night=reshape2::melt(night.data, id.vars="startDateTime")
+        m.night$startDateTime=as.POSIXct(m.night$startDateTime, tz = time.zone)
+        m.night$testPeriod=0
+        m.night$testPeriod[frst.week[2]>m.night$startDateTime&m.night$startDateTime>=frst.week[1]]=1
+        m.night$testPeriod[last.week[2]>m.night$startDateTime&m.night$startDateTime>=last.week[1]]=1
+
+        var.plot=ggplot2::ggplot(data=m.night, ggplot2::aes(x=startDateTime, y=value, color=as.factor(variable)))+
+            ggplot2::geom_rect(
+                ggplot2::aes(xmin=as.POSIXct(frst.week[1]),
+                    xmax = as.POSIXct(frst.week[2]),
+                    ymin = -Inf,
+                    ymax = Inf),
+                fill = 'gray',
+                alpha = 0.01)+
+            ggplot2::geom_rect(
+                ggplot2::aes(xmin=as.POSIXct(last.week[2]),
+                    xmax = as.POSIXct(last.week[1]),
+                    ymin = -Inf,
+                    ymax = Inf),
+                fill = 'gray',
+                alpha = 0.01)+
+            ggplot2::geom_point()+
+            ggplot2::theme_light()+
+            ggplot2::ggtitle(paste0(site, " overnight variance values for radiation data products"), subtitle = "Gray boxes indicate test periods")+
+            ggplot2::xlab("Date")+
+            ggplot2::geom_smooth()
+
+        ggplot2::ggsave(plot = var.plot, device = "png", width = 8, height = 5, filename = paste0(site, "_night_vars.png"), path = raw.dir, units = "in")
+
+        #lm(m.night$startDateTime ~ m.night$value)
+    }
+
+
+
+
     ########### INTERNAL CONSISTENCY ###########
     ########### PAR and QL PAR ONLY ############
     site.MLs=1:Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]
@@ -165,8 +208,15 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     names(PAR.rho)=paste0("PAR-", PAR.pairwise)
     names(QL.PAR.rho)=c("QL PAR 1-3", "QL PAR 3-5")
 
+    # One pair in each direction may fail
+    if(Noble::rad_dq_info$classification[Noble::rad_dq_info$Site==site]=="forest"){
+        if(length(PAR.rho<rho.TH)>=(length(PAR.rho)-1)){PAR.rho.test="Pass"}else{PAR.rho.test="Fail"} # ------>PAR rho results####
+        if(length(QL.PAR.rho<rho.TH)>=(length(PAR.rho)-1)){QL.PAR.rho.test="Pass"}else{QL.PAR.rho.test="Fail"} # ------>QL PAR rho results####
+    }
+
     if(any(PAR.rho<rho.TH)==F){PAR.rho.test="Pass"}else{PAR.rho.test="Fail"} # ------>PAR rho results####
     if(any(QL.PAR.rho<rho.TH)==F){QL.PAR.rho.test="Pass"}else{QL.PAR.rho.test="Fail"} # ------>QL PAR rho results####
+
     ### Write stats out ###
     raw.stats=data.frame(rho.estimate=append(PAR.rho, QL.PAR.rho))
     write.csv(x = raw.stats, file = paste0(raw.dir,"par_rho_stats.csv"), row.names = T)
@@ -178,7 +228,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     }else{internal.compair.result="Pass"}
 
     message(
-        paste0("Internal Comparison Test: ", internal.compair.result) ###############################################################################################
+        paste0("PAR/QL PAR Internal Comparison Test: ", internal.compair.result) ###############################################################################################
     )
 
     ########### TOWER-TOP CONSISTENCY ###########
@@ -216,7 +266,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     # Sum up the direct and diffuse rad
     DirDif$total=DirDif$dirRadMean*cos(DirDif$SZA/180*pi)+DirDif$difRadMean
-    DirDif=DirDif[DirDif$total>50&!is.na(DirDif$total),]
+    DirDif=DirDif[DirDif$total>5&!is.na(DirDif$total),]
 
     # A. Ratio is within ±8% for solar zenith angle < 75°
     set1=DirDif[which(DirDif$SZA<75),]
@@ -244,8 +294,71 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     write.csv(x = tower.top, file = paste0(raw.dir,"tower_top_ratios.csv"), row.names = F)
 
     message(
-        paste0("Tower Top Consistency Test: ", ratio.result) ##############################################################################################################
+        paste0("Tower Top (Direct + Diffuse, Global) Consistency Test: ", ratio.result) ##############################################################################################################
     )
+
+    ########### GLOBAL RAD STREAMS AT TOWER TOP ###########
+
+    t.top.IDs=test.dpIDs[test.dpIDs %in% c("DP1.00014.001", "DP1.00022.001", "DP1.00023.001")]
+    raw.ttop.data=lapply(t.top.IDs, function(x)
+        try(Noble::data.pull(site = site,
+                             dpID = x,
+                             bgn.month = bgn.month,
+                             end.month = end.month,
+                             time.agr = 30,
+                             package = "basic",
+                             save.dir = site.dir)
+        )
+    )
+
+    for(i in 1:length(raw.ttop.data)){
+        raw.ttop.data[[i]]$startDateTime=as.POSIXct(raw.ttop.data[[i]]$startDateTime, tz="UTC")
+    }
+
+    big.df=data.frame(
+        startDateTime=as.POSIXct(
+            Noble::help.time.seq(
+                from = as.POSIXct(paste0(bgn.month, "-01"), tz = "UTC"),
+                to=as.POSIXct(Noble:::end.day.time(end.month = end.month, time.agr = 30), tz = "UTC"),
+                time.agr = 30), tz="UTC"))
+
+    big.df$startDateTime=as.POSIXct(big.df$startDateTime, tz="UTC")
+
+    for(i in 1:length(raw.ttop.data)){
+        big.df=merge(x=big.df, y=raw.ttop.data[[i]])
+    }
+
+    big.df=big.df[,-which(grepl(colnames(big.df), pattern = ".000$"))] #Get rid of soil plots
+
+    data.indx=unlist(lapply(c("gloRadMean", "inSWMean", "shortRadMean"), function(x) which(grepl(pattern = x, x=colnames(big.df)))))
+
+    big.df=big.df[-any(is.na(big.df[,data.indx]))]
+
+    if(length(data.indx)==3){
+        list=list(
+            pair1=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95),
+            pair2=cor.test(x=big.df[,data.indx[2]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95),
+            pair3=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95)
+        )
+
+        tower.top.glo.rad="Fail"
+        if(isTRUE(unlist(lapply(list, "[[", "estimate")>.9))){tower.top.glo.rad="Pass"}
+
+    }
+    if(length(data.indx)==2){
+        list=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95)
+
+        tower.top.glo.rad="Fail"
+        if(list$estimate>=.9){tower.top.glo.rad="Pass"}
+
+    }
+
+    write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "gloRad_tower_top_comparison.csv"), row.names = T)
+    message(paste0("Tower Top (Global Radiation Measureemnts) Consistency Test: ", tower.top.glo.rad))
+
+    # if(site %in% Noble::tis_site_config$SiteID[Noble::tis_site_config$Core.Relocatable=="Core"]){
+    #
+    # }
 
     ########### EXTERNAL CONSISTENCY ###########
     ######## ALL GLORAD DATA ########
@@ -275,8 +388,8 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")#-lubridate::hours(offset+2)
 
         int.rad<-data.frame(int.data %>%
-                                group_by(startDateTime = cut(startDateTime, breaks="60 min")) %>%
-                                summarize(gloRadMean.000.060 = mean(gloRadMean.000.060)))
+                                dplyr::group_by(startDateTime = cut(startDateTime, breaks="60 min")) %>%
+                                dplyr::summarize(gloRadMean.000.060 = mean(gloRadMean.000.060)))
         int.rad$startDateTime=as.POSIXct(int.rad$startDateTime, tz="UTC")
 
         all.data=merge(x=int.rad, y=ext.data, by.y = "Date", by.x = "startDateTime")
@@ -291,50 +404,66 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         temp=Noble::pull.USCRN.data(timeScale = "subhourly",
                                     stationID = uscrn.site,
                                     TimeBgn = paste0(bgn.month, "-01"),
-                                    TimeEnd =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1))
+                                    TimeEnd =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1)),
+                                    saveDir = Noble:::.data.route(site = site, save.dir = save.dir)
         )
 
         ext.data=temp
+        ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
         write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
 
-    ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")-lubridate::minutes(30)
 
+        ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
         int.data=try(Noble::data.pull(site = site,
                                       dpID = "DP1.00014.001",
                                       bgn.month = bgn.month,
                                       end.month = end.month,
-                                      time.agr = 30,
+                                      time.agr = 1,
                                       package = "basic",
                                       save.dir = Noble:::.data.route(site, save.dir = save.dir))
         )
         int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
-        int.rad=data.frame(startDateTime=int.data$startDateTime, NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
-        ext.rad<-data.frame(ext.data %>%
-                               group_by(UTC_DATE = cut(UTC_DATE, breaks="30 min")) %>%
-                               summarize(SOLAR_RADIATION = mean(SOLAR_RADIATION)))
+        int.rad=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
+        int.rad=data.frame(int.rad[-(1:4),] %>%
+                               dplyr::group_by(UTC_DATE = cut(UTC_DATE, breaks="5 min")) %>%
+                               dplyr::summarize(NEON.rad = mean(NEON.rad)))
+        int.rad$UTC_DATE=as.POSIXct(int.rad$UTC_DATE, tz="UTC")
 
         ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
 
-        all.data=merge(x=int.rad, y=ext.rad, by.y = "UTC_DATE", by.x = "startDateTime")
+        all.data=merge(x=int.rad, y=ext.rad, by= "UTC_DATE")
+        all.data=all.data[all.data$USCRN.rad>-5,]
 
 
 
         #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
 
-        spearman.results=cor.test(all.data$NEON.rad, all.data$SOLAR_RADIATION, method = "spearman", conf.level = 0.95, exact = F)
+        spearman.results=cor.test(all.data$NEON.rad, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
+
         ext.consist=spearman.results$estimate
+
+        corr.plot=ggplot2::qplot(x=all.data$NEON.rad, y=all.data$USCRN.rad)+
+            ggplot2::ggtitle(label = paste0(site, "-", uscrn.site, " Rho: ", round(ext.consist, digits = 2)))+
+            ggplot2::geom_abline(slope = 1, color='red')+
+            ggplot2::coord_fixed()
+        ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
+
         write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }
-    if(ext.consist>0.95){external.test="Pass"}else{external.test="Fail"}
+    if(ext.consist>0.90){external.test="Pass"}else{external.test="Fail"}
     message(
         paste0("External Consistency Test: ", external.test)
     )
 
     dq.rslt=data.frame(site=site,
+                       begin.month=bgn.month,
+                       end.month=end.month,
                        variance.stability = f.test.result,
                        internal.consistency=internal.compair.result,
-                       tower.top.consistency=ratio.result,
-                       external.consistency=external.test)
+                       tower.top.consistency=tower.top.glo.rad,
+                       dir.dif.glo.consistency=ratio.result,
+                       external.consistency=external.test,
+                       test.date=as.character(Sys.Date()))
 
     ########### WRITE TO RESULTS FILE ###########
 
@@ -348,8 +477,3 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     }
 
 }
-
-
-
-
-

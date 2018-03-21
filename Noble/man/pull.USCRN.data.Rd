@@ -4,7 +4,7 @@
 \alias{pull.USCRN.data}
 \title{Pull data from meterologic stations in the USCRN network}
 \usage{
-\method{pull}{USCRN.data}(timeScale, stationID, TimeBgn, TimeEnd)
+\method{pull}{USCRN.data}(timeScale, stationID, TimeBgn, TimeEnd, saveDir)
 }
 \arguments{
 \item{\code{stationID}}{The WBAN ID of a valid USCRN site.}
