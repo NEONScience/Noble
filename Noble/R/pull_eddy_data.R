@@ -30,8 +30,8 @@
 #
 ##############################################################################################
 
-# test block
-# test.dir="/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisCO2ConcentrationProcessQuality/"
+# #test block
+# test.dir="~/Desktop/"
 # site="CPER"
 # bgn.month="2017-04"
 # end.month="2017-11"
@@ -75,27 +75,25 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
 
     file.dates=gsub(x = stringr::str_extract(string=hdf5.links, pattern = "\\.\\d{4}-\\d{2}"), pattern = "\\.", replacement = "")
 
-    hdf5.info=cbind(hdf5.links, file.dates)
+    hdf5.info=data.frame(cbind(hdf5.links, file.dates))
+
+    hdf5.info$zip=rep(NA, times=length(hdf5.info[,1]))
 
     #Need to add in a smart way to include the month of the file requested in the file read/write
     #sink=lapply(seq(length(hdf5.links)), function(x)
 
     for(x in 1:length(hdf5.info[,1])){
         zip.save=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.zip")
+        #hdf5.info$zip[i]=
         hdf5.file=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.h5")
         download.file(url = hdf5.info[x,1], destfile = zip.save)
         utils::unzip(zipfile = zip.save, exdir = file.dir, overwrite = T)
+
         #temp=rhdf5::h5read(file =paste0(file.dir, "NEON.", Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site], ".", site, ".DP4.00200.001.nsae.", hdf5.info[x,2], ".basic.h5"), name = site)
     }
-    #
-    #     out=rhdf5::h5read(file =
-    #                           paste0(save.dir, site, "_DP4.00200.001/NEON.",
-    #                                  Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site],
-    #                                  ".",site, ".DP4.00200.001.nsae.", api.months[1] ,".basic.h5"),
-    #                       name = site)
-    # }
-    # #"NEON.D10.CPER.DP4.00200.001.nsae.2017-09.basic.h5"
-    # return(out)
+    found.h5s=list.files(file.dir)[grep(x = list.files(file.dir), pattern = "\\.h5")]
+    out= found.h5s[which(stringr::str_extract("\\d{4}-\\d{2}", string=  found.h5s) %in% requested.months)]
+    return(out)
 
 }
 

@@ -46,8 +46,6 @@ hdf5.to.df=function(site, hdf5.file, meas.name, time.agr, save.dir){
         stop("Invalid temporal aggregation input. Please enter either 1 or 30.")
     }
 
-
-
     temp=rhdf5::h5read(file=hdf5.file, name=site)
     top.data=temp$dp01$data[names(temp$dp01$data)==meas.name][[1]]
     data=(top.data[grepl(x = names(top.data), pattern = paste0("*",time.agr,"m"))][[1]])
@@ -59,13 +57,13 @@ hdf5.to.df=function(site, hdf5.file, meas.name, time.agr, save.dir){
     for(q in 1:length(names(qf))){
         colnames(qf[[q]])[!grepl(x = colnames(qf[[q]]), pattern = "time", ignore.case = T)]=paste0(colnames(qf[[q]])[!grepl(x = colnames(qf[[q]]), pattern = "time", ignore.case = T)], ".", names(qf)[q])
     }
-    uncert.top=temp$dp01$ucrt[names(temp$dp01$data)==meas.name][[1]]
-    unct=uncert.top[grepl(x = names(uncert.top), pattern = paste0("*",time.agr,"m"))][[1]]
-    for(u in 1:length(names(unct))){
-        colnames(unct[[u]])[!grepl(x = colnames(unct[[u]]), pattern = "time", ignore.case = T)]=paste0(colnames(unct[[u]])[!grepl(x = colnames(unct[[u]]), pattern = "time", ignore.case = T)], ".", names(unct)[u])
-    }
+    # uncert.top=temp$dp01$ucrt[names(temp$dp01$data)==meas.name][[1]]
+    # unct=uncert.top[grepl(x = names(uncert.top), pattern = paste0("*",time.agr,"m"))][[1]]
+    # for(u in 1:length(names(unct))){
+    #     colnames(unct[[u]])[!grepl(x = colnames(unct[[u]]), pattern = "time", ignore.case = T)]=paste0(colnames(unct[[u]])[!grepl(x = colnames(unct[[u]]), pattern = "time", ignore.case = T)], ".", names(unct)[u])
+    # }
 
-    all=Reduce(function(x, y) merge(x, y, all=TRUE, by="timeBgn"), c(data, qf, unct))
+    all=Reduce(function(x, y) merge(x, y, all=TRUE, by="timeBgn"), c(data, qf)) #, unct
     end.times=which(grepl(pattern = "timeEnd*", x = colnames(all)))
     all=all[-end.times]
     colnames(all)=gsub(x = colnames(all), pattern = "\\.y", replacement = "")
