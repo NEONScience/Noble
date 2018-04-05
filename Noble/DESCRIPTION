@@ -1,7 +1,7 @@
 Package: Noble
 Type: Package
 Title: Work With NEON Project Instrumented Data
-Version: 0.2.5
+Version: 0.2.6
 Author: Robert Lee
 Maintainer: Robert Lee <rlee@battelleecology.org>
 Description: Work with data from the NEON project's instrumented data, from terrestrial and aquatic sites. With Noble, you can return data for individual data products or families of products, check for missing data, plot wind rose from the 2D Wind Data product, and much more.  

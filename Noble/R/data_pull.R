@@ -15,6 +15,7 @@
 #' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
 #' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
 #' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
+#' @param \code{complete.times} Optional. Parameter of class logical. Should gaps in the endDateTime column be filled? Defaults to FALSE (No gap filling).
 #'
 #' @return Writes data files to the specified directory.
 
@@ -43,7 +44,7 @@
 # package="basic"
 
 
-data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11", end.month = "2017-11", time.agr = 30, package="basic", save.dir){
+data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F){
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
@@ -108,6 +109,7 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11
         # Make a reference sequence to match to
         dates=data.frame(startDateTime=ref_seq)
 
+
         #Perform the matching
         data.raw=data.frame(lapply(data.chunk, function(x) dplyr::left_join(x=dates, y=x, by="startDateTime")))
 
@@ -117,6 +119,11 @@ data.pull = function(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11
             data.out=data.raw[,-(time.index[3:length(time.index)])]
         }else{
             data.out=data.raw
+        }
+
+        if(complete.times){
+            end_ref=as.POSIXct(ref_seq, tz = "UTC")+lubridate::minutes(x=time.agr)
+            data.out$endDateTime=end_ref
         }
 
         #Zip and write the files

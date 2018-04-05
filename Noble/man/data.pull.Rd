@@ -4,8 +4,8 @@
 \alias{data.pull}
 \title{Downloads data for a specified data product or products, and saves the data to a specified directory}
 \usage{
-data.pull(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11",
-  end.month = "2017-11", time.agr = 30, package = "basic", save.dir)
+data.pull(site, dpID, bgn.month, end.month, time.agr, package = "basic",
+  save.dir, complete.times = F)
 }
 \arguments{
 \item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
@@ -23,6 +23,8 @@ data.pull(site = "JORN", dpID = "DP1.00001.001", bgn.month = "2017-11",
 \item{\code{package}}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
 
 \item{\code{save.dir}}{Parameter of class character. The local directory where data files should be saved.}
+
+\item{\code{complete.times}}{Optional. Parameter of class logical. Should gaps in the endDateTime column be filled? Defaults to FALSE (No gap filling).}
 }
 \value{
 Writes data files to the specified directory.
