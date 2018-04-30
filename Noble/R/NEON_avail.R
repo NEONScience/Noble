@@ -27,6 +27,9 @@
 #   Robert Lee (2017-07-17)
 #     Updating function for Noble integration
 #
+#   Robert Lee (2018-04-10)
+#     Fixing tis_pri_vars bug
+#
 ##############################################################################################
 
 NEON.avail<-function(dpID = "DP1.00001.001") {
@@ -34,6 +37,8 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     #     "https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv",
     #     header = TRUE))
     # The earliest start date. May want to swithc to earliest date found via API.
+    tis_pri_vars=Noble::tis_pri_vars
+
     NEONstrt <- base::as.POSIXct("2014-01-01",tz="GMT",format="%Y-%m-%d")
 
     # Date of the function call, endcap on returned data frame
@@ -49,7 +54,7 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     availability=data.frame(do.call(rbind, jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data$siteCodes))
 
     availDF <-data.frame(refMonths)
-    dataPrd <- base::unlist(Noble::tis_pri_vars$dp.name[match(dpID, Noble::tis_pri_vars$dpID)])
+    dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dpID, tis_pri_vars$dpID)])
     dfNames <- c("Month", unlist(availability$siteCode))
 
     #Wrap around the API availability by site, to make data frame

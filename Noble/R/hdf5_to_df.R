@@ -70,9 +70,10 @@ hdf5.to.df=function(site, hdf5.file, meas.name, time.agr, save.dir){
     colnames(all)=gsub(x = colnames(all), pattern = "\\.x", replacement = "")
     startDate=as.Date(all$timeBgn[1])
     endDate=as.Date(all$timeBgn[length(all$timeBgn)])
+
     if(!missing(save.dir)){
         if(dir.exists(save.dir)){
-            write.csv(x=all, file = paste0(save.dir, "/", meas.name, "_", site, "_", startDate, "-", endDate, ".csv"), row.names = F)
+            write.csv(x=all, file = paste0(Noble:::.data.route(site = site, save.dir = save.dir), "/", meas.name, "_", site, "_", startDate, "-", endDate, ".csv"), row.names = F)
         }
         if(!dir.exists(save.dir)){
             warning("'save.dir' is not valid- no file saved.")

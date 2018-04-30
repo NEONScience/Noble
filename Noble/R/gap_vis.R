@@ -35,6 +35,15 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
     raw.mls=zoo::na.trim(stringr::str_extract(string = colnames(data), pattern = "\\.\\d\\d\\d\\.\\d\\d\\d"))
     tower.mls=as.numeric(unique(stringr::str_sub(raw.mls, start = 7, end = 7)))
 
+    locs=as.character(na.exclude(unique(stringr::str_extract(string = colnames(data), pattern = "\\d{3}\\.\\d{3}"))))
+
+    sp.locs=unique(substr(x=locs, start = 3,3))
+    sp.locs=sp.locs[!sp.locs==0]
+    ml.locs=unique(substr(x=locs, start=6,6))
+    ml.locs=ml.locs[!ml.locs==0]
+
+    all.locs=list(ml.locs=ml.locs, sp.locs=sp.locs)
+
     ## Below function from answer provided by Joris Meys, on stackoverflow.com.
     ## Retrieved Dec 20, 2017 from https://stackoverflow.com/questions/7077710/sequence-length-encoding-using-r?rq=1
     seq.length <- function(x){
@@ -53,45 +62,58 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
 
     ## End Function
 
-    data.time.table=function(l){
-        ml.data=Noble::ml.extract(data=data, ml = l)
-        gaps=Noble::find.gap(data = ml.data, time.agr = 30, return = "index")
+    data.time.table=function(l, loc){
+        l=as.character(l)
+        if(loc=="sp"){
+            l.data=Noble::sp.extract(data=data, sp = l)
+        }else if(loc=="ml"){
+            l.data=Noble::ml.extract(data=data, ml = l)
+        }
+        gaps=Noble::find.gap(data = l.data, time.agr = 30, return = "index")
         no.data.times=seq.length(gaps$no.data.indx)
         no.data.times$stop_index=(no.data.times$start_index+no.data.times$stop_index-1)
-        no.data.times=data.frame(ML=l,gap.start=ml.data$startDateTime[no.data.times$start_index], gap.end=ml.data$startDateTime[no.data.times$stop_index])
+        location=paste0(toupper(loc),"-", l)
+        no.data.times=data.frame(location=rep(location, times=nrow(no.data.times)),gap.start=l.data$startDateTime[no.data.times$start_index], gap.end=l.data$startDateTime[no.data.times$stop_index])
     }
 
-    qf.time.table=function(l){
-        ml.data=Noble::ml.extract(data=data, ml = l)
-        gaps=Noble::find.gap(data = ml.data, time.agr = 30, return = "index")
+    qf.time.table=function(l, loc){
+        if(loc=="sp"){
+            l.data=Noble::sp.extract(data=data, sp = l)
+        }else if(loc=="ml"){
+            l.data=Noble::ml.extract(data=data, ml = l)
+        }
+        gaps=Noble::find.gap(data = l.data, time.agr = 30, return = "index")
         no.qf.times=seq.length(gaps$no.qf.indx)
         no.qf.times$stop_index=(no.qf.times$start_index+no.qf.times$stop_index-1)
-        no.qf.times=data.frame(ML=l,gap.start=ml.data$startDateTime[no.qf.times$start_index], gap.end=ml.data$startDateTime[no.qf.times$stop_index])
+        location=paste0(toupper(loc),"-", l)
+        no.qf.times=data.frame(location=rep(location, times=nrow(no.qf.times)),gap.start=l.data$startDateTime[no.qf.times$start_index], gap.end=l.data$startDateTime[no.qf.times$stop_index])
     }
 
-    no.data=lapply(tower.mls, data.time.table)
-    no.qf=lapply(tower.mls, qf.time.table)
+    sp.no.data=lapply(all.locs$sp.locs, function(l) data.time.table(l, loc="sp"))
+    sp.no.qf=lapply(all.locs$sp.locs, function(l) qf.time.table(l, loc="sp"))
 
-    no.data.times=do.call(rbind, no.data)
-    no.qf.times=do.call(rbind, no.qf)
+    ml.no.data=lapply(all.locs$ml.locs, function(l) data.time.table(l, loc="ml"))
+    ml.no.qf=lapply(all.locs$ml.locs, function(l) qf.time.table(l, loc="ml"))
 
-    no.data.times=data.frame(no.data.times, gap.type=rep("No Data", times=length(no.data.times[,1])))
-    no.qf.times=data.frame(no.qf.times, gap.type=rep("No QFs", times=length(no.qf.times[,1])))
-    gaps=rbind(no.data.times, no.qf.times)
+    no.data.times=rbind(do.call(rbind, sp.no.data), do.call(rbind, ml.no.data))
+    no.qf.times=rbind(do.call(rbind, sp.no.qf), do.call(rbind, ml.no.qf))
 
+    #no.data.times=no.data.times[-which(no.data.times[,2]==no.data.times[,3]),] #weed out weird duplicates
 
-    gaps$ML=paste0("ML-", gaps$ML)
+    no.data.times$gap.type=rep("No Data")
+    no.qf.times$gap.type=rep("No QF")
 
+    gaps=data.frame(rbind(no.data.times, no.qf.times))
 
     gap.vis=ggplot2::ggplot(gaps,
-                            ggplot2::aes(x=factor(ML),
+                            ggplot2::aes(x=factor(location),
                                          ymin=as.POSIXct(gap.start),
                                          ymax=as.POSIXct(gap.end),
-                                         color=factor(ML)
+                                         color=factor(location)
                             )
     )+
         ggplot2::geom_linerange(size=2.5)+
-        ggplot2::facet_grid(gap.type+ML~., scales="free_x", switch = "y")+
+        ggplot2::facet_grid(gap.type+location~., scales="free_x", switch = "y")+
         ggplot2::coord_flip()+
         ggplot2::scale_x_discrete(name="", breaks=NULL)+
         ggplot2::theme_minimal()+
@@ -107,3 +129,4 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
            height = 5,
            units = "in")
 }
+

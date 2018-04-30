@@ -37,7 +37,7 @@
 #
 ##############################################################################################
 
-co2.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v.th=90){
+co2.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v.th=88.1){
     time.agr = 30
     files=Noble::pull.eddy.data(site, bgn.month, end.month, package="basic", save.dir)
     file.dir=Noble:::.data.route(site = site, save.dir = save.dir)

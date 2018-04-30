@@ -68,7 +68,6 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
     for(i in 1:length(hdf5.links)){
         month=stringr::str_extract(hdf5.links[i],pattern = "\\d\\d\\d\\d-\\d\\d")
         file=paste0(file.dir,"/", site, "_", month,"_", package, "_DP4.00200.001.zip")
-        if(!file.exists(file)){download.file(url = hdf5.links[i], destfile = file, quiet = T)}
     }
 
     curr.files=list.files(file.dir, pattern = ".zip", full.names = T)
@@ -79,21 +78,16 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
 
     hdf5.info$zip=rep(NA, times=length(hdf5.info[,1]))
 
-    #Need to add in a smart way to include the month of the file requested in the file read/write
-    #sink=lapply(seq(length(hdf5.links)), function(x)
-
     for(x in 1:length(hdf5.info[,1])){
         zip.save=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.zip")
-        #hdf5.info$zip[i]=
         hdf5.file=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.h5")
-        download.file(url = hdf5.info[x,1], destfile = zip.save)
+        if(!file.exists(paste0(file.dir,"/", site, "_", month,"_DP4.00200.001.zip"))){
+            download.file(url = hdf5.info[x,1], destfile = zip.save)
+        }
         utils::unzip(zipfile = zip.save, exdir = file.dir, overwrite = T)
-
-        #temp=rhdf5::h5read(file =paste0(file.dir, "NEON.", Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site], ".", site, ".DP4.00200.001.nsae.", hdf5.info[x,2], ".basic.h5"), name = site)
     }
     found.h5s=list.files(file.dir)[grep(x = list.files(file.dir), pattern = "\\.h5")]
     out= found.h5s[which(stringr::str_extract("\\d{4}-\\d{2}", string=  found.h5s) %in% requested.months)]
     return(out)
-
 }
 

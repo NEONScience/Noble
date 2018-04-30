@@ -121,10 +121,14 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
             data.out=data.raw
         }
 
+        ## Fill a sequence of endDateTimes?
         if(complete.times){
             end_ref=as.POSIXct(ref_seq, tz = "UTC")+lubridate::minutes(x=time.agr)
             data.out$endDateTime=end_ref
         }
+
+        ## Remove duplicates
+        data.out=data.out[-which(duplicated(data.out)),]
 
         #Zip and write the files
         file.path<-paste0(save.dir, file.name)

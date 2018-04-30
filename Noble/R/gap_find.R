@@ -22,7 +22,7 @@
 #'
 #' @param \code{data} A data frame of NEON data returned from the API or SOM tool.
 #' @param \code{time.agr} Optional, but recommended. The data aggregation period of the input data
-#' (difference between timestamps in minutes), if not specified it will guess at the value
+#' (difference between timestamps in minutes), if not specified it will guess at the value.
 #' @param \code{return} Optional. Used to specifiy whether row numbers ("index") or timestamps
 #' ("times") are returned. Defaults to row numbers if not specified.
 
@@ -40,12 +40,14 @@
 #   Robert Lee (2017-07-10)
 #     original creation
 #
+# changelog and author contributions / copyrights
+#   Robert Lee (2018-04-27)
+#     Attempt to accomodate soil plot DPs.
+#
 ##############################################################################################
 
 find.gap<-function(data, time.agr, return){
-    # example dataset, pulled from the IS SOM tool for HARV. It is L1 2D wind and direction data from ML1
-    #  data <- read.csv(file = "/Users/rlee/Dropbox/Downloads/D01.HARV.DP1.00001.001.csv", row.names = F)
-    # 1  POSIX sequence (POS.seq) generated based on bookends of data
+
     valid.returns <- c("index", "times")
 
     if(missing(return)){
@@ -69,7 +71,6 @@ find.gap<-function(data, time.agr, return){
         time.agr<-as.numeric(difftime(data[2,time.indx[1]], data[1,time.indx[1]], units = "mins"))
         message(paste0("No time.agr value specified, making an educated guess that it is: ", time.agr, " minutes."))
     }
-
 
     # Make a list of reference times, to check against
     frst.time<-as.POSIXct(data[1,time.indx[1]], tz="UTC")

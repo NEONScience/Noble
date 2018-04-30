@@ -10,7 +10,7 @@ find.gap(data, time.agr, return)
 \item{\code{data}}{A data frame of NEON data returned from the API or SOM tool.}
 
 \item{\code{time.agr}}{Optional, but recommended. The data aggregation period of the input data
-(difference between timestamps in minutes), if not specified it will guess at the value}
+(difference between timestamps in minutes), if not specified it will guess at the value.}
 
 \item{\code{return}}{Optional. Used to specifiy whether row numbers ("index") or timestamps
 ("times") are returned. Defaults to row numbers if not specified.}

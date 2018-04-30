@@ -48,7 +48,7 @@
     }
 
     # Weed out XML links
-    url_list=url_list[(!grepl(pattern = "xml", x= url_list))]
+    url_list=url_list[!(grepl(pattern = "xml", x= url_list))]
 
     #Try to handle name excpetions
     exceptions=c("DP1.00005.001", "DP1.00041.001")

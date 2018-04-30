@@ -1,5 +1,5 @@
 ############################################################################################
-#' @title  Refine a data frame with multiple measurement levels down to the specified level
+#' @title  Refine Data from Multiple Soil Plot Locations Down to a Specified Location
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
@@ -7,9 +7,10 @@
 #' from the location are returned as a data frame.
 #'
 #' @param \code{data} A data frame of instrumented data pulled with \code{data.pull}.
-#' @param \code{ml} Desired measurement level, given as an integer (eg ml=1, corresponding to the first level at a tower)
+#' @param \code{sp} Desired soil plot, given as an integer (eg. sp=1, corresponding to the
+#' first soil plot, closest to the tower)
 #'
-#' @return Returns a data frame of data just from the specified measurement level
+#' @return Returns a data frame of data just from the specified measurement location
 
 #' @keywords process quality, data quality, gaps, commissioning
 
@@ -18,16 +19,16 @@
 #' @seealso Currently none
 
 # changelog and author contributions / copyrights
-#   Robert Lee (2017-07-18)
+#   Robert Lee (2018-04-27)
 #     original creation
 #
 ##############################################################################################
 
-ml.extract<-function(data, ml){
-    tis_site_config<-Noble::tis_site_config
+sp.extract<-function(data, sp){
+    #tis_site_config<-Noble::tis_site_config
     time.indx <- grep(x=colnames(data), pattern = "time", ignore.case = T)
-    ml.pattern <- paste0(".0", ml, "0")
-    ml.data<-data[,which(grepl(colnames(data), pattern = ml))]
-    ml.data<-cbind(data[,time.indx], ml.data)
-    return(ml.data)
+    sp.pattern <- paste0("00", sp, ".5*")
+    sp.data<-data[,which(grepl(colnames(data), pattern = sp.pattern))]
+    sp.data<-cbind(data[,time.indx], sp.data)
+    return(sp.data)
 }

@@ -15,7 +15,7 @@
 #' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
 #' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
 #' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
+#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.
 #' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
 #' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
 #'
@@ -32,18 +32,19 @@
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
 #     original creation
-#
+#   Robert Lee (2018-04-24)
+#     Function refinement
 ##############################################################################################
 
-# bgn.month="2017-07"
-# end.month="2017-08"
-# site="CPER"
-# save.dir=tempdir()
+# bgn.month="2018-01"
+# end.month="2018-02"
+# site="MOAB"
+# save.dir="/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisAirTempDataQuality/"
 
-air.temp.dq.test<-function(data.dir){
+air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
     ## PART 1: Variance Stability
-    saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
-    taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+    saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 1, package = "basic", save.dir = save.dir)
+    taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 1, package = "basic", save.dir = save.dir)
 
     test.data=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
     test.data$startDateTime=as.POSIXct(test.data$startDateTime, tz="UTC")
@@ -59,33 +60,42 @@ air.temp.dq.test<-function(data.dir){
 
 
     group.one=Noble::date.extract(data = test.data, bgn.date = as.Date(paste0(bgn.month, "-01")), end.date =as.Date(paste0(bgn.month, "-01"))+15)
-    group.one=data.frame(startDateTime=group.one$startDateTime, group.one[,grepl(pattern = "tempSingleMean", x = colnames(group.one))|grepl(pattern = "tempTripleMean", x = colnames(group.one))])
-    group.one=group.one[lubridate::hour(group.one$startDateTime) %in% c(0:4),]
+    group.one=data.frame(startDateTime=group.one$startDateTime, group.one[,grepl(pattern = "tempSingleVariance", x = colnames(group.one))|grepl(pattern = "tempTripleVariance", x = colnames(group.one))])
+    group.one=group.one[lubridate::hour(group.one$startDateTime) %in% c(0:5),]
     group.two=Noble::date.extract(data = test.data, bgn.date = end_temp-lubridate::days(15), end.date = end_temp-lubridate::minutes(30)-lubridate::seconds(1))
-    group.two=data.frame(startDateTime=group.two$startDateTime, group.two[,grepl(pattern = "tempSingleMean", x = colnames(group.two))|grepl(pattern = "tempTripleMean", x = colnames(group.two))])
-    group.two=group.two[lubridate::hour(group.two$startDateTime) %in% c(0:4),]
+    group.two=data.frame(startDateTime=group.two$startDateTime, group.two[,grepl(pattern = "tempSingleVariance", x = colnames(group.two))|grepl(pattern = "tempTripleVariance", x = colnames(group.two))])
+    group.two=group.two[lubridate::hour(group.two$startDateTime) %in% c(0:5),]
 
-    f.test=var.test(x=unlist(as.list(group.one[2:length(group.one)])), y=unlist(as.list(group.two[2:length(group.two)])), conf.level = 0.99)
+    f.test=c()
+    for(i in 2:length(colnames(group.one))){
+    f.test=append(f.test, var.test(x=group.one[,i], y = group.two[,i], ratio = 1, conf.level = 0.95)$estimate)
+    }
+    mean=mean(f.test, na.rm = T)
+    f.test=append(f.test, c("mean"=mean))
+    variance=data.frame(ML=c(seq(Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]), "Mean"), f.test)
+
+    #f.test=var.test(x=unlist(as.list(group.one[2:length(group.one)])), y=unlist(as.list(group.two[2:length(group.two)])), conf.level = 0.99)
 
     ## PART 2: Internal Consistancy
     internal.data=test.data[,grepl(pattern = "tempSingleMean", x = colnames(test.data))|grepl(pattern = "tempTripleMean", x = colnames(test.data))]
-    internal.data=internal.data[,!(grepl(pattern = "000.010", x=colnames(internal.data)))]
+    #internal.data=internal.data[,!(grepl(pattern = "000.010", x=colnames(internal.data)))] #Remove ML1
 
     spearman=lapply(c( 1:(length(internal.data)-1)), function(l) cor.test(x = internal.data[,l], y = internal.data[,l+1], method = "spearman"))
     mls=unlist(lapply(c( 1:(length(internal.data)-1)), function(x) paste0("ML ", x, "-", x+1)))
-    spearman=do.call(rbind, spearman)
-    spearman=cbind(Pair=mls, spearman)
+    spearman=as.data.frame(do.call(rbind, spearman))
+    sman.rho=data.frame(Pair=mls, internal.rho=unlist(spearman$estimate))
+
 
     ## PART 3: External Consistancy
 
-    ext.sites=metScanR::getNearby(siteID = paste0("NEON:", site), radius = 5)
+    ext.sites=metScanR::getNearby(siteID = paste0("NEON:", site), radius = 20)
 
     ref.sites=character(0)
     if(length(ext.sites)>0){
         ref.sites=metScanR::getNetwork(ext.sites , network = c("NRCS", "USCRN"))
     }
     rho="NA"
-    if(length(ref.sites>0)){
+    if(length(ref.sites)>0){
         ext.loc.info=do.call(rbind, lapply(ref.sites, "[[", "location"))
 
 
@@ -132,7 +142,7 @@ air.temp.dq.test<-function(data.dir){
             simple.data$Date=format(simple.data$Date, tz="UTC", usetz = T)
 
 
-            neon.data=data.frame(Date=as.POSIXct(saat.test.data$startDateTime, format="%Y-%m-%dT%H:%M:%SZ", tz = "UTC"), neon.temp=saat.test.data$tempSingleMean.000.020)
+            neon.data=data.frame(Date=as.POSIXct(saat.test.data$startDateTime, format="%Y-%m-%d %H:%M:%S", tz = "UTC"), neon.temp=saat.test.data$tempSingleMean.000.020)
 
             neon.data=data.frame(neon.data %>%
                                      dplyr::group_by(Date = cut(Date, breaks="60 min")) %>%
@@ -147,6 +157,18 @@ air.temp.dq.test<-function(data.dir){
         }
     }
 
-    out=c("Variance"=f.test, "Internal"=spearman, External=rho)
-    return(out)
+    out=list("Mean Variance"=variance, "Internal Correlation"=sman.rho, "External Correlation"=rho)
+    if(out$`Mean Variance`$f.test[length(out$`Mean Variance`$ML)]>.95&out$`Mean Variance`$f.test[length(out$`Mean Variance`$ML)]<1.05){var.result="Pass"}else{var.result="Fail"}
+    if(out$`Internal Correlation`$internal.rho[length(out$`Internal Correlation`$internal.rho)]>.95){int.cor.result="Pass"}else{int.cor.result="Fail"}
+    if(out$`External Correlation`>0.95){ext.cor.result="Pass"}else{ext.cor.result="Fail"}
+    if(all(c(var.result, int.cor.result, ext.cor.result)=="Pass")){result="Pass"}else{result="Fail"}
+
+    data.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    write.csv(x = out$`Mean Variance`, file = paste0(data.dir, "variance.csv"), row.names = F)
+    write.csv(x = out$`Internal Correlation`, file = paste0(data.dir, "internal_comparison.csv"), row.names = F)
+    write.csv(x = out$`External Correlation`, file = paste0(data.dir, "external_comparison.csv"), row.names = F)
+
+    rslt.string=
+
+    return(result)
 }

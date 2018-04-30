@@ -29,7 +29,7 @@ test.sites = function(dpID, bgn.month, end.month){
     prod.avail=NEON.avail(dpID = dpID)
     bgn.avail=zoo::as.yearmon(bgn.month)
     end.avail=zoo::as.yearmon(end.month)
-
+    tis_site_config=Noble::tis_site_config
     test.avail=rbind(prod.avail[prod.avail$Month==bgn.avail,], prod.avail[prod.avail$Month==end.avail,])
 
     indx.test.sites=c()
