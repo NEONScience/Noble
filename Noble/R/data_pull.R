@@ -35,11 +35,11 @@
 ##############################################################################################
 
 
-###TEST BLOCK####
-# site="CPER"
-# dpID="DP1.00002.001"
-# bgn.month="2017-06"
-# end.month="2017-06"
+# ###TEST BLOCK####
+# site="MLBS"
+# dpID="DP1.00040.001"
+# bgn.month="2018-02"
+# end.month="2018-03"
 # time.agr=30
 # package="basic"
 
@@ -48,7 +48,7 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
-     #Make a list of months to get data for
+    #Make a list of months to get data for
     date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
 
     #read in current IS site info
@@ -57,9 +57,9 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
 
     #make sure to request valid packages!
     valid.pack<-c("basic", "expanded")
-    save.dir = paste0(save.dir, "/")
+    #save.dir = paste0(save.dir, "/")
 
-    #if(!dir.exists(save.dir)){stop("Invalid directory specified! Please correct the parameter given to 'save.dir'.")}
+    if(!dir.exists(save.dir)){stop("Invalid directory specified! Please correct the parameter given to 'save.dir'.")}
 
     if(missing(package)){package<-"basic"}
     if(!package %in% valid.pack){stop("Please specify a package of 'basic' or 'expaned'")}
@@ -80,11 +80,11 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
     ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp+lubridate::seconds(1), time.agr = time.agr)
 
     # Get site metadata
-    call.df=Noble:::.gen.call.df(bgn.month=bgn.month,
+    call.df=as.data.frame(Noble:::.gen.call.df(bgn.month=bgn.month,
                                  end.month=end.month,
                                  site=site, dpID=dpID,
                                  time.agr=time.agr,
-                                 package=package)
+                                 package=package))
 
     #Make our start timestamps, which data are matched to.
     start_time_stamps<-as.data.frame(ref_seq)
@@ -95,7 +95,8 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
 
     ## If the file isn't there, get it
     if(!file.exists(paste0(save.dir, file.name))){
-        data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)], function(l) read.csv(as.character(l), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
+        data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)],
+                                                       function(l) as.data.frame(read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
         data.lump=do.call(rbind, data.wad) #make into data frame of lists, with dimensions nrow=n_months, ncol=n_measurementLocations
         data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(rbind, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
 
@@ -109,7 +110,6 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
         # Make a reference sequence to match to
         dates=data.frame(startDateTime=ref_seq)
 
-
         #Perform the matching
         data.raw=data.frame(lapply(data.chunk, function(x) dplyr::left_join(x=dates, y=x, by="startDateTime")))
 
@@ -121,14 +121,16 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
             data.out=data.raw
         }
 
+        # ## Remove duplicates
+        if(length(which(duplicated(data.out)))>0){
+            data.out=data.out[-which(duplicated(data.out)),]
+        }
+
         ## Fill a sequence of endDateTimes?
         if(complete.times){
             end_ref=as.POSIXct(ref_seq, tz = "UTC")+lubridate::minutes(x=time.agr)
             data.out$endDateTime=end_ref
         }
-
-        ## Remove duplicates
-        data.out=data.out[-which(duplicated(data.out)),]
 
         #Zip and write the files
         file.path<-paste0(save.dir, file.name)
@@ -141,3 +143,4 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
     ## Return to parent environment
     return(data.out)
 }
+

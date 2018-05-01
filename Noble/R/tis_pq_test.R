@@ -21,6 +21,7 @@
 #' @keywords process quality, data quality, gaps, commissioning
 
 #' @examples
+#' \dontrun{
 #' site = "CPER"
 #' dpID = "DP1.00001.001"
 #' prin.vars<-c("windSpeed", "windDir")
@@ -31,6 +32,7 @@
 #' save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
 #' Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
 #' time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
+#' }
 
 #'
 #' @seealso Currently none
@@ -61,7 +63,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
 
     #pull data
     test.data=data.frame()
-    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=site.dir))
+    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, m))
     if(length(test.data)>1){
         for(i in 1:length(prin.vars)){
             data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))

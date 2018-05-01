@@ -2,7 +2,7 @@
     "path" : "~/Dropbox/GitHub/Noble-Package/Noble",
     "sortOrder" : [
         {
-            "ascending" : false,
+            "ascending" : true,
             "columnIndex" : 2
         },
         {

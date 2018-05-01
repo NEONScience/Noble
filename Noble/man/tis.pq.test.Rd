@@ -34,6 +34,7 @@ For the specified dates, site, variables, and data product or name of family of 
 data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
 }
 \examples{
+\dontrun{
 site = "CPER"
 dpID = "DP1.00001.001"
 prin.vars<-c("windSpeed", "windDir")
@@ -44,6 +45,7 @@ package="basic"
 save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
 Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
 time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
+}
 
 }
 \seealso{

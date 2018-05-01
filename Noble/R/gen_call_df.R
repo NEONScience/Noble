@@ -7,8 +7,9 @@
 
     date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
 
-    site_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/sites/", site))$data
-    prod_meta=jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data
+    site_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/sites/", site), unexpected.escape = "skip")$data
+
+    prod_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/products/", dpID), unexpected.escape = "skip")$data
 
     prod_indx=grep(site_meta$dataProducts, pattern = dpID)
     site_indx=grep(prod_meta$siteCodes, pattern = site)
@@ -33,7 +34,8 @@
     if(length(temp_data_urls)==0){stop("Data was missing in specified date range at ", site, ". Check ", dpID, " avalability with NEON.avail")}
 
     #For found DPs, given the Kpi, pull hosted metadata via API
-    api_data<-(lapply(temp_data_urls, function(x) jsonlite::read_json(path = as.character(x))))
+    #print(temp_data_urls)
+    api_data<-lapply(as.list(temp_data_urls), function(x) as.list(rjson::fromJSON(file = as.character(x), unexpected.escape = "skip")))
 
     # build a list of URLs served by the API
     url_list<-c()

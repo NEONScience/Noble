@@ -3,8 +3,8 @@
         "caseSensitive" : false,
         "filePatterns" : [
         ],
-        "path" : "~/Dropbox/GitHub/Noble-Package/Noble",
-        "query" : "format(",
+        "path" : "/Library/Frameworks/R.framework/Versions/3.5/Resources",
+        "query" : "dimnames = list(rn",
         "regex" : false
     }
 }
