@@ -5,7 +5,7 @@
 \title{Perform A Commissioning PQ Test on IRGA CO2 Concentration Data
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr}
 \usage{
-co2.pq.test(site = "CPER", bgn.month, end.month, save.dir, q.th = 95,
+co2.pq.test(site = site, bgn.month, end.month, save.dir, q.th = 95,
   v.th = 88.1)
 }
 \arguments{

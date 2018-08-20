@@ -46,6 +46,7 @@
 
 tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90)
 {
+    options(stringsAsFactors = FALSE)
     quant_threshold=q.th
     valid_threshold=v.th
 
@@ -63,7 +64,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
 
     #pull data
     test.data=data.frame()
-    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, m))
+    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir = site.dir))
     if(length(test.data)>1){
         for(i in 1:length(prin.vars)){
             data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))

@@ -142,7 +142,7 @@
                     ggplot2::labs(x="Date/Time", y=nameData, title=sites.req[s])
                # grobData <- ggplot2::ggplotGrob(plotData) # grab the grob for this plot for later manipulation
             }
-            ggplot2::ggsave(filename =paste0(sites.req[s], "_", dpID, "_", package, "_", nameData, ".png"), plot = plotData, device = "png", path = save.dir, width = 5, height = 4, units = "in")
+            ggplot2::ggsave(filename =paste0(sites.req[s], "_", dpID, "_", package, "_", nameData, ".png"), plot = plotData, device = "png", path = save.dir, width = 6, height = 3, units = "in")
             #gridExtra::grid.arrange(grobData,nrow=1) # plot it
 
         } ##Plotting code

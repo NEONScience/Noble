@@ -1,86 +1,87 @@
-Domain,Site name,SITE,CFGLOC,Rad,2D,Combined,dx_clockwise,dy_clockwise,dx_counterClockwise,dy_counterClockwise,boomOrientation,towerFaceLength,boomLength,Distorted Flow Min Threshold,Distorted Flow Max Threshold,Direction Range Threshold Min,Direction Range Threshold Max,Speed Range Threshold Min,Speed Range Threshold Max,Step,Gap (>= ? Consecutive NAs),Despiking Method,Despiking maximum missing points (%),Despiking window size (n),Despiking step (n),Despiking MAD,Despiking maximum consecutive points (n),Persistence (change),Persistence (time - seconds)
-16,Abby Road,ABBY,ABBY,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-10,Arikaree River,ARIK,ARIK,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Lake Barco,BARC,BARC,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-17,Upper Big Creek,BIGC,BIGC,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-12,Black Tail Deer Creek,BLDE,BLDE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-11,Blue River,BLUE,BLUE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Black Warrior River,BLWA,BLWA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-19,Caribou Creek,CARI,CARI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-13,Como Creek,COMO,COMO,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-5,Crampton Lake,CRAM,CRAM,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-4,Rio Cupeyes,CUPE,CUPE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Flint River,FLNT,FLNT,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-4,Rio Guilarte,GUIL,GUIL,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-1,Hop Brooke,HOPB,HOPB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-6,Kings Creek,KING,KING,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-7,Leconte Creek,LECO,LECO,NA,NA,NA,NA,NA,NA,NA,355,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-2,Lewis Run,LEWI,LEWI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-16,Martha Creek,MART,MART,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Mayfield Creek,MAYF,MAYF,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-6,McDiffit Creek,MCDI,MCDI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-16,McRae Creek,MCRA,MCRA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-18,Oksrukuyik Creek,OKSR,OKSR,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-2,Posey Creek,POSE,POSE,NA,NA,NA,NA,NA,NA,NA,37,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-11,Pringle Creek,PRIN,PRIN,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-9,Prarie Lake,PRLA,PRLA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-9,Prarie Pothole,PRPO,PRPO,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-15,Red Butte Creek,REDB,REDB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Suggs Lake,SUGG,SUGG,NA,NA,NA,NA,NA,NA,NA,3,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-14,Sycamore Creek,SYCA,SYCA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-17,Teakettle 2 Creek,TECR,TECR,NA,NA,NA,NA,NA,NA,NA,0,NA, ,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Lower Tombigbee River,TOMB,TOMB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-18,Toolik Lake,TOOK,TOOK,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-7,Walker Branch,WALK,WALK,NA,NA,NA,NA,NA,NA,NA,4,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-13,West Saint Louis Creek,WLOU,WLOU,NA,NA,NA,NA,NA,NA,NA,5,NA,0.35,NA,NA,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-18,Barrow Arctic Science Consortium,BARR,BARR,BA,BA,Yes,-2.35,0,0,2.35,165,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-1,Bartlett Experimental Forest,BART,BART,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-2,Blandy Experimental Farm,BLAN,BLAN,BA,BA,Yes,-2.35,0,0,2.35,150,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-19,Caribou Creek,BONA,BONA,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-12,"Bozeman, MT (MOR)",BOZE,BOZE,AB,AB,Yes,0,-2.35,-2.35,0,225,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-11,Caddo/LBJ National Grassland ,CLBJ,CLBJ,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-10,Central Plains Experimental Range (CPER) (Pawnee),CPER,CPER,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-9,Dakota Coteau Field School,DCFS,DCFS,BA,AB,No,0,-2.35,0,2.96,245,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-19,Delta Junction,DEJU,DEJU,BA,BA,Yes,-2.35,0,0,2.35,200,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Dead Lake,DELA,DELA,BA,BA,Yes,-2.35,0,0,2.35,190,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Disney Wilderness Preserve,DSNY,DSNY,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-7,"Great Smoky Mountains National Park, Twin Creeks",GRSM,GRSM,BA,AD,No,-2.35,-2.96,0,2.35,50,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-4,Guanica Forest,GUAN,GUAN,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-1,Harvard Forest,HARV,HARV,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-19,Eight Mile Lake (Healy),HEAL,HEAL,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Jones Ecological Research Center,JERC,JERC,AB,BA,No,0,-2.96,0,2.35,45,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-14,Jornada LTER,JORN,JORN,AB,AB,Yes,0,-2.35,-2.35,0,220,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-6,Konza Prairie Biological Station Ag Lowland,KONA,KONA,BA,AB,No,0,-2.35,0,2.96,290,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-6,Konza Prairie Biological Station,KONZ,KONZ,BA,AB,No,0,-2.35,0,2.96,290,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-4,Lajas Experimental Station,LAJA,LAJA,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Lenoir Landing (formerly Choctaw National Wildlife Refuge),LENO,LENO,BA,AB,No,0,-2.35,0,2.96,315,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-4,Ponce Metro (Mameyes),MAME,MAME,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-7,Mountain Lake Biological Station ( SW Virginia),MLBS,MLBS,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-13,"Moab, Canyon lands Ecological Research Site",MOAB,MOAB,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-13,Niwot Ridge/ Mountain Research Station,NIWO,NIWO,BA,AB,No,0,-2.35,0,2.96,225,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-9,Northern Great Plains Research Laboratory,NOGP,NOGP,AB,AB,Yes,0,-2.35,-2.35,0,220,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-11,Klemme Range Research Station,OAES,OAES,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-15,Onaqui-Ault,ONAQ,ONAQ,AB,AB,Yes,0,-2.35,-2.35,0,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-7,Oak Ridge,ORNL,ORNL,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-3,Ordway-Swisher Biological Station,OSBS,OSBS,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-12,"Paradise Valley, MT  (Loch Leven)",PARA,PARA,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-19,Poker Flat ,POKE,POKE,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-15,Red Butte Canyon,RBUT,RBUT,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-10,"RMNP, CASTNET",RMNP,RMNP,BA,BA,Yes,-2.35,-2.96,0,2.35,213,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-1,"Plum Island Suburban - Burlington, MA",SAWB,SAWB,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-2,SCBI,SCBI,SCBI,BA,AB,No,0,-2.35,0,2.96,300,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-2,Smithsonian Environmental Research Center (SERC),SERC,SERC,AB,AB,Yes,0,-2.35,-2.35,0,230,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-17,San Joaquin,SJER,SJER,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-17,Soaproot Saddle,SOAP,SOAP,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-14,Santa Rita Experimental Range,SRER,SRER,BA,BA,Yes,-2.35,0,0,2.35,200,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-5,Steigerwald Land Service,STEI,STEI,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-10,"North Sterling, CO",STER,STER,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-8,Talladega National Forest,TALL,TALL,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-17,Lower Teakettle,TEAK,TEAK,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-16,Thayer,THAY,THAY,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10,0,360,0,65,not applicable,4,A,10,1800,1,7,4,0.001,3600
-18,Toolik Lake,TOOL,TOOL,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
-5,Tree Haven  (tower height listed at 35m),TREE,TREE,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
-6,University of Kansas Field Station,UKFS,UKFS,AB,AB,Yes,0,-2.35,-2.35,0,230,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
-5,UNDERC,UNDE,UNDE,AB,AB,Yes,0,-2.35,-2.35,0,200,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
-9,Woodworth,WOOD,WOOD,BA,AB,No,0,-2.35,0,2.96,245,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
-16,Wind River Experimental Forest,WREF,WREF,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10,0,360,0,65,,,,,,,,,,
+Domain,Site name,SITE,CFGLOC,Rad,2D,Combined,dx_clockwise,dy_clockwise,dx_counterClockwise,dy_counterClockwise,boomOrientation,towerFaceLength,boomLength,Distorted Flow Min Threshold,Distorted Flow Max Threshold
+16,Abby Road,ABBY,ABBY,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+10,Arikaree River,ARIK,ARIK,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+3,Lake Barco,BARC,BARC,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+17,Upper Big Creek,BIGC,BIGC,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+12,Black Tail Deer Creek,BLDE,BLDE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+11,Blue River,BLUE,BLUE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+8,Black Warrior River,BLWA,BLWA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+19,Caribou Creek,CARI,CARI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+13,Como Creek,COMO,COMO,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+5,Crampton Lake,CRAM,CRAM,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+4,Rio Cupeyes,CUPE,CUPE,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+3,Flint River,FLNT,FLNT,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+4,Rio Guilarte,GUIL,GUIL,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+1,Hop Brooke,HOPB,HOPB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+6,Kings Creek,KING,KING,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+7,Leconte Creek,LECO,LECO,NA,NA,NA,NA,NA,NA,NA,355,NA,0.35,NA,NA
+2,Lewis Run,LEWI,LEWI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+16,Martha Creek,MART,MART,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+8,Mayfield Creek,MAYF,MAYF,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+6,McDiffit Creek,MCDI,MCDI,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+16,McRae Creek,MCRA,MCRA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+18,Oksrukuyik Creek,OKSR,OKSR,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+2,Posey Creek,POSE,POSE,NA,NA,NA,NA,NA,NA,NA,37,NA,0.35,NA,NA
+11,Pringle Creek,PRIN,PRIN,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+9,Prarie Lake,PRLA,PRLA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+9,Prarie Pothole,PRPO,PRPO,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+15,Red Butte Creek,REDB,REDB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+3,Suggs Lake,SUGG,SUGG,NA,NA,NA,NA,NA,NA,NA,3,NA,0.35,NA,NA
+14,Sycamore Creek,SYCA,SYCA,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+17,Teakettle 2 Creek,TECR,TECR,NA,NA,NA,NA,NA,NA,NA,0,NA, ,NA,NA
+8,Lower Tombigbee River,TOMB,TOMB,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+18,Toolik Lake,TOOK,TOOK,NA,NA,NA,NA,NA,NA,NA,0,NA,0.35,NA,NA
+7,Walker Branch,WALK,WALK,NA,NA,NA,NA,NA,NA,NA,4,NA,0.35,NA,NA
+13,West Saint Louis Creek,WLOU,WLOU,NA,NA,NA,NA,NA,NA,NA,5,NA,0.35,NA,NA
+18,Barrow Arctic Science Consortium,BARR,BARR,BA,BA,Yes,-2.35,0,0,2.35,165,2.35,2.96,10,10
+1,Bartlett Experimental Forest,BART,BART,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+2,Blandy Experimental Farm,BLAN,BLAN,BA,BA,Yes,-2.35,0,0,2.35,150,2.35,2.96,10,10
+19,Caribou Creek,BONA,BONA,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+12,"Bozeman, MT (MOR)",BOZE,BOZE,AB,AB,Yes,0,-2.35,-2.35,0,225,2.35,2.96,10,10
+11,Caddo/LBJ National Grassland ,CLBJ,CLBJ,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+10,Central Plains Experimental Range (CPER) (Pawnee),CPER,CPER,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+9,Dakota Coteau Field School,DCFS,DCFS,BA,AB,No,0,-2.35,0,2.96,245,2.35,2.96,10,10
+19,Delta Junction,DEJU,DEJU,BA,BA,Yes,-2.35,0,0,2.35,200,2.35,2.96,10,10
+8,Dead Lake,DELA,DELA,BA,BA,Yes,-2.35,0,0,2.35,190,2.35,2.96,10,10
+3,Disney Wilderness Preserve,DSNY,DSNY,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+7,"Great Smoky Mountains National Park, Twin Creeks",GRSM,GRSM,BA,AD,No,-2.35,-2.96,0,2.35,50,2.35,2.96,10,10
+4,Guanica Forest,GUAN,GUAN,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+1,Harvard Forest,HARV,HARV,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+19,Eight Mile Lake (Healy),HEAL,HEAL,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+3,Jones Ecological Research Center,JERC,JERC,AB,BA,No,0,-2.96,0,2.35,45,2.35,2.96,10,10
+14,Jornada LTER,JORN,JORN,AB,AB,Yes,0,-2.35,-2.35,0,220,2.35,2.96,10,10
+6,Konza Prairie Biological Station Ag Lowland,KONA,KONA,BA,AB,No,0,-2.35,0,2.96,290,2.35,2.96,10,10
+6,Konza Prairie Biological Station,KONZ,KONZ,BA,AB,No,0,-2.35,0,2.96,290,2.35,2.96,10,10
+4,Lajas Experimental Station,LAJA,LAJA,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+8,Lenoir Landing (formerly Choctaw National Wildlife Refuge),LENO,LENO,BA,AB,No,0,-2.35,0,2.96,315,2.35,2.96,10,10
+4,Ponce Metro (Mameyes),MAME,MAME,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+7,Mountain Lake Biological Station ( SW Virginia),MLBS,MLBS,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10
+13,"Moab, Canyon lands Ecological Research Site",MOAB,MOAB,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+13,Niwot Ridge/ Mountain Research Station,NIWO,NIWO,BA,AB,No,0,-2.35,0,2.96,225,2.35,2.96,10,10
+9,Northern Great Plains Research Laboratory,NOGP,NOGP,AB,AB,Yes,0,-2.35,-2.35,0,220,2.35,2.96,10,10
+11,Klemme Range Research Station,OAES,OAES,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+15,Onaqui-Ault,ONAQ,ONAQ,AB,AB,Yes,0,-2.35,-2.35,0,180,2.35,2.96,10,10
+7,Oak Ridge,ORNL,ORNL,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+3,Ordway-Swisher Biological Station,OSBS,OSBS,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10
+12,"Paradise Valley, MT  (Loch Leven)",PARA,PARA,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+19,Poker Flat ,POKE,POKE,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+15,Red Butte Canyon,RBUT,RBUT,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10
+10,"RMNP, CASTNET",RMNP,RMNP,BA,BA,Yes,-2.35,-2.96,0,2.35,213,2.35,2.96,10,10
+1,"Plum Island Suburban - Burlington, MA",SAWB,SAWB,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+2,SCBI,SCBI,SCBI,BA,AB,No,0,-2.35,0,2.96,300,2.35,2.96,10,10
+2,Smithsonian Environmental Research Center (SERC),SERC,SERC,AB,AB,Yes,0,-2.35,-2.35,0,230,2.35,2.96,10,10
+17,San Joaquin,SJER,SJER,BA,AD,No,-2.35,-2.96,0,2.35,90,2.35,2.96,10,10
+17,Soaproot Saddle,SOAP,SOAP,AB,AD,No,-2.35,0,0,2.35,360,2.35,2.96,10,10
+14,Santa Rita Experimental Range,SRER,SRER,BA,BA,Yes,-2.35,0,0,2.35,200,2.35,2.96,10,10
+5,Steigerwald Land Service,STEI,STEI,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10
+10,"North Sterling, CO",STER,STER,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+8,Talladega National Forest,TALL,TALL,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+17,Lower Teakettle,TEAK,TEAK,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+16,Thayer,THAY,THAY,BA,BA,Yes,-2.35,0,0,2.35,180,2.35,2.96,10,10
+18,Toolik Lake,TOOL,TOOL,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+5,Tree Haven  (tower height listed at 35m),TREE,TREE,BA,BA,Yes,-2.35,0,0,2.35,135,2.35,2.96,10,10
+6,University of Kansas Field Station,UKFS,UKFS,AB,AB,Yes,0,-2.35,-2.35,0,230,2.35,2.96,10,10
+5,UNDERC,UNDE,UNDE,AB,AB,Yes,0,-2.35,-2.35,0,200,2.35,2.96,10,10
+9,Woodworth,WOOD,WOOD,BA,AB,No,0,-2.35,0,2.96,245,2.35,2.96,10,10
+16,Wind River Experimental Forest,WREF,WREF,BA,AB,No,0,-2.35,0,2.96,270,2.35,2.96,10,10
+6,,MD00,MD00,NA,NA,No,-0.14,0,0,0.23,290,0.25,1.14,1.063829787,10

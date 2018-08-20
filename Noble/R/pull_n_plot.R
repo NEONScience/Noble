@@ -35,6 +35,8 @@
 ##############################################################################################
 
 pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package){
+    options(stringsAsFactors = FALSE)
+
     #require(nneo)
     require(lubridate)
 
@@ -147,3 +149,4 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
         print(paste(sites.req[s], "complete."))
     }
 }
+

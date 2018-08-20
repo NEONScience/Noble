@@ -55,18 +55,23 @@ parse.results=function(test.dir, write.summary=T){
     if(write.summary==T){
         site=unique(parsed.results$site)
 
-        summary.results=data.frame(cbind(site=site,
-                                         passed=unlist(lapply(site, function(x) all(
-                                             parsed.results$data_quantity[parsed.results$site==x]>=
-                                                 parsed.results$quant_threshold[parsed.results$site==x])&
-                                                 all(parsed.results$data_validity[parsed.results$site==x]>=
-                                                         parsed.results$valid_threshold[parsed.results$site==x]))),
-                                         bgn=unlist(lapply(site, function(x) unique(parsed.results$begin_month[parsed.results$site==x]))),
-                                         end=unlist(lapply(site, function(x) unique(parsed.results$end_month[parsed.results$site==x])))
-        )
+        summary.results=data.frame(cbind(site=unique(parsed.results$site),
+                                         passed=unlist(
+                                             lapply(site, function(x)
+                                                 all(
+                                                     parsed.results$data_quantity[parsed.results$site==x]>=
+                                                         parsed.results$quant_threshold[parsed.results$site==x]
+                                                 )&all(
+                                                     parsed.results$data_validity[parsed.results$site==x]>=
+                                                           parsed.results$valid_threshold[parsed.results$site==x])
+                                             )
+                                         ),
+                                         bgn=unlist(lapply(site, function(x) unique(parsed.results$begin_month[parsed.results$site==x][1]))),
+                                         end=unlist(lapply(site, function(x) unique(parsed.results$end_month[parsed.results$site==x])[1]))
+         )
         )
 
-        write.csv(x = summary.results, file =  paste0(test.dir,"/Common/summary_results.csv"), row.names = F)
+        write.csv(x = summary.results, file =  paste0(test.dir,"/Common/summary_results.csv"), row.names = F, append = F)
 
 
     }

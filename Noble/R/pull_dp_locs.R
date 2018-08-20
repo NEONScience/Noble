@@ -31,11 +31,10 @@
 ##############################################################################################
 
 pull.dp.locs=function(site, dpID){
-    month=format(zoo::as.yearmon(Sys.Date()-lubridate::weeks(4)), "%Y-%m")
+    month=format(zoo::as.yearmon(Sys.Date()-lubridate::weeks(8)), "%Y-%m")
     out=jsonlite::read_json(path=paste0("http://data.neonscience.org/api/v0/data/", dpID, "/", site, "/", month))
     files=unlist(lapply(out$data$files, "[[", "name"))
     loc.url=out$data$files[[grep(pattern = "sensor", x = files)[1]]]$url
-
     loc.info=read.csv(file = loc.url)
     raw.hor.vers=stringr::str_split(loc.info$HOR.VER, "\\.")
 

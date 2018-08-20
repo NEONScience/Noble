@@ -37,11 +37,11 @@
 #
 ##############################################################################################
 
-co2.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v.th=88.1){
+co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=95, v.th=88.1){
     time.agr = 30
     files=Noble::pull.eddy.data(site, bgn.month, end.month, package="basic", save.dir)
     file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
-    co2.raw=lapply(files, function(x) Noble::hdf5.to.df(site, hdf5.file=paste0(file.dir,x), meas.name="irgaCo2", time.agr, save.dir))
+    co2.raw=lapply(files, function(x) Noble::hdf5.to.df(site, hdf5.file=paste0(file.dir,x), meas.name="co2Turb", time.agr, save.dir))
     co2.df=do.call(rbind, co2.raw)
     co2.df$timeBgn=gsub(x = co2.df$timeBgn, pattern = "T", replacement = " ")
     co2.df$timeBgn=gsub(x = co2.df$timeBgn, pattern = "z", replacement = "")

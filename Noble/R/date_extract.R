@@ -28,6 +28,6 @@
 
 ## Funciton start
 date.extract=function(data, bgn.date, end.date){
-    data.out=data[which(as.POSIXct(data[,1])>bgn.date & as.POSIXct(data[,1])<end.date),]
+    data.out=data[which(as.POSIXct(data[,1], tz = "UTC")>bgn.date & as.POSIXct(data[,1], tz="UTC")<end.date),]
     return(data.out)
 }

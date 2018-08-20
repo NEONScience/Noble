@@ -202,8 +202,8 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     PAR=PAR[,grepl(pattern = "^PARMean", x = colnames(PAR))]
     QL.PAR=QL.PAR[,grepl(pattern = "linePARMean", x = colnames(QL.PAR))]
 
-    PAR.rho=unlist(lapply(PAR.pairwise, function(x) cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman", exact = F)$estimate))
-    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman", exact = F)$estimate))
+    PAR.rho=unlist(lapply(PAR.pairwise, function(x) round(cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman", exact = F)$estimate, digits=2)))
+    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) round(cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman", exact = F)$estimate, digits = 2)))
 
     names(PAR.rho)=paste0("PAR-", PAR.pairwise)
     names(QL.PAR.rho)=c("QL PAR 1-3", "QL PAR 3-5")
@@ -213,7 +213,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         if(length(PAR.rho<rho.TH)>=(length(PAR.rho)-1)){PAR.rho.test="Pass"}else{PAR.rho.test="Fail"} # ------>PAR rho results####
         if(length(QL.PAR.rho<rho.TH)>=(length(PAR.rho)-1)){QL.PAR.rho.test="Pass"}else{QL.PAR.rho.test="Fail"} # ------>QL PAR rho results####
     }
-
+2
     if(any(PAR.rho<rho.TH)==F){PAR.rho.test="Pass"}else{PAR.rho.test="Fail"} # ------>PAR rho results####
     if(any(QL.PAR.rho<rho.TH)==F){QL.PAR.rho.test="Pass"}else{QL.PAR.rho.test="Fail"} # ------>QL PAR rho results####
 
@@ -270,7 +270,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     # A. Ratio is within ±8% for solar zenith angle < 75°
     set1=DirDif[which(DirDif$SZA<75),]
-    ratio1=sum(set1$total)/sum(set1$gloRadMean)
+    ratio1=round(sum(set1$total)/sum(set1$gloRadMean), 2)
     if(0.92<ratio1&ratio1<1.08){
         rat1Result="Pass"
     }else(rat1Result="Fail")
@@ -280,7 +280,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     ratio2="NA"
     rat2Result="NA"
     if(length(set2[,1]>0)){
-        ratio2=sum(set2$total)/sum(set2$gloRadMean)
+        ratio2=round(sum(set2$total)/sum(set2$gloRadMean), 2)
         if(0.85<ratio1&ratio1<1.15){
             rat2Result="Pass"
         }else(rat2Result="Fail")
@@ -291,7 +291,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     ### Raw data out
     tower.top=data.frame(sets=c("SZA<75", "75<SZA<93"), ratio=c(ratio1, ratio2), result=c(rat1Result, rat2Result))
-    write.csv(x = tower.top, file = paste0(raw.dir,"tower_top_ratios.csv"), row.names = F)
+    write.csv(x = tower.top, file = paste0(raw.dir,"gloRad_tower_top_comparison.csv"), row.names = F)
 
     message(
         paste0("Tower Top (Direct + Diffuse, Global) Consistency Test: ", ratio.result) ##############################################################################################################
@@ -353,8 +353,8 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     }
 
-    write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "gloRad_tower_top_comparison.csv"), row.names = T)
-    message(paste0("Tower Top (Global Radiation Measureemnts) Consistency Test: ", tower.top.glo.rad))
+    write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "tower_top_ratios.csv"), row.names = T)
+    message(paste0("Tower Top (Global Radiation Measurements) Consistency Test: ", tower.top.glo.rad))
 
     # if(site %in% Noble::tis_site_config$SiteID[Noble::tis_site_config$Core.Relocatable=="Core"]){
     #

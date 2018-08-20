@@ -1,7 +1,9 @@
 #Make is_site_config
+
+options(stringsAsFactors = FALSE)
 library(Noble)
-TIS=tis_site_config
-AIS=ais_site_config
+TIS=Noble::tis_site_config
+AIS=Noble::ais_site_config
 
 TIS=data.frame(System=rep("TIS", times=length(TIS[,1])), TIS)
 AIS=data.frame(System=rep("AIS", times=length(AIS[,1])), AIS)
@@ -26,7 +28,7 @@ save(tis_pri_vars, file = "../Noble/data/tis_pri_vars.rda")
 ## Make the wind thresholds, from the CSV
 
 wind_thresholds=data.frame(read.csv(file="../DB_making/raw_DBs/ATBD_thresholds_2Dwind.csv"))
-save(wind_thresholds, file = "./Noble/data/wind_thresholds.rda")
+save(wind_thresholds, file = "../Noble/data/wind_thresholds.rda")
 
 
 ## Make the radiation DQ testing info DB
@@ -35,7 +37,7 @@ save(rad_dq_info, file = "../Noble/data/rad_dq_info.rda")
 
 
 ## Make the USCRN site data table
-USCRN_sites = data.frame(read.table("ftp://ftp.ncdc.noaa.gov/pub/data/uscrn/products/stations.tsv", header = T, sep = "\t"))
+USCRN_sites = data.frame(read.csv("../DB_making/raw_DBs/uscrn_sites.csv", stringsAsFactors = F))
 # write.csv(USCRN_sites, file = "../DB_making/raw_DBs/uscrn_sites.csv", row.names = F)
 save(USCRN_sites, file="../Noble/data/uscrn_sites.rda")
 

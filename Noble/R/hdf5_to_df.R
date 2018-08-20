@@ -37,7 +37,7 @@ hdf5.to.df=function(site, hdf5.file, meas.name, time.agr, save.dir){
 
     ok.meas=c("co2Stor","fluxHeatSoil", "h2oSoilVol", "h2oStor", "irgaCo2",
               "irgaH2o", "isoCo2", "isoH2o", "presBaro", "radiNet", "soni",
-              "soniAmrs", "tempAirLvl", "tempAirTop", "tempSoil")
+              "soniAmrs", "tempAirLvl", "tempAirTop", "tempSoil", "co2Turb", "amrs", "co2Stor")
     if(!meas.name %in% ok.meas){
         message("Invalid measurement name selected. Please enter one of the following:")
         stop(print(ok.meas))

@@ -73,7 +73,7 @@ pull.USCRN.data <- function(timeScale, stationID, TimeBgn, TimeEnd, saveDir) {
         wban<-substr(stationID, (nchar(stationID)-4), nchar(stationID))
 
         #Read station info for all sites in the USCRN
-        station.Info=Noble::GHCNDstations
+        station.Info=Noble::USCRN_sites
         monthlyFiles<-"https://www1.ncdc.noaa.gov/pub/data/uscrn/products/monthly01/"
 
         site.info=station.Info[grep(wban, station.Info$WBAN),]

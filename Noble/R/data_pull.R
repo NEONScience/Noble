@@ -45,6 +45,7 @@
 
 
 data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F){
+    options(stringsAsFactors = FALSE)
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
@@ -98,7 +99,7 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
         data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)],
                                                        function(l) as.data.frame(read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
         data.lump=do.call(rbind, data.wad) #make into data frame of lists, with dimensions nrow=n_months, ncol=n_measurementLocations
-        data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(rbind, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
+        data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(plyr::rbind.fill, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
 
         ## Clean up column naming (apply location info to measurement columns)
         for(i in 1:length(data.chunk)){
