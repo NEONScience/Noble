@@ -55,7 +55,7 @@ soni.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v
     test.data=merge(x=ref.times, y=soni.df, by="timeBgn", all.x = T)
 
     if(length(test.data)>1){
-        data.indx<-grep(x=colnames(test.data), pattern="mean.veloZaxsErth")
+        data.indx<-grep(x=colnames(test.data), pattern="mean\\.velo.axsErth") #pattern="mean.veloZaxsErth"
 
         qf.indx<-grep(x=colnames(test.data), pattern="qfFinl.angZaxsErth")
         #qf.indx<-append(qf.indx, grep(x=colnames(test.data), pattern="^finalQF*"))
@@ -86,7 +86,7 @@ soni.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v
                             end_month=end.month,
                             days_tested=days,
                             data_product="DP4.00200.001",
-                            variable_tested="mean.veloZaxsErth",
+                            variable_tested="mean.velo*axsErth",
                             data_quantity=data.quant,
                             data_validity=data.valid,
                             quant_threshold= q.th,

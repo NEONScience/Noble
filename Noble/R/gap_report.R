@@ -94,7 +94,7 @@ gap.report=function(site, bgn.month, end.month, dpID, save.dir){
     no.data.times=rbind(do.call(rbind, sp.no.data), do.call(rbind, ml.no.data))
     no.qf.times=rbind(do.call(rbind, sp.no.qf), do.call(rbind, ml.no.qf))
 
-    no.data.times=no.data.times[-which(no.data.times[,2]==no.data.times[,3]),] #weed out weird duplicates
+    no.data.times=no.data.times[!(no.data.times[,2]==no.data.times[,3]),] #weed out weird duplicates
 
     write.csv(x = no.data.times, file = paste0(save.dir, "/", site, "_", bgn.month, "-", end.month, "_", short.name, "_NO_DATA.csv"),row.names = F)
     write.csv(x = no.qf.times, file = paste0(save.dir, "/", site, "_", bgn.month, "-", end.month,  "_", short.name, "_NO_QF.csv"))

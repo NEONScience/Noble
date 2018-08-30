@@ -127,7 +127,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     f.test=stats::var.test(unlist(as.list(first.pop[,(2:length(colnames(first.pop)))])),# ------>f.test results####
                            unlist(as.list(last.pop[,(2:length(colnames(last.pop)))])))
 
-    if(f.test$statistic>1.05|f.test$statistic<0.95){f.test.result="Fail"}else{f.test.result="Pass"} ################################################################
+    if(0.01>f.test$p.value){f.test.result="Fail"}else{f.test.result="Pass"} ################################################################
 
     message(paste0("Variance Stability Test: ", f.test.result))
     write.csv(x = data.frame(value=unlist(f.test)),file = paste0(raw.dir, "variance_stats.csv"))
@@ -332,16 +332,18 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     data.indx=unlist(lapply(c("gloRadMean", "inSWMean", "shortRadMean"), function(x) which(grepl(pattern = x, x=colnames(big.df)))))
 
-    big.df=big.df[-any(is.na(big.df[,data.indx]))]
+
 
     if(length(data.indx)==3){
         list=list(
-            pair1=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95),
-            pair2=cor.test(x=big.df[,data.indx[2]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95),
-            pair3=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95)
+            pair1=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95, exact = TRUE),
+            pair2=cor.test(x=big.df[,data.indx[2]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE),
+            pair3=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE)
         )
 
         tower.top.glo.rad="Fail"
+        p.vals=lapply(list, "[[", "p.value")
+        probs=lapply(p.vals, function(x) 100-x)
         if(isTRUE(unlist(lapply(list, "[[", "estimate")>.9))){tower.top.glo.rad="Pass"}
 
     }

@@ -38,7 +38,7 @@
 
 # bgn.month="2017-04"
 # end.month="2017-05"
-# site="BARR"
+# site="CPER"
 # save.dir="/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisAirTempDataQuality/"
 
 air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
@@ -62,6 +62,9 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
     end_temp$mon<-end_temp$mon+1
     #end_temp<-end_temp-lubridate::minutes(30)-lubridate::seconds(1)
 
+    frst.week=c(as.Date(paste0(bgn.month, "-01")), as.Date(paste0(bgn.month, "-01"))+7)
+    last.week=c(as.Date(Noble::end.day.time(end.month = end.month, time.agr = 1))-7, as.Date(Noble::end.day.time(end.month = end.month, time.agr = 1)))
+
 
     group.one=Noble::date.extract(data = test.data, bgn.date = bgn_temp, end.date =bgn_temp+lubridate::days(15))
     group.one=data.frame(startDateTime=group.one$startDateTime, group.one[,grepl(pattern = "tempSingleVariance", x = colnames(group.one))|grepl(pattern = "tempTripleVariance", x = colnames(group.one))])
@@ -72,13 +75,55 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
 
     f.test=c()
     for(i in 2:length(colnames(group.one))){
-    f.test=append(f.test, try(var.test(x=group.one[,i], y = group.two[,i], ratio = 1, conf.level = 0.95)$estimate, silent = T))
+        f.test=append(f.test, try(var.test(x=group.one[,i], y = group.two[,i], ratio = 1)$p.value, silent = T))
     }
     f.test[unlist(lapply(f.test, function(f) grepl(pattern = "not enough", x = f)))]=NA
     #if(class(f.test)=="try-error"){f.test=NA}
-    mean=mean(f.test, na.rm = T)
+    f.test=as.numeric(f.test)
+    mean=mean(na.omit(f.test), na.rm = T)
     f.test=append(f.test, c("mean"=mean))
-    variance=data.frame(ML=c(seq(Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]), "Mean"), f.test)
+    variance=data.frame(ML=c(seq(Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]), "Mean"), P_value=f.test)
+
+## PLOTTING
+    saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
+    taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
+
+    test.data=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
+
+    test.time = c("00:00:00", "00:30:00", "01:00:00", "01:30:00", "02:00:00", "02:30:00", "03:00:00",
+                  "03:30:00", "04:00:00")
+
+    night.data=test.data[which(strftime(test.data$startDateTime, format="%H:%M:%S", tz=site.tz) %in% test.time),]
+    night.data=data.frame(startDateTime=night.data$startDateTime, night.data[,grepl(pattern = "Variance", x = colnames(night.data))])
+    m.night=reshape2::melt(night.data, id.vars="startDateTime")
+    m.night$startDateTime=as.POSIXct(m.night$startDateTime, tz = site.tz)
+    m.night$testPeriod=0
+    m.night$testPeriod[frst.week[2]>m.night$startDateTime&m.night$startDateTime>=frst.week[1]]=1
+    m.night$testPeriod[last.week[2]>m.night$startDateTime&m.night$startDateTime>=last.week[1]]=1
+
+    var.plot=ggplot2::ggplot(data=m.night, ggplot2::aes(x=startDateTime, y=value, color=as.factor(variable)))+
+        ggplot2::geom_rect(
+            ggplot2::aes(xmin=as.POSIXct(frst.week[1], tz=site.tz),
+                         xmax = as.POSIXct(frst.week[2], tz=site.tz),
+                         ymin = -Inf,
+                         ymax = Inf),
+            fill = 'gray',
+            alpha = 0.01)+
+        ggplot2::geom_rect(
+            ggplot2::aes(xmin=as.POSIXct(last.week[2], tz=site.tz),
+                         xmax = as.POSIXct(last.week[1], tz=site.tz),
+                         ymin = -Inf,
+                         ymax = Inf),
+            fill = 'gray',
+            alpha = 0.01)+
+        ggplot2::geom_point()+
+        ggplot2::theme_light()+
+        ggplot2::ggtitle(paste0(site, " overnight variance values for radiation data products"), subtitle = "Gray boxes indicate test periods")+
+        ggplot2::xlab("Date")+
+        ggplot2::geom_smooth()
+
+    ggplot2::ggsave(plot = var.plot, device = "png", width = 8, height = 5, filename = paste0(site, "_night_vars.png"), path = Noble:::.data.route(site = site, save.dir = save.dir), units = "in")
+
 
     ## PART 2: Internal Consistancy
     internal.data=test.data[,grepl(pattern = "tempSingleMean", x = colnames(test.data))|grepl(pattern = "tempTripleMean", x = colnames(test.data))]
@@ -89,8 +134,8 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
     #spearman[lapply(spearman, function(f) f)]
 
     spearman=as.data.frame(do.call(rbind, spearman))
-    sman.rho=data.frame(Pair=mls, internal.rho=unlist(spearman$estimate))
-    sman.rho$internal.rho[grepl(x=sman.rho$internal.rho, pattern = "Error")]=NA
+    sman.p=data.frame(Pair=mls, internal.p=unlist(spearman$p.value))
+    sman.p$internal.p[grepl(x=sman.p$internal.p, pattern = "Error")]=NA
 
     ## PART 3: External Consistancy
 
@@ -103,10 +148,10 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
         ref.sites=ref.sites[lapply(temp, "[[", "date.end")=="present"]
         temp=lapply(ref.sites, "[[", "identifiers")
         ref.sites=ref.sites[any(unlist(lapply(temp, "[[", "idType")) %in% c("SCAN", "WBAN"))]
-       # wban=as.data.frame(lapply(ref.sites, "[[", "identifiers"))[as.data.frame(lapply(ref.sites, "[[", "identifiers"))[,1]=="WBAN",2]
+        # wban=as.data.frame(lapply(ref.sites, "[[", "identifiers"))[as.data.frame(lapply(ref.sites, "[[", "identifiers"))[,1]=="WBAN",2]
 
     }
-    rho=NA
+    p_val=NA
     if(length(ref.sites)>0){
         ext.loc.info=do.call(rbind, lapply(ref.sites, "[[", "location"))
 
@@ -136,7 +181,7 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
                                     dplyr::group_by(Date = cut(Date, breaks="30 min")) %>%
                                     dplyr::summarize(airTemp = mean(AIR_TEMPERATURE)))
 
-            neon.temp=data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+            neon.temp=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
 
             neon.data=data.frame(Date=as.POSIXct(neon.temp$startDateTime, tz = "UTC"), neon.temp=neon.temp$tempSingleMean.000.020)
 
@@ -146,8 +191,8 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
 
 
             comp.data=merge(x=neon.data, y=ref.data)
-            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman", conf.level = 0.95)
-            rho=correlation$estimate
+            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
+            p_val=correlation$p.value
         }else if(ref.site$platform=="NRCS"){
             ref.data=RNRCS::grabNRCS.data(network = "SCAN",
                                           site_id = ref.site$identifiers$id[ref.site$identifiers$idType=="SCAN"],
@@ -177,19 +222,19 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
             #simple.data$Date=as.POSIXct(simple.data$Date)
 
             comp.data=merge(x=neon.data, y=simple.data, by="Date")
-            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman", conf.level = 0.95)
-            rho=correlation$estimate
+            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
+            p_val=correlation$p.value
         }
     }
 
-    out=list("Mean Variance"=variance, "Internal Correlation"=sman.rho, "External Correlation"=rho)
-    if(is.na(out$`Mean Variance`$f.test[length(out$`Mean Variance`$ML)])){var.result="No Test"}else if(out$`Mean Variance`$f.test[length(out$`Mean Variance`$ML)]>.95&out$`Mean Variance`$f.test[length(out$`Mean Variance`$ML)]<1.05){var.result="Pass"}else{var.result="Fail"}
-    if(out$`Internal Correlation`$internal.rho[length(out$`Internal Correlation`$internal.rho)]>.95){int.cor.result="Pass"}else{int.cor.result="Fail"}
-    if(is.na(out$`External Correlation`)){ext.cor.result="No Test"}else if(out$`External Correlation`>0.95){ext.cor.result="Pass"}else{ext.cor.result="Fail"}
+    out=list("Variance Stability"=variance, "Internal Correlation"=sman.p, "External Correlation"=p_val)
+    if(out$`Variance Stability`$P_value[length(out$`Variance Stability`$ML)]>0.01){var.result="Pass"}else{var.result="Fail"}
+    if(all(out$`Internal Correlation`$internal.p<.001)){int.cor.result="Pass"}else{int.cor.result="Fail"}
+    if(is.na(out$`External Correlation`)){ext.cor.result="No Test"}else if(out$`External Correlation`<0.001){ext.cor.result="Pass"}else{ext.cor.result="Fail"}
     if(all(c(var.result, int.cor.result, ext.cor.result)=="Pass")){result="Pass"}else{result="Fail"}
 
     data.dir=Noble:::.data.route(site = site, save.dir = save.dir)
-    write.csv(x = out$`Mean Variance`, file = paste0(data.dir, "variance.csv"), row.names = F)
+    write.csv(x = out$`Variance Stability`, file = paste0(data.dir, "variance.csv"), row.names = F)
     write.csv(x = out$`Internal Correlation`, file = paste0(data.dir, "internal_comparison.csv"), row.names = F)
     write.csv(x = out$`External Correlation`, file = paste0(data.dir, "external_comparison.csv"), row.names = F)
 
