@@ -20,5 +20,5 @@ Depends: R (>= 3.4.0),
     httr,
     zoo,
     stringr,
-    RAtmosphere,
     RNRCS
+Suggests:    RAtmosphere,
