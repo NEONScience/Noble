@@ -42,10 +42,10 @@ USCRN_sites = data.frame(read.csv("../DB_making/raw_DBs/uscrn_sites.csv", string
 save(USCRN_sites, file="../Noble/data/uscrn_sites.rda")
 
 #AIS Site config
-ais_site_config=read.csv(file="../DB_making/raw_DBs/ais_sites.csv")
-save(ais_site_config, file = "../Noble/data/ais_site_config.rda")
+ais_site_config=read.csv(file="../../DB_making/raw_DBs/ais_sites.csv")
+colnames(ais_site_config)=tolower(colnames(ais_site_config))
+save(ais_site_config, file = "./data/ais_site_config.rda")
 
 #TIS Site Config
-
-tis_site_config=read.csv("../DB_making/raw_DBs/tis_site_config.csv")
-save(tis_site_config, file = "../Noble/data/tis_site_config.rda")
+tis_site_config=read.csv("../../DB_making/raw_DBs/tis_site_config.csv", stringsAsFactors = F)
+save(tis_site_config, file = "./data/tis_site_config.rda")
