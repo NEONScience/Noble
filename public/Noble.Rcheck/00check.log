@@ -1,0 +1,490 @@
+* using log directory ‘/Users/rlee/GitHub/Noble/public/Noble.Rcheck’
+* using R version 3.5.1 (2018-07-02)
+* using platform: x86_64-apple-darwin15.6.0 (64-bit)
+* using session charset: UTF-8
+* using options ‘--no-manual --as-cran’
+* checking for file ‘Noble/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘Noble’ version ‘0.3.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+Depends: includes the non-default packages:
+  ‘lubridate’ ‘hellno’ ‘jsonlite’ ‘ggplot2’ ‘magrittr’ ‘data.table’
+  ‘dplyr’ ‘httr’ ‘zoo’ ‘stringr’ ‘RNRCS’
+Adding so many packages to the search path is excessive and importing
+selectively is preferable.
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .Rd
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking serialization versions ... OK
+* checking whether package ‘Noble’ can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... WARNING
+'::' or ':::' imports not declared from:
+  ‘RAtmosphere’ ‘RCurl’ ‘circular’ ‘geosphere’ ‘gridExtra’ ‘gtools’
+  ‘metScanR’ ‘plyr’ ‘reshape2’ ‘rhdf5’
+'library' or 'require' calls to packages already attached by Depends:
+  ‘data.table’ ‘ggplot2’ ‘lubridate’ ‘magrittr’ ‘stringr’ ‘zoo’
+  Please remove these calls from your code.
+Packages in Depends field not imported from:
+  ‘RNRCS’ ‘data.table’ ‘dplyr’ ‘ggplot2’ ‘hellno’ ‘httr’ ‘jsonlite’
+  ‘lubridate’ ‘magrittr’ ‘stringr’ ‘zoo’
+  These packages need to be imported from (in the NAMESPACE file)
+  for when this namespace is loaded but not attached.
+Missing or unexported objects:
+  ‘Noble::NEON.avail’ ‘Noble::distorted.field’ ‘Noble::end.day.time’
+  ‘Noble::find.gap’ ‘Noble::hdf5.to.df’ ‘Noble::health.data’
+  ‘Noble::help.time.seq’ ‘Noble::ml.extract’ ‘Noble::pull.USCRN.data’
+  ‘Noble::pull.dp.locs’ ‘Noble::pull.eddy.data’ ‘Noble::sp.extract’
+There are ::: calls to the package's namespace in its code. A package
+  almost never needs to use ::: for its own objects:
+  ‘.data.route’ ‘.gen.call.df’ ‘.result.route’ ‘end.day.time’
+* checking S3 generic/method consistency ... WARNING
+plot:
+  function(x, ...)
+plot.dp.survey:
+  function(dpID, save.dir, site, pri.var)
+
+plot:
+  function(x, ...)
+plot.wind.dir.hist:
+  function(site, bgn.month, end.month, save.dir, dir.bins)
+
+plot:
+  function(x, ...)
+plot.wind.rose:
+  function(site, bgn.month, end.month, ml, speed.bins, dir.bins)
+
+date:
+  function(x)
+date.extract:
+  function(data, bgn.date, end.date)
+
+See section ‘Generic functions and methods’ in the ‘Writing R
+Extensions’ manual.
+
+Found the following apparent S3 methods exported but not registered:
+  date.extract plot.dp.survey plot.wind.dir.hist plot.wind.rose
+See section ‘Registering S3 methods’ in the ‘Writing R Extensions’
+manual.
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+.tis.pq.test: no visible global function definition for ‘read.csv’
+.tis.pq.test: no visible global function definition for ‘write.csv’
+air.temp.cnst.plot : <anonymous>: no visible binding for global
+  variable ‘T1’
+air.temp.cnst.plot : <anonymous>: no visible binding for global
+  variable ‘T2’
+air.temp.cnst.plot: no visible global function definition for
+  ‘graphics.off’
+air.temp.cnst.plot: no visible global function definition for ‘ggsave’
+air.temp.dq.test: no visible global function definition for ‘var.test’
+air.temp.dq.test: no visible global function definition for ‘na.omit’
+air.temp.dq.test: no visible binding for global variable
+  ‘startDateTime’
+air.temp.dq.test: no visible binding for global variable ‘value’
+air.temp.dq.test: no visible binding for global variable ‘variable’
+air.temp.dq.test : <anonymous>: no visible global function definition
+  for ‘cor.test’
+air.temp.dq.test: no visible global function definition for ‘%>%’
+air.temp.dq.test: no visible binding for global variable ‘Date’
+air.temp.dq.test: no visible binding for global variable
+  ‘AIR_TEMPERATURE’
+air.temp.dq.test: no visible global function definition for ‘cor.test’
+air.temp.dq.test: no visible global function definition for ‘write.csv’
+air.temp.dq.test: no visible global function definition for ‘read.csv’
+air.temp.plot: no visible binding for global variable ‘Date’
+air.temp.plot: no visible binding for global variable ‘value’
+air.temp.plot: no visible binding for global variable ‘variable’
+co2.pq.test: no visible global function definition for ‘read.csv’
+co2.pq.test: no visible global function definition for ‘write.csv’
+data.pull : <anonymous> : <anonymous>: no visible global function
+  definition for ‘read.csv’
+data.pull: no visible global function definition for ‘write.csv’
+data.pull: no visible global function definition for ‘read.csv’
+fan.test: no visible global function definition for ‘read.csv’
+fan.test: no visible global function definition for ‘na.omit’
+fan.test: no visible global function definition for ‘write.csv’
+gap.report: no visible global function definition for ‘na.exclude’
+gap.report : seq.length: no visible global function definition for
+  ‘head’
+gap.report: no visible global function definition for ‘write.csv’
+gap.vis: no visible global function definition for ‘na.exclude’
+gap.vis : seq.length: no visible global function definition for ‘head’
+gap.vis: no visible binding for global variable ‘location’
+gap.vis: no visible binding for global variable ‘gap.start’
+gap.vis: no visible binding for global variable ‘gap.end’
+hdf5.to.df: no visible global function definition for ‘write.csv’
+health.data: no visible global function definition for ‘sunstr’
+par.cnst.plot : <anonymous>: no visible binding for global variable
+  ‘T1’
+par.cnst.plot : <anonymous>: no visible binding for global variable
+  ‘T2’
+par.cnst.plot: no visible global function definition for ‘graphics.off’
+par.cnst.plot: no visible global function definition for ‘ggsave’
+parse.results: no visible global function definition for ‘read.csv’
+parse.results: no visible global function definition for ‘write.csv’
+plot.dp.survey: no visible binding for global variable ‘Month’
+plot.dp.survey: no visible binding for global variable ‘value’
+plot.dp.survey: no visible binding for global variable ‘variable’
+plot.dp.survey: no visible global function definition for
+  ‘element_text’
+plot.dp.survey: no visible global function definition for
+  ‘graphics.off’
+plot.dp.survey: no visible global function definition for ‘ggsave’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘ggplot’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘aes’
+plot.wind.dir.hist : plot: no visible binding for global variable
+  ‘windDirMean’
+plot.wind.dir.hist : plot: no visible binding for global variable
+  ‘windDirFinalQF’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘geom_histogram’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘scale_fill_manual’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘scale_x_continuous’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘geom_vline’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘theme_minimal’
+plot.wind.dir.hist : plot: no visible global function definition for
+  ‘ggtitle’
+plot.wind.dir.hist : <anonymous>: no visible global function definition
+  for ‘ggplot’
+plot.wind.dir.hist : <anonymous>: no visible global function definition
+  for ‘geom_blank’
+plot.wind.dir.hist : <anonymous>: no visible global function definition
+  for ‘xlim’
+plot.wind.dir.hist : <anonymous>: no visible global function definition
+  for ‘ylim’
+plot.wind.dir.hist : <anonymous>: no visible global function definition
+  for ‘annotate’
+plot.wind.dir.hist: no visible global function definition for ‘ggsave’
+plot.wind.rose: no visible binding for global variable ‘DirCut’
+plot.wind.rose: no visible binding for global variable ‘SpeedCut’
+precip.plot: no visible binding for global variable ‘startDateTime’
+precip.plot: no visible binding for global variable ‘Precip’
+pull.USCRN.data : get.data: no visible global function definition for
+  ‘read.delim’
+pull.USCRN.data : get.data : <anonymous>: no visible global function
+  definition for ‘str_pad’
+pull.USCRN.data : get.data: no visible global function definition for
+  ‘between’
+pull.USCRN.data: no visible global function definition for ‘read.csv’
+pull.USCRN.data: no visible global function definition for ‘write.csv’
+pull.dp.locs: no visible global function definition for ‘read.csv’
+pull.eddy.data: no visible global function definition for
+  ‘download.file’
+pull.n.plot: no visible global function definition for ‘read.csv’
+pull.n.plot: no visible global function definition for ‘pdf’
+pull.n.plot: no visible binding for global variable ‘time’
+pull.n.plot: no visible binding for global variable ‘value’
+pull.n.plot: no visible binding for global variable ‘qfFail’
+pull.n.plot: no visible global function definition for ‘graphics.off’
+rad.dq.test: no visible global function definition for ‘write.csv’
+rad.dq.test: no visible binding for global variable ‘startDateTime’
+rad.dq.test: no visible binding for global variable ‘value’
+rad.dq.test: no visible binding for global variable ‘variable’
+rad.dq.test : <anonymous>: no visible global function definition for
+  ‘cor.test’
+rad.dq.test: no visible global function definition for ‘cor.test’
+rad.dq.test: no visible global function definition for ‘%>%’
+rad.dq.test: no visible binding for global variable
+  ‘gloRadMean.000.060’
+rad.dq.test: no visible binding for global variable ‘UTC_DATE’
+rad.dq.test: no visible binding for global variable ‘NEON.rad’
+rad.dq.test: no visible global function definition for ‘read.csv’
+soil.temp.plot: no visible binding for global variable ‘value’
+soil.temp.plot: no visible binding for global variable ‘depth’
+soni.pq.test: no visible global function definition for ‘read.csv’
+soni.pq.test: no visible global function definition for ‘write.csv’
+test.sites: no visible global function definition for ‘complete.cases’
+tis.pq.test: no visible global function definition for ‘read.csv’
+tis.pq.test: no visible global function definition for ‘write.csv’
+wind.dq.test: no visible global function definition for ‘%>%’
+wind.dq.test: no visible binding for global variable ‘startDateTime’
+wind.dq.test: no visible binding for global variable
+  ‘windSpeedMean.000.050’
+wind.dq.test: no visible global function definition for ‘cor.test’
+wind.dq.test: no visible global function definition for ‘write.csv’
+wind.dq.test: no visible binding for global variable ‘raw.dir’
+wind.dq.test: no visible binding for global variable ‘UTC_DATE’
+wind.dq.test: no visible binding for global variable ‘NEON.dir’
+wind.rose.report: no visible global function definition for ‘pdf’
+wind.rose.report: no visible binding for global variable ‘DirCut’
+wind.rose.report: no visible binding for global variable ‘SpeedCut’
+wind.rose.report: no visible global function definition for ‘dev.off’
+Undefined global functions or variables:
+  %>% AIR_TEMPERATURE Date DirCut Month NEON.dir NEON.rad Precip
+  SpeedCut T1 T2 UTC_DATE aes annotate between complete.cases cor.test
+  depth dev.off download.file element_text gap.end gap.start geom_blank
+  geom_histogram geom_vline ggplot ggsave ggtitle gloRadMean.000.060
+  graphics.off head location na.exclude na.omit pdf qfFail raw.dir
+  read.csv read.delim scale_fill_manual scale_x_continuous
+  startDateTime str_pad sunstr theme_minimal time value var.test
+  variable windDirFinalQF windDirMean windSpeedMean.000.050 write.csv
+  xlim ylim
+Consider adding
+  importFrom("grDevices", "dev.off", "graphics.off", "pdf")
+  importFrom("stats", "complete.cases", "cor.test", "na.exclude",
+             "na.omit", "time", "var.test")
+  importFrom("utils", "download.file", "head", "read.csv", "read.delim",
+             "write.csv")
+to your NAMESPACE file.
+* checking Rd files ... NOTE
+prepare_Rd: distorted.field.Rd:25-27: Dropping empty section \seealso
+prepare_Rd: end.day.time.Rd:20-22: Dropping empty section \examples
+prepare_Rd: hdf5.to.df.Rd:30-33: Dropping empty section \examples
+prepare_Rd: pull.eddy.data.Rd:29-32: Dropping empty section \examples
+* checking Rd metadata ... OK
+* checking Rd line widths ... NOTE
+Rd file 'air.temp.dq.test.Rd':
+  \examples lines wider than 100 characters:
+     data.pull(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir ... [TRUNCATED]
+
+Rd file 'gap.report.Rd':
+  \examples lines wider than 100 characters:
+     gap.report(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+
+Rd file 'gap.vis.Rd':
+  \examples lines wider than 100 characters:
+     gap.vis(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+
+These lines will be truncated in the PDF manual.
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... WARNING
+Undocumented code objects:
+  ‘USCRN_sites’ ‘wind_thresholds’
+Undocumented data sets:
+  ‘USCRN_sites’ ‘wind_thresholds’
+All user-level objects in a package should have documentation entries.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... WARNING
+Undocumented arguments in documentation object 'NEON.avail'
+  ‘dpID’
+Documented arguments not in \usage in documentation object 'NEON.avail':
+  ‘\code{dpID}’
+
+Undocumented arguments in documentation object 'air.temp.cnst.plot'
+  ‘end.month’
+Documented arguments not in \usage in documentation object 'air.temp.cnst.plot':
+  ‘end.date’
+
+Documented arguments not in \usage in documentation object 'air.temp.dq.test':
+  ‘dpID’ ‘time.agr’ ‘package’
+
+Undocumented arguments in documentation object 'air.temp.plot'
+  ‘bgn.month’ ‘end.month’ ‘site’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'air.temp.plot':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'co2.pq.test'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘save.dir’ ‘q.th’ ‘v.th’
+Documented arguments not in \usage in documentation object 'co2.pq.test':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'data.pull'
+  ‘site’ ‘dpID’ ‘bgn.month’ ‘end.month’ ‘time.agr’ ‘package’ ‘save.dir’
+  ‘complete.times’
+Documented arguments not in \usage in documentation object 'data.pull':
+  ‘\code{site}’ ‘\code{dpID}’ ‘\code{bgn.month}’ ‘\code{end.month}’
+  ‘\code{time.agr}’ ‘\code{package}’ ‘\code{save.dir}’
+  ‘\code{complete.times}’
+
+Undocumented arguments in documentation object 'distorted.field'
+  ‘site’
+Documented arguments not in \usage in documentation object 'distorted.field':
+  ‘\code{site}’
+
+Undocumented arguments in documentation object 'dp.survey'
+  ‘dpID’ ‘save.dir’ ‘site’ ‘pri.var’
+Documented arguments not in \usage in documentation object 'dp.survey':
+  ‘\code{dpID}’ ‘\code{save.dir}’ ‘\code{site}’
+
+Undocumented arguments in documentation object 'end.day.time'
+  ‘end.month’ ‘time.agr’
+Documented arguments not in \usage in documentation object 'end.day.time':
+  ‘\code{end.month}’ ‘\code{time.agr}’
+
+Undocumented arguments in documentation object 'fan.test'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘save.dir’ ‘pass.th’
+Documented arguments not in \usage in documentation object 'fan.test':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{save.dir}’
+  ‘\code{pass.th}’
+
+Undocumented arguments in documentation object 'find.gap'
+  ‘data’ ‘time.agr’ ‘return’
+Documented arguments not in \usage in documentation object 'find.gap':
+  ‘\code{data}’ ‘\code{time.agr}’ ‘\code{return}’
+
+Undocumented arguments in documentation object 'gap.report'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘dpID’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'gap.report':
+  ‘\code{site}’ ‘\code{dpID}’ ‘\code{bgn.month}’ ‘\code{end.date}’
+  ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'gap.vis'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘dpID’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'gap.vis':
+  ‘\code{site}’ ‘\code{dpID}’ ‘\code{bgn.month}’ ‘\code{end.date}’
+  ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'hdf5.to.df'
+  ‘site’ ‘hdf5.file’ ‘meas.name’ ‘time.agr’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'hdf5.to.df':
+  ‘\code{site}’ ‘\code{hdf5.file}’ ‘\code{meas.name}’ ‘\code{time.agr}’
+  ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'health.data'
+  ‘site’ ‘dpID’ ‘bgn.month’ ‘end.month’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'health.data':
+  ‘\code{dpID}’ ‘\code{site}’
+
+Undocumented arguments in documentation object 'par.cnst.plot'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'par.cnst.plot':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.date}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'parse.results'
+  ‘test.dir’ ‘write.summary’
+Documented arguments not in \usage in documentation object 'parse.results':
+  ‘\code{test.dir}’ ‘\code{write.summary}’
+
+Undocumented arguments in documentation object 'plot.dp.survey'
+  ‘dpID’ ‘save.dir’ ‘site’ ‘pri.var’
+Documented arguments not in \usage in documentation object 'plot.dp.survey':
+  ‘\code{dpID}’ ‘\code{save.dir}’ ‘\code{site}’
+
+Undocumented arguments in documentation object 'plot.wind.dir.hist'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘save.dir’ ‘dir.bins’
+Documented arguments not in \usage in documentation object 'plot.wind.dir.hist':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.date}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'plot.wind.rose'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘ml’ ‘speed.bins’ ‘dir.bins’
+Documented arguments not in \usage in documentation object 'plot.wind.rose':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{ml}’
+  ‘\code{speed.bins}’ ‘\code{dir.bins}’
+
+Undocumented arguments in documentation object 'pull.USCRN.data'
+  ‘saveDir’
+
+Undocumented arguments in documentation object 'pull.date'
+  ‘site’ ‘dpID’ ‘bgn.date’ ‘end.date’ ‘time.agr’ ‘package’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'pull.date':
+  ‘\code{site}’ ‘\code{dpID}’ ‘\code{bgn.date}’ ‘\code{end.date}’
+  ‘\code{time.agr}’ ‘\code{package}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'pull.dp.locs'
+  ‘site’ ‘dpID’
+Documented arguments not in \usage in documentation object 'pull.dp.locs':
+  ‘\code{site}’ ‘\code{dpId}’
+
+Undocumented arguments in documentation object 'pull.eddy.data'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘package’ ‘save.dir’
+Documented arguments not in \usage in documentation object 'pull.eddy.data':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{package}’
+  ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'pull.n.plot'
+  ‘sites.req’ ‘bgn.month’ ‘end.month’ ‘dpID’ ‘save.dir’ ‘data.field’
+  ‘package’
+Documented arguments not in \usage in documentation object 'pull.n.plot':
+  ‘\code{sites.req}’ ‘\code{bgn.month}’ ‘\code{end.month}’
+  ‘\code{dpID}’ ‘\code{save.dir}’ ‘\code{data.field}’
+
+Undocumented arguments in documentation object 'rad.dq.test'
+  ‘site’ ‘save.dir’ ‘bgn.month’ ‘end.month’
+Documented arguments not in \usage in documentation object 'rad.dq.test':
+  ‘\code{site}’ ‘\code{save.dir}’ ‘\code{bgn.month}’ ‘\code{end.month}’
+
+Undocumented arguments in documentation object 'soil.temp.plot'
+  ‘site’ ‘date’
+Documented arguments not in \usage in documentation object 'soil.temp.plot':
+  ‘\code{site}’ ‘\code{date}’
+
+Undocumented arguments in documentation object 'soni.pq.test'
+  ‘site’ ‘bgn.month’ ‘end.month’ ‘save.dir’ ‘q.th’ ‘v.th’
+Documented arguments not in \usage in documentation object 'soni.pq.test':
+  ‘\code{site}’ ‘\code{bgn.month}’ ‘\code{end.month}’ ‘\code{save.dir}’
+
+Undocumented arguments in documentation object 'sp.extract'
+  ‘data’ ‘sp’
+Documented arguments not in \usage in documentation object 'sp.extract':
+  ‘\code{data}’ ‘\code{sp}’
+
+Undocumented arguments in documentation object 'test.sites'
+  ‘dpID’ ‘bgn.month’ ‘end.month’
+Documented arguments not in \usage in documentation object 'test.sites':
+  ‘\code{dpId}’ ‘\code{bgn.month}’ ‘\code{end.month}’
+
+Undocumented arguments in documentation object 'tis.pq.test'
+  ‘q.th’ ‘v.th’
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+S3 methods shown with full name in documentation object 'date.extract':
+  ‘date.extract’
+
+The \usage entries for S3 methods should use the \method markup and not
+their full name.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... WARNING
+Warning: parse error in file 'Noble-Ex.R':
+11: unexpected symbol
+186: 
+187: Currently none
+               ^
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... ERROR
+Running examples in ‘Noble-Ex.R’ failed
+The error most likely occurred in:
+
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: air.temp.cnst.plot
+> ### Title: Generate Pairwise Comparison Plots for SAAT Measurements by ML
+> ### Aliases: air.temp.cnst.plot
+> ### Keywords: air commissioning, consistency, data process quality,
+> ###   temperature
+> 
+> ### ** Examples
+> 
+> air.temp.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
+Error: 'help.time.seq' is not an exported object from 'namespace:Noble'
+Execution halted
+* DONE
+Status: 1 ERROR, 5 WARNINGs, 5 NOTEs
