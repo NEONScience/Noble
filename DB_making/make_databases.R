@@ -21,14 +21,15 @@ save(is_site_config, file = "../Noble/data/is_site_config.rda")
 
 ## Make the TIS_pri_vars DB, from the CSV
 
-tis_pri_vars=data.frame(read.csv(file="../DB_making/raw_DBs/tis_pri_vars.csv"))
-save(tis_pri_vars, file = "../Noble/data/tis_pri_vars.rda")
+tis_pri_vars=data.frame(read.csv(file="../../DB_making/raw_DBs/tis_pri_vars.csv"))
+save(tis_pri_vars, file = "./data/tis_pri_vars.rda")
 
 
 ## Make the wind thresholds, from the CSV
 
-wind_thresholds=data.frame(read.csv(file="../DB_making/raw_DBs/ATBD_thresholds_2Dwind.csv"))
-save(wind_thresholds, file = "../Noble/data/wind_thresholds.rda")
+#wind_thresholds=data.frame(read.csv(file="../DB_making/raw_DBs/ATBD_thresholds_2Dwind.csv"))
+wind_thresholds=data.frame(read.csv("../../DB_making/raw_DBs/Threshold_2D_Wind_Direction_REVB_constraint_2018-12-26T21_39_06.779Z.csv"), stringsAsFactors = F)
+save(wind_thresholds, file = "./data/wind_thresholds.rda")
 
 
 ## Make the radiation DQ testing info DB
@@ -48,4 +49,5 @@ save(ais_site_config, file = "./data/ais_site_config.rda")
 
 #TIS Site Config
 tis_site_config=read.csv("../../DB_making/raw_DBs/tis_site_config.csv", stringsAsFactors = F)
+colnames(tis_site_config)=tolower(colnames(tis_site_config))
 save(tis_site_config, file = "./data/tis_site_config.rda")
