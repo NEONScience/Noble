@@ -6,17 +6,14 @@
 #' @description For a specified data product ID, this function will produce summary plots of data
 #' product availability and validity for their period of record at a site. By default, plots for all
 #' sites with data product availability are generated and saved to the specified directory. If
-#' \code{site} is specified, only plots for the site(s) passed to that parameter are generated and saved.
+#' \code{site} is specified, only plots for the site(s) passed to that parameter are generated and saved.\cr
 #'
 #'
 #'
 #' Because the full period of record for all sites are queried,
 #' this function can take a long time to execute.
+#' @inheritParams dp.survey
 #'
-#'
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
-#' @param \code{save.dir} The directory for data files and output PNGs to be saved to.
-#' @param \code{site} Optional. Can specify single site or list of sites of interest.
 
 #' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
 #' If only one site is specified, the GGPlot2 object for the summary plot is also returned,
@@ -25,10 +22,12 @@
 #' @keywords process quality, data quality, gaps, commissioning, data product, health
 
 #' @examples
+#' \dontrun{
 #' # For 2d Wind, save all plots to the current working directory:
-#' dp.survey(dpID = "DP1.00001.001", save.dir = getwd())
+#' dp.survey(dp.id = "DP1.00001.001", save.dir = getwd())
+#' }
 
-#' @export plot.dp.survey
+#' @export
 #'
 #'
 # changelog and author contributions / copyrights
@@ -42,15 +41,18 @@
 #     Color Revamp
 #
 ##############################################################################################
-plot.dp.survey=function(dpID, save.dir, site, pri.var){
-    require(zoo)
-    require(ggplot2)
+dp.survey.plot=function(dp.id, save.dir, site, pri.var){
+
+    Month=NULL
+    value=NULL
+    variable=NULL
+
     if(missing(pri.var)){
-        pri.var=Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dpID==dpID]
+        pri.var=Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dp.id==dp.id]
     }
     var.name=gsub(pattern = "mean", replacement = "", x = pri.var, ignore.case = T)
 
-    dp.avail = Noble::NEON.avail(dpID = dpID)
+    dp.avail = Noble::neon.avail(dp.id = dp.id)
     dp.avail = cbind(Month=dp.avail[,1],  dp.avail[,which(colnames(dp.avail) %in% Noble::tis_site_config$SiteID)])
 
     if(missing(site)){
@@ -61,7 +63,7 @@ plot.dp.survey=function(dpID, save.dir, site, pri.var){
     }
 
     for(i in 1:length(dp.sites)){
-        health.data=Noble::health.data(site = dp.sites[i], dpID = dpID)
+        health.data=Noble::health.data(site = dp.sites[i], dp.id = dp.id)
         health.data$Month=as.Date(paste0(health.data$Month, "-01"))
 
         melt.health=reshape2::melt(data=health.data, id.vars="Month")
@@ -74,13 +76,13 @@ plot.dp.survey=function(dpID, save.dir, site, pri.var){
             ggplot2::scale_y_continuous(limits = c(0,100), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
             ggplot2::ylab("Percent")+
             ggplot2::ggtitle(label = dp.sites[i], subtitle = paste0("Using '", pri.var, "' as data column"))+
-            ggplot2::theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+            ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))+
             ggplot2::geom_hline(yintercept = 90, color="#a02c46", show.legend = T)
 
 
-        graphics.off()
+        grDevices::graphics.off()
 
-        ggsave(filename = paste0(dpID, "_health_", dp.sites[i], ".png"), plot = plot, device = "png", path = save.dir, width = 7, height = 5.5, units = "in")
+        ggplot2::ggsave(filename = paste0(dp.id, "_health_", dp.sites[i], ".png"), plot = plot, device = "png", path = save.dir, width = 7, height = 5.5, units = "in")
     }
     #if(length(dp.sites==1)){return(plot)}
 }

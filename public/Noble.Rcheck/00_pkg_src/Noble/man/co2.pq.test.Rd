@@ -2,23 +2,28 @@
 % Please edit documentation in R/CO2_pq_test.R
 \name{co2.pq.test}
 \alias{co2.pq.test}
-\title{Perform A Commissioning PQ Test on IRGA CO2 Concentration Data
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr}
+\title{Perform A Commissioning PQ Test on IRGA CO2 Concentration Data}
 \usage{
 co2.pq.test(site = site, bgn.month, end.month, save.dir, q.th = 95,
   v.th = 88.1)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
+\item{site}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first
 month to get data for.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last
 month to get data for.}
 
-\item{\code{save.dir}}{Parameter of class character. The local directory where data files should
+\item{save.dir}{Parameter of class character. The local directory where data files should
 be saved.}
+
+\item{q.th}{Optional, the quanitity threshold used in testing. Defaults to 95
+(95 percent of expected data must exist to pass the test)}
+
+\item{v.th}{Optional, the quanitity threshold used in testing. Defaults to 88.1
+(88.1 percent of expected data must exist and be unflagged to pass the test)}
 }
 \value{
 Writes data files to the specified directory.
@@ -28,17 +33,8 @@ For the specified dates, site, variables, and data product or name of family of 
 products, data are downloaded and saved to the specifed directory. Process quality calculations are
  then performed and written to a results file in save.dir.
 }
-\examples{
-site = "CPER"
-bgn.month = "2017-05"
-end.month = "2017-06"
-time.agr = 30
-package="basic"
-save.dir<-tempdir()
-Noble::tis.pq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
-}
-\seealso{
-Currently none
+\author{
+Robert Lee
 }
 \keyword{commissioning}
 \keyword{data}

@@ -4,18 +4,18 @@
 \alias{gap.report}
 \title{Generate and Write Data Product Gap Summaries}
 \usage{
-gap.report(site, bgn.month, end.month, dpID, save.dir)
+gap.report(site, bgn.month, end.month, dp.id, save.dir)
 }
 \arguments{
-\item{\code{site}}{A NEON TIS site}
+\item{site}{A NEON TIS site}
 
-\item{\code{dpID}}{Parameter of class character. The NEON data product code of the data product of interest.}
+\item{bgn.month}{The fisrt month of data to examine for gaps.}
 
-\item{\code{bgn.month}}{The fisrt month of data to examine for gaps.}
+\item{end.month}{The last month of data to examine for gaps.}
 
-\item{\code{end.date}}{The last month of data to examine for gaps.}
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of interest.}
 
-\item{\code{save.dir}}{The directory to write data files to.}
+\item{save.dir}{The directory to write data files to.}
 }
 \value{
 Writes two CSVs of the start end times of gaps, one CSV for data gaps, the other for quality flag gaps.
@@ -25,8 +25,10 @@ For a specified data product ID, this function will produce summary CSVs of data
 and quality flag gaps for their period of record at a site.
 }
 \examples{
+\dontrun{
 # For 2d Wind, save files to the current working directory:
-gap.report(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+gap.report(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+}
 }
 \seealso{
 gap.find

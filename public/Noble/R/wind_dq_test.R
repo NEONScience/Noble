@@ -1,3 +1,31 @@
+############################################################################################
+#' @title  Downloads and performs data quality checks on NEON wind data
+
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+
+#' @description For the specified dates, site, variables, and data product or name of family of data products,
+#' data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
+#'
+#' @param site Parameter of class character. The NEON site data should be downloaded for.
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param save.dir Parameter of class character. The local directory where data files should be saved.
+
+#' @return Writes data files to the specified directory.
+
+#' @keywords process quality, data quality, gaps, commissioning
+
+#' @export
+
+
+# changelog and author contributions / copyrights
+#   Robert Lee (2017-07-20)
+#     original creation
+#
+##############################################################################################
+
+
+
 # #Test Block
 # site="CPER"
 #
@@ -22,17 +50,23 @@
 # Wind DQ Test
 
 wind.dq.test=function(site, save.dir, bgn.month, end.month){
+    raw.dir=NULL
+UTC_DATE=NULL
+NEON.dir=NULL
+windSpeedMean.000.050=NULL
+startDateTime=NULL
+
     valid.sites=c("BART", "JERC", "KONZ", "KONA", "WOOD", "CPER", "JORN", "BARR", "HEAL")
 
     if(!site %in% valid.sites)(stop())
 
     domn=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
-    site.dir=Noble:::.data.route(site=site, save.dir = save.dir)
+    site.dir=.data.route(site=site, save.dir = save.dir)
 
     site.MLs=1:Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]
     wind.MLs=site.MLs[-length(site.MLs)]
 
-    rslt.dir=Noble:::.result.route(save.dir = save.dir)
+    rslt.dir=.result.route(save.dir = save.dir)
     data=Noble::pull.data(site = site, dp.id = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = 2, package = "basic", save.dir = site.dir)
 
     speed=data.frame(data[,grepl(x=colnames(data), "windSpeedMean*")])
@@ -72,7 +106,7 @@ wind.dq.test=function(site, save.dir, bgn.month, end.month){
                                       end.month = end.month,
                                       time.agr = 30,
                                       package = "basic",
-                                      save.dir = Noble:::.data.route(site, save.dir = save.dir))
+                                      save.dir = .data.route(site, save.dir = save.dir))
         )
         int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")#-lubridate::hours(offset+2)
 
@@ -84,19 +118,19 @@ wind.dq.test=function(site, save.dir, bgn.month, end.month){
         speed.data=merge(x=int.speed, y=ext.data, by.y = "Date", by.x = "startDateTime")
 
         #qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
-        ext.consist=cor.test(x=speed.data$Wind.Speed.Average..mph., y = speed.data$windSpeedMean.000.050, conf.level = 0.95, method = "spearman", exact = F)$estimate
+        ext.consist=stats::cor.test(x=speed.data$Wind.Speed.Average..mph., y = speed.data$windSpeedMean.000.050, conf.level = 0.95, method = "spearman", exact = F)$estimate
     }else{
         uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
         temp=Noble::pull.USCRN.data(timeScale = "subhourly",
                                     stationID = uscrn.site,
                                     TimeBgn = paste0(bgn.month, "-01"),
                                     TimeEnd =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)),
-                                    saveDir = Noble:::.data.route(site = site, save.dir = save.dir)
+                                    saveDir = .data.route(site = site, save.dir = save.dir)
         )
 
         ext.data=temp
         ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
-        write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
+        utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
 
 
         ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
@@ -106,7 +140,7 @@ wind.dq.test=function(site, save.dir, bgn.month, end.month){
                                       end.month = end.month,
                                       time.agr = 2,
                                       package = "basic",
-                                      save.dir = Noble:::.data.route(site, save.dir = save.dir))
+                                      save.dir = .data.route(site, save.dir = save.dir))
         )
         int.dir$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
         int.dir=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.dir=int.dir[,max(which(grepl(x = colnames(int.dir), pattern = "windDirMean")))])
@@ -124,7 +158,7 @@ wind.dq.test=function(site, save.dir, bgn.month, end.month){
 
         #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
 
-        spearman.results=cor.test(all.data$NEON.dir, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
+        spearman.results=stats::cor.test(all.data$NEON.dir, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
 
         ext.consist=spearman.results$estimate
 
@@ -134,6 +168,6 @@ wind.dq.test=function(site, save.dir, bgn.month, end.month){
             ggplot2::coord_fixed()
         ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
 
-        write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
+        utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }
 }

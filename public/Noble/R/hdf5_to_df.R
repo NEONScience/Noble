@@ -7,12 +7,12 @@
 #' data structure, and convert it to a data frame. If a save location is specified, a csv of the
 #' data will also be saved.
 #'
-#' @param \code{site} Parameter of class character. The 4-letter NEON site code that the data is for.
-#' @param \code{hdf5.file} Parameter of class character. The path to the hdf5 file to convert.
-#' @param \code{meas.name} Parameter of class character. The name of the measurement in the hdf5 file
+#' @param site Parameter of class character. The 4-letter NEON site code that the data is for.
+#' @param hdf5.file Parameter of class character. The path to the hdf5 file to convert.
+#' @param meas.name Parameter of class character. The name of the measurement in the hdf5 file
 #' to be extracted.
-#' @param \code{time.agr} What the time difference between sequence values should be, in minutes.
-#' @param \code{save.dir} Optional. If specified a CSV of the extracted data will be saved to the
+#' @param time.agr What the time difference between sequence values should be, in minutes.
+#' @param save.dir Optional. If specified a CSV of the extracted data will be saved to the
 #' input directory.
 #'
 #' @return A data table of mesurements for the requested data product.
@@ -23,7 +23,7 @@
 #' \dontrun{
 #' }
 
-#' @seealso Currently none
+
 #' @export
 
 # changelog and author contributions / copyrights
@@ -74,7 +74,7 @@ hdf5.to.df=function(site, hdf5.file, meas.name, time.agr, save.dir){
 
     if(!missing(save.dir)){
         if(dir.exists(save.dir)){
-            write.csv(x=all, file = paste0(Noble:::.data.route(site = site, save.dir = save.dir), "/", meas.name, "_", site, "_", startDate, "-", endDate, ".csv"), row.names = F)
+            utils::write.csv(x=all, file = paste0(.data.route(site = site, save.dir = save.dir), "/", meas.name, "_", site, "_", startDate, "-", endDate, ".csv"), row.names = F)
         }
         if(!dir.exists(save.dir)){
             warning("'save.dir' is not valid- no file saved.")

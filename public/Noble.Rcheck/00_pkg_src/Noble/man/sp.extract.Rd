@@ -7,9 +7,9 @@
 sp.extract(data, sp)
 }
 \arguments{
-\item{\code{data}}{A data frame of instrumented data pulled with \code{data.pull}.}
+\item{data}{A data frame of instrumented pull.dataed with \code{pull.data}.}
 
-\item{\code{sp}}{Desired soil plot, given as an integer (eg. sp=1, corresponding to the
+\item{sp}{Desired soil plot, given as an integer (eg. sp=1, corresponding to the
 first soil plot, closest to the tower)}
 }
 \value{

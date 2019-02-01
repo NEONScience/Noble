@@ -32,7 +32,7 @@
 #' \dontrun{
 #' #Make a temporary directory for the example:
 #' tempDir<- tempdir()
-#' data.pull(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05",
+#' pull.data(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05",
 #' time.agr = 30, package="basic", save.dir= tempDir)}
 
 
@@ -81,7 +81,7 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
     ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp+lubridate::seconds(1), time.agr = time.agr)
 
     # Get site metadata
-    call.df=as.data.frame(Noble:::.gen.call.df(bgn.month=bgn.month,
+    call.df=as.data.frame(.gen.call.df(bgn.month=bgn.month,
                                  end.month=end.month,
                                  site=site, dp.id=dp.id,
                                  time.agr=time.agr,
@@ -97,7 +97,7 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
     ## If the file isn't there, get it
     if(!file.exists(paste0(save.dir, file.name))){
         data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)],
-                                                       function(l) as.data.frame(read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
+                                                       function(l) as.data.frame(utils::read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
         data.lump=do.call(rbind, data.wad) #make into data frame of lists, with dimensions nrow=n_months, ncol=n_measurementLocations
         data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(plyr::rbind.fill, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
 
@@ -139,7 +139,7 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
         write.csv(x=data.out, file=zip.dir, row.names = F)
         close(zip.dir)
     }else{#if the file is there, read it
-        data.out<-read.csv(paste0(save.dir, file.name))
+        data.out<-utils::read.csv(paste0(save.dir, file.name))
     }
     ## Return to parent environment
     return(data.out)

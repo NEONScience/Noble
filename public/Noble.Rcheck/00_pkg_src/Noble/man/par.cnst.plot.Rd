@@ -7,13 +7,13 @@
 par.cnst.plot(site, bgn.month, end.month, save.dir)
 }
 \arguments{
-\item{\code{site}}{The 4-letter NEON site code.}
+\item{site}{The 4-letter NEON site code.}
 
-\item{\code{bgn.month}}{The fisrt month of data to use in plotting.}
+\item{bgn.month}{The fisrt month of data to use in plotting.}
 
-\item{\code{end.date}}{The last month of data to use in plotting.}
+\item{end.month}{The last month of data to use in plotting.}
 
-\item{\code{save.dir}}{The save directory for the output plot.}
+\item{save.dir}{The save directory for the output plot.}
 }
 \value{
 A PNG of level-by-level comparison plots in the specified \code{save.dir}.
@@ -28,9 +28,7 @@ plot are not saved.
 \dontrun{
 par.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
 }
-}
-\seealso{
-Currently none
+
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

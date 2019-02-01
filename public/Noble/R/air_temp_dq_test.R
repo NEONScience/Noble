@@ -10,13 +10,8 @@
 #'
 #'
 #' @param site Parameter of class character. The NEON site data should be downloaded for.
-#' @param dp.id Parameter of class character. The data product code in question. See
-#' \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
-#' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
 #' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
 #' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param time.agr Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.
-#' @param package Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
 #' @param save.dir Parameter of class character. The local directory where data files should be saved.
 #'
 #' @return Writes data files to the specified directory.
@@ -25,11 +20,18 @@
 #' @examples
 #' \dontrun{
 #' #Make a temporary direcotry for the example:
-#' tempDir<- tempdir()
-#' data.pull(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
+#' tempDir= tempdir()
+#' pull.data(site = "CPER",
+#' dp.id = "DP1.00002.001",
+#' bgn.month = "2017-04",
+#' end.month = "2017-05",
+#' time.agr = 30,
+#' package="basic",
+#' save.dir= tempDir)
 #' }
 
 #' @export
+#' @importFrom magrittr %>%
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
@@ -43,46 +45,54 @@
 # site="CPER"
 # save.dir="/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisAirTempDataQuality/"
 
-air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
-    library(magrittr)
+air.temp.dq.test=function(site, bgn.month, end.month, save.dir){
     options(stringsAsFactors = FALSE)
+
+    T1=NULL
+    T2=NULL
+    startDateTime=NULL
+    value=NULL
+    variable=NULL
+    AIR_TEMPERATURE=NULL
+    Date=NULL
+
     ## PART 1: Variance Stability
     saat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 1, package = "basic", save.dir = save.dir)
     taat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 1, package = "basic", save.dir = save.dir)
 
-    test.data=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
-    test.data$startDateTime=as.POSIXct(test.data$startDateTime)
+    test.data=base::cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
+    test.data$startDateTime=base::as.POSIXct(test.data$startDateTime)
     site.tz=as.character(Noble::tis_site_config$Time.Zone[(Noble::tis_site_config$SiteID==site)])
 
     attributes(test.data$startDateTime)$tzone=site.tz
 
     # Make a sequence of dates and times for the requested period
-    bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
-    end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
-    bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
-    end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
-    end_temp$mon<-end_temp$mon+1
-    #end_temp<-end_temp-lubridate::minutes(30)-lubridate::seconds(1)
+    bgn_temp = base::as.Date(base::paste0(bgn.month, "-01"), tz="UTC")
+    end_temp = base::as.Date(base::paste0(end.month, "-01"), tz="UTC")
+    bgn_temp = base::as.POSIXct(base::paste0(bgn.month, "-01"), tz="UTC")
+    end_temp = base::as.POSIXlt(base::paste0(end_temp, "-01"), tz="UTC")
+    end_temp$mon=end_temp$mon+1
+    #end_temp=end_temp-lubridate::minutes(30)-lubridate::seconds(1)
 
     frst.week=c(as.Date(paste0(bgn.month, "-01")), as.Date(paste0(bgn.month, "-01"))+7)
     last.week=c(as.Date(Noble::last.day.time(end.month = end.month, time.agr = 1))-7, as.Date(Noble::last.day.time(end.month = end.month, time.agr = 1)))
 
 
     group.one=Noble::date.extract(data = test.data, bgn.date = bgn_temp, end.date =bgn_temp+lubridate::days(15))
-    group.one=data.frame(startDateTime=group.one$startDateTime, group.one[,grepl(pattern = "tempSingleVariance", x = colnames(group.one))|grepl(pattern = "tempTripleVariance", x = colnames(group.one))])
+    group.one=base::data.frame(startDateTime=group.one$startDateTime, group.one[,grepl(pattern = "tempSingleVariance", x = colnames(group.one))|grepl(pattern = "tempTripleVariance", x = colnames(group.one))])
     group.one=group.one[lubridate::hour(group.one$startDateTime) %in% c(0:5),]
     group.two=Noble::date.extract(data = test.data, bgn.date = end_temp-lubridate::days(15), end.date = end_temp-lubridate::minutes(30)-lubridate::seconds(1))
-    group.two=data.frame(startDateTime=group.two$startDateTime, group.two[,grepl(pattern = "tempSingleVariance", x = colnames(group.two))|grepl(pattern = "tempTripleVariance", x = colnames(group.two))])
+    group.two=base::data.frame(startDateTime=group.two$startDateTime, group.two[,grepl(pattern = "tempSingleVariance", x = colnames(group.two))|grepl(pattern = "tempTripleVariance", x = colnames(group.two))])
     group.two=group.two[lubridate::hour(group.two$startDateTime) %in% c(0:5),]
 
     f.test=c()
     for(i in 2:length(colnames(group.one))){
-        f.test=append(f.test, try(var.test(x=group.one[,i], y = group.two[,i], ratio = 1)$p.value, silent = T))
+        f.test=append(f.test, try(stats::var.test(x=group.one[,i], y = group.two[,i], ratio = 1)$p.value, silent = T))
     }
     f.test[unlist(lapply(f.test, function(f) grepl(pattern = "not enough", x = f)))]=NA
     #if(class(f.test)=="try-error"){f.test=NA}
     f.test=as.numeric(f.test)
-    mean=mean(na.omit(f.test), na.rm = T)
+    mean=mean(stats::na.omit(f.test), na.rm = T)
     f.test=append(f.test, c("mean"=mean))
     variance=data.frame(ML=c(seq(Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]), "Mean"), P_value=f.test)
 
@@ -90,7 +100,7 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
     saat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
     taat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
 
-    test.data=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
+    test.data=base::cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
 
     test.time = c("00:00:00", "00:30:00", "01:00:00", "01:30:00", "02:00:00", "02:30:00", "03:00:00",
                   "03:30:00", "04:00:00")
@@ -124,14 +134,14 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
         ggplot2::xlab("Date")+
         ggplot2::geom_smooth()
 
-    ggplot2::ggsave(plot = var.plot, device = "png", width = 8, height = 5, filename = paste0(site, "_night_vars.png"), path = Noble:::.data.route(site = site, save.dir = save.dir), units = "in")
+    ggplot2::ggsave(plot = var.plot, device = "png", width = 8, height = 5, filename = paste0(site, "_night_vars.png"), path = .data.route(site = site, save.dir = save.dir), units = "in")
 
 
     ## PART 2: Internal Consistancy
     internal.data=test.data[,grepl(pattern = "tempSingleMean", x = colnames(test.data))|grepl(pattern = "tempTripleMean", x = colnames(test.data))]
     #internal.data=internal.data[,!(grepl(pattern = "000.010", x=colnames(internal.data)))] #Remove ML1
 
-    spearman=lapply(c( 1:(length(internal.data)-1)), function(l) try(cor.test(x = internal.data[,l], y = internal.data[,l+1], method = "spearman", na.rm=T)))
+    spearman=lapply(c( 1:(length(internal.data)-1)), function(l) try(stats::cor.test(x = internal.data[,l], y = internal.data[,l+1], method = "spearman", na.rm=T)))
     mls=unlist(lapply(c( 1:(length(internal.data)-1)), function(x) paste0("ML ", x, "-", x+1)))
     #spearman[lapply(spearman, function(f) f)]
 
@@ -160,41 +170,46 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
 
         closest.index=which.min(unlist(lapply(seq(length(ext.loc.info[,1])), function(i)
             geosphere::distm(c(ext.loc.info$longitude_dec[i], ext.loc.info$latitude_dec[i]),
-                             c(Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site], Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site])))))
+                             c(Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site],
+                               Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site])))))
 
         ref.site=ref.sites[[closest.index]]
 
         if(ref.site$platform=="USCRN"){
-            ref.data=Noble::pull.USCRN.data(timeScale = "subhourly",
-                                            stationID = as.numeric(ref.site$identifiers$id[ref.site$identifiers$idType=="WBAN"]),
-                                            TimeBgn = bgn_temp,
-                                            TimeEnd = end_temp,
-                                            saveDir = save.dir)
-            ref.data$Date=as.POSIXct(ref.data$UTC_DATE, tz="UTC")
+            ## NEED TO POINT TO METDOWNLOADR
 
-            if(nchar(as.character(ref.data$Date[1]))>10){
-                frst30=grep(ref.data$Date[1:16], pattern = ":30:")
-                ref.data=ref.data[-(1:(frst30-1)),]
-            }
+           #-------->  ref.data=Noble::pull.USCRN.data(timeScale = "subhourly",
+            #                                 stationID = as.numeric(ref.site$identifiers$id[ref.site$identifiers$idType=="WBAN"]),
+            #                                 TimeBgn = bgn_temp,
+            #                                 TimeEnd = end_temp,
+            #                                 saveDir = save.dir)
+            # ref.data$Date=as.POSIXct(ref.data$UTC_DATE, tz="UTC")
+            #
+            # if(nchar(as.character(ref.data$Date[1]))>10){
+            #     frst30=grep(ref.data$Date[1:16], pattern = ":30:")
+            #     ref.data=ref.data[-(1:(frst30-1)),]
+            # }
+            #
+            #
+            # ## Make 30 min direction data from refs
+            # ref.data=data.frame(ref.data %>%
+            #                         dplyr::group_by(Date = cut(Date, breaks="30 min")) %>%
+            #                         dplyr::summarize(airTemp = mean(AIR_TEMPERATURE)))
+            #
+            # neon.temp=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+            #
+            # neon.data=data.frame(Date=as.POSIXct(neon.temp$startDateTime, tz = "UTC"), neon.temp=neon.temp$tempSingleMean.000.020)
+            #
+            #
+            # ref.data$Date=as.POSIXct(ref.data$Date, tz="UTC")
+            # #neon.data$Date=as.POSIXct(neon.data$Date, tz="UTC")
+            #
+            #
+            # comp.data=merge(x=neon.data, y=ref.data)
+            # correlation=stats::cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
+            # p_val=correlation$p.value
 
-
-            ## Make 30 min direction data from refs
-            ref.data=data.frame(ref.data %>%
-                                    dplyr::group_by(Date = cut(Date, breaks="30 min")) %>%
-                                    dplyr::summarize(airTemp = mean(AIR_TEMPERATURE)))
-
-            neon.temp=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
-
-            neon.data=data.frame(Date=as.POSIXct(neon.temp$startDateTime, tz = "UTC"), neon.temp=neon.temp$tempSingleMean.000.020)
-
-
-            ref.data$Date=as.POSIXct(ref.data$Date, tz="UTC")
-            #neon.data$Date=as.POSIXct(neon.data$Date, tz="UTC")
-
-
-            comp.data=merge(x=neon.data, y=ref.data)
-            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
-            p_val=correlation$p.value
+            p_val=NA
         }else if(ref.site$platform=="NRCS"){
             ref.data=RNRCS::grabNRCS.data(network = "SCAN",
                                           site_id = ref.site$identifiers$id[ref.site$identifiers$idType=="SCAN"],
@@ -224,7 +239,7 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
             #simple.data$Date=as.POSIXct(simple.data$Date)
 
             comp.data=merge(x=neon.data, y=simple.data, by="Date")
-            correlation=cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
+            correlation=stats::cor.test(x=comp.data$neon.temp, y=comp.data$airTemp, method = "spearman")
             p_val=correlation$p.value
         }
     }
@@ -235,19 +250,19 @@ air.temp.dq.test<-function(site, bgn.month, end.month, save.dir){
     if(is.na(out$`External Correlation`)){ext.cor.result="No Test"}else if(out$`External Correlation`<0.001){ext.cor.result="Pass"}else{ext.cor.result="Fail"}
     if(all(c(var.result, int.cor.result, ext.cor.result)=="Pass")){result="Pass"}else{result="Fail"}
 
-    data.dir=Noble:::.data.route(site = site, save.dir = save.dir)
-    write.csv(x = out$`Variance Stability`, file = paste0(data.dir, "variance.csv"), row.names = F)
-    write.csv(x = out$`Internal Correlation`, file = paste0(data.dir, "internal_comparison.csv"), row.names = F)
-    write.csv(x = out$`External Correlation`, file = paste0(data.dir, "external_comparison.csv"), row.names = F)
+    data.dir=.data.route(site = site, save.dir = save.dir)
+    utils::write.csv(x = out$`Variance Stability`, file = paste0(data.dir, "variance.csv"), row.names = F)
+    utils::write.csv(x = out$`Internal Correlation`, file = paste0(data.dir, "internal_comparison.csv"), row.names = F)
+    utils::write.csv(x = out$`External Correlation`, file = paste0(data.dir, "external_comparison.csv"), row.names = F)
 
     rslt.string=data.frame("Site"=site, "Begin.Month"=bgn.month, "end.month"=end.month, "Variance"=var.result, "Internal.Correlation"=int.cor.result, "External.Correlation"=ext.cor.result, "Overall"=result)
 
-    if(file.exists(Noble:::.result.route(save.dir = save.dir))){
-        prev=read.csv(Noble:::.result.route(save.dir = save.dir))
+    if(file.exists(.result.route(save.dir = save.dir))){
+        prev=utils::read.csv(.result.route(save.dir = save.dir))
         curr=rbind(prev, rslt.string)
-        write.csv(x = curr, file = Noble:::.result.route(save.dir = save.dir), row.names = FALSE)
+        utils::write.csv(x = curr, file = .result.route(save.dir = save.dir), row.names = FALSE)
     }else{
-        write.csv(x=rslt.string, file = Noble:::.result.route(save.dir = save.dir), row.names = FALSE)
+       utils::write.csv(x=rslt.string, file = .result.route(save.dir = save.dir), row.names = FALSE)
     }
 
 

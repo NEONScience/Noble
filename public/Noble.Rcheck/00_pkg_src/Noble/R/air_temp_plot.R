@@ -2,10 +2,10 @@
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 #'
 #' @description Plots and saves all temperature measurements at a site for a given date range.
-#' @param \code{site} The NEON TIS site to generate plots for.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to plot.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to plot.
-#' @param \code{save.dir} Directory where plots should be written.
+#' @param site The NEON TIS site to generate plots for.
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to plot.
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to plot.
+#' @param save.dir Directory where plots should be written.
 #'
 #' @return A data frame with data collected between \code{bgn.time} and \code{end.time}.
 #'
@@ -26,10 +26,14 @@
 
 air.temp.plot=function(bgn.month, end.month, site, save.dir){
 
+    Date=NULL
+    value=NULL
+    variable=NULL
+
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
-    saat.test.data=Noble::data.pull(site = site, dpID = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
-    taat.test.data=Noble::data.pull(site = site, dpID = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+    saat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
+    taat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00003.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
 
     airTemp=cbind(saat.test.data, taat.test.data[,(3:length(colnames(taat.test.data)))])
 
@@ -49,8 +53,8 @@ air.temp.plot=function(bgn.month, end.month, site, save.dir){
     return(plot)
 }
 
-# TREE_ML4=Noble::ml.extract(data=Noble::data.pull(site = "CPER", bgn.month = bgn.month, end.month = end.month, dpID = "DP1.00002.001", save.dir = Noble:::.data.route("CPER", dir)), ml = 3)
-# TREE_ML5=Noble::data.pull(site = "CPER", bgn.month = bgn.month, end.month = end.month, dpID = "DP1.00003.001", save.dir = Noble:::.data.route("CPER", dir))
+# TREE_ML4=Noble::ml.extract(data=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00002.001", save.dir = .data.route("CPER", dir)), ml = 3)
+# TREE_ML5=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00003.001", save.dir = .data.route("CPER", dir))
 #
 # plot.data=data.frame("Date"=TREE_ML4$startDateTime, ML4=TREE_ML4$tempSingleMean.000.030, ML5=TREE_ML5$tempTripleMean.000.040)
 # melt.plot=reshape2::melt(data = plot.data, id.vars="Date")

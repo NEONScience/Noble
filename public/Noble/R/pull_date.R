@@ -7,19 +7,19 @@
 #' of data products, data are downloaded and returned. Data for the month(s) spanned in the requested
 #' dates will be saved to the \code{save.dir}, if specified.
 #'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{dp.id} Parameter of class character. The data product code in question. See
+#' @param site Parameter of class character. The NEON site data should be downloaded for.
+#' @param dp.id Parameter of class character. The data product code in question. See
 #' \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
 #' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
-#' @param \code{bgn.date} Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
+#' @param bgn.date Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
 #' representing the first timestamp to return data for.
-#' @param \code{end.date} Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
+#' @param end.date Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
 #' representing the last timestamp to return data for.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be
+#' @param time.agr Parameter of class numeric. The data agregation interval requested, must be
 #' 1, 2, 5, or 30.
-#' @param \code{package} Parameter of class character. Optional. The type of data package to be
+#' @param package Parameter of class character. Optional. The type of data package to be
 #' returned If not specified, defaults to "basic".
-#' @param \code{save.dir} Parameter of class character. Optional. The local directory where data files
+#' @param save.dir Parameter of class character. Optional. The local directory where data files
 #' should be saved. If unspecified, defaults to a temporariy directory given by \code{base::tempdir()}.
 #'
 #' @return Writes data files to the specified directory.
@@ -35,7 +35,7 @@
 #' }
 
 
-#' @seealso Currently none
+
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2018-01-31)

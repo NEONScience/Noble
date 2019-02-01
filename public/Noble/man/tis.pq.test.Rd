@@ -37,21 +37,6 @@ Writes data files to the specified directory.
 For the specified dates, site, variables, and data product or name of family of data products,
 data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
 }
-\examples{
-\dontrun{
-site = "CPER"
-dp.id = "DP1.00001.001"
-prin.vars<-c("windSpeed", "windDir")
-bgn.month = "2017-05"
-end.month = "2017-06"
-time.agr = 30
-package="basic"
-save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-Noble::tis.pq.test(site = site, dp.id = dp.id, bgn.month = bgn.month, end.month = end.month,
-time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
-}
-
-}
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
 }

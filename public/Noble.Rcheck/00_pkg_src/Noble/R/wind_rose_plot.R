@@ -7,12 +7,12 @@
 #' parameter is specified, a ggplot2 object for that measurement level is produced. Otherwise, a ggplot2 object of a
 #' faceted plot of all available measurement levels is returned.
 #'
-#' @param \code{site} NEON site to produce the wind rose plot.
-#' @param \code{bgn.month} The start month for wind data to plot.
-#' @param \code{end.month} The end month for wind data to plot.
-#' @param \code{ml} Optional. Used to specifiy what measurement level should be plotted.
-#' @param \code{speed.bins} Optional. The number of bins for wind speed to be plotted in.
-#' @param \code{dir.bins} Optional. The number of bins for wind directions to be plotted in.
+#' @param site NEON site to produce the wind rose plot.
+#' @param bgn.month The start month for wind data to plot.
+#' @param end.month The end month for wind data to plot.
+#' @param ml Optional. Used to specifiy what measurement level should be plotted.
+#' @param speed.bins Optional. The number of bins for wind speed to be plotted in.
+#' @param dir.bins Optional. The number of bins for wind directions to be plotted in.
 #'
 #' @return Outputs a ggplot2 object of the generated wind roses
 
@@ -28,7 +28,7 @@
 #' dir.bins=36)
 #' }
 
-#' @export plot.wind.rose
+#' @export wind.rose.plot
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-10)
@@ -36,7 +36,11 @@
 #
 ##############################################################################################
 
-plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
+wind.rose.plot = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
+    options(stringsAsFactors = F)
+    DirCut=NULL
+    SpeedCut=NULL
+
     time.agr = 30
     ml.case=missing(ml)
 
@@ -54,7 +58,7 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     if(as.numeric(difftime(end_temp, bgn_temp))>=92){message("More than 3 months of data requested, may take a long time...")}
 
     # Return data
-    data<-data.pull(site = site, dpID = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package="basic", save.dir = tempdir())
+    data<-pull.data(site = site, dp.id = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package="basic", save.dir = tempdir())
 
     # Set default bin breakdowns
     if(missing(speed.bins)){speed.bins=10}
@@ -101,7 +105,7 @@ plot.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
     # Set up output parameters for plot
     degreeSteps<-as.numeric(360/dir.bins)
     dir.bin.seq<-seq(0, 360, by=360/dir.bins)
-    all.binned<-cbind(all, SpeedCut= cut(as.numeric(all$Speed), breaks = speed.bins), DirCut= cut(as.numeric(all$Dir), breaks = dir.bin.seq))
+    all.binned<-cbind(all, SpeedCut = cut(as.numeric(all$Speed), breaks = speed.bins), DirCut= cut(as.numeric(all$Dir), breaks = dir.bin.seq))
     all.binned<-stats::na.omit(all.binned)
 
     # Make labels and title

@@ -26,6 +26,10 @@
 
 air.temp.plot=function(bgn.month, end.month, site, save.dir){
 
+    Date=NULL
+    value=NULL
+    variable=NULL
+
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
     saat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
@@ -49,8 +53,8 @@ air.temp.plot=function(bgn.month, end.month, site, save.dir){
     return(plot)
 }
 
-# TREE_ML4=Noble::ml.extract(data=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00002.001", save.dir = Noble:::.data.route("CPER", dir)), ml = 3)
-# TREE_ML5=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00003.001", save.dir = Noble:::.data.route("CPER", dir))
+# TREE_ML4=Noble::ml.extract(data=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00002.001", save.dir = .data.route("CPER", dir)), ml = 3)
+# TREE_ML5=Noble::pull.data(site = "CPER", bgn.month = bgn.month, end.month = end.month, dp.id = "DP1.00003.001", save.dir = .data.route("CPER", dir))
 #
 # plot.data=data.frame("Date"=TREE_ML4$startDateTime, ML4=TREE_ML4$tempSingleMean.000.030, ML5=TREE_ML5$tempTripleMean.000.040)
 # melt.plot=reshape2::melt(data = plot.data, id.vars="Date")

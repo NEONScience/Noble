@@ -6,20 +6,13 @@
 #' @description Given a directory in the SCA, this function output only the most recent test results
 #' from the 'results.csv' file in the
 #'
-#' @param \code{test.dir} The top level of a given test directory in the SCA (not the "Common" folder).
-#' @param \code{write.summary} Logical, refering to if a simplified test summary should be written in
+#' @param test.dir The top level of a given test directory in the SCA (not the "Common" folder).
+#' @param write.summary Logical, refering to if a simplified test summary should be written in
 #' the Common folder of the specified directory. If TRUE, a summary_results.csv will be generated.
 #'
 #' @return The most recent test results from the 'results.csv' file in the
 
 #' @keywords process quality, data quality, gaps, commissioning
-
-#' @examples
-#' None
-
-#'
-#' @seealso Currently none
-
 # changelog and author contributions / copyrights
 #   Robert Lee (2018-01-15)
 #     original creation
@@ -29,7 +22,7 @@
 parse.results=function(test.dir, write.summary=T){
     options(stringsAsFactors=FALSE)
     if(!is.logical(write.summary)){write.summary=TRUE}
-    results = data.frame(read.csv(Noble:::.result.route(save.dir = test.dir), stringsAsFactors = FALSE))
+    results = data.frame(utils::read.csv(.result.route(save.dir = test.dir), stringsAsFactors = FALSE))
 
     # Important! Only reads the most recent results data per site into the RMD #
     siteList = (unique(results$site))
@@ -71,7 +64,7 @@ parse.results=function(test.dir, write.summary=T){
          )
         )
 
-        write.csv(x = summary.results, file =  paste0(test.dir,"/Common/summary_results.csv"), row.names = F, append = F)
+        utils::write.csv(x = summary.results, file =  paste0(test.dir,"/Common/summary_results.csv"), row.names = F, append = F)
 
 
     }

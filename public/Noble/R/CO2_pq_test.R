@@ -1,7 +1,7 @@
 ############################################################################################
 #' @title  Perform A Commissioning PQ Test on IRGA CO2 Concentration Data
 
-#'#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+#' @author Robert Lee
 
 #' @description For the specified dates, site, variables, and data product or name of family of data
 #' products, data are downloaded and saved to the specifed directory. Process quality calculations are
@@ -14,22 +14,15 @@
 #'  month to get data for.
 #' @param save.dir Parameter of class character. The local directory where data files should
 #' be saved.
+#' @param q.th Optional, the quanitity threshold used in testing. Defaults to 95
+#' (95 percent of expected data must exist to pass the test)
+#' @param v.th Optional, the quanitity threshold used in testing. Defaults to 88.1
+#' (88.1 percent of expected data must exist and be unflagged to pass the test)
+#'
 #'
 #' @return Writes data files to the specified directory.
 
 #' @keywords process quality, data quality, gaps, commissioning
-
-#' @examples
-#' site = "CPER"
-#' bgn.month = "2017-05"
-#' end.month = "2017-06"
-#' time.agr = 30
-#' package="basic"
-#' save.dir<-tempdir()
-#' Noble::tis.pq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
-
-
-#' @seealso Currently none
 #'
 #' @export
 
@@ -42,7 +35,7 @@
 co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=95, v.th=88.1){
     time.agr = 30
     files=Noble::pull.eddy.data(site, bgn.month, end.month, package="basic", save.dir)
-    file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    file.dir=.data.route(site = site, save.dir = save.dir)
     co2.raw=lapply(files, function(x) Noble::hdf5.to.df(site, hdf5.file=paste0(file.dir,x), meas.name="co2Turb", time.agr, save.dir))
     co2.df=do.call(rbind, co2.raw)
     co2.df$timeBgn=gsub(x = co2.df$timeBgn, pattern = "T", replacement = " ")
@@ -95,12 +88,12 @@ co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=95, v.th
                             valid_threshold=v.th
         )
 
-        if(file.exists(Noble:::.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+        if(file.exists(.result.route(save.dir))){
+            dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+            utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }else{
-            write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+            utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }
     }
 }

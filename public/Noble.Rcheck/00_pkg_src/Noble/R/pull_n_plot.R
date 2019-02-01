@@ -7,22 +7,30 @@
 #' for all NEON instrumented sites is returned. The output of data product availability is best
 #' interpreted with the base \code{View()} function.
 #'
-#' @param \code{sites.req} The site, or character list of sites to return plots of.
-#' @param \code{bgn.month} The start month to plot data for.
-#' @param \code{end.month} The end month to plot data for.
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
-#' @param \code{save.dir} The directory for data files and output PDFs to be saved to.
-#' @param \code{data.field} Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.
+#' @param sites.req The site, or character list of sites to return plots of.
+#' @param bgn.month The start month to plot data for.
+#' @param end.month The end month to plot data for.
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of interest.
+#' @param save.dir The directory for data files and output PDFs to be saved to.
+#' @param data.field Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.
+#' @param package Optional. The package type ("basic" or "expanded") to be downloaded.
 
 #' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
 #'
 
 #' @keywords process quality, data quality, gaps, commissioning
-
+#'
+#' @examples
+#' \dontrun{
 #' # for a variable, "test.dir", holding a valid file path:
-#' pull.n.plot(bgn.month = "2017-04", end.month = "2017-05", dpID = "DP1.00001.001", sites.req = "BLAN", save.dir = getwd(), data.field = "windDirMean")
+#' pull.n.plot(bgn.month = "2017-04",
+#' end.month = "2017-05",
+#' dp.id = "DP1.00001.001",
+#' sites.req = "BLAN",
+#' save.dir = getwd(),
+#'  data.field = "windDirMean")
+#' }
 
-#' @seealso Currently none
 
 # changelog and author contributions / copyrights
 #   Cove Sturdevant (2016-11-07)
@@ -33,11 +41,11 @@
 #
 ##############################################################################################
 
-pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.field, package){
+pull.n.plot <- function(sites.req, bgn.month, end.month, dp.id, save.dir, data.field, package){
     options(stringsAsFactors = FALSE)
-
-    #require(nneo)
-    require(lubridate)
+    time=NULL
+    value=NULL
+    qfFail=NULL
 
     #kpiList <- data.frame(read.csv("https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv", header = TRUE))
     time.agr=30
@@ -47,7 +55,7 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
     #ENTRY CONTROL
     #auto fill the data field, if not specified
     if(missing(data.field)){
-        data.field = Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dpID==dpID]
+        data.field = Noble::tis_pri_vars$data.field[Noble::tis_pri_vars$dp.id==dp.id]
     }
 
     if(interactive()&length(data.field)==0){
@@ -76,13 +84,13 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
     for (s in 1:length(sites.req)){
 
     domn<-Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==sites.req[s]]
-        dataFile<- paste0("NEON.", domn,".", sites.req[s],".", dpID, "_REQ_", DateBgn, "_", DateEnd, "_", time.agr,"min_", package, ".csv.gz")
+        dataFile<- paste0("NEON.", domn,".", sites.req[s],".", dp.id, "_REQ_", DateBgn, "_", DateEnd, "_", time.agr,"min_", package, ".csv.gz")
         fullPath <- paste0(save.dir, "/", dataFile)
         if (!file.exists(fullPath)){
             print(paste("Currently downloading data for:", sites.req[s]))
 
-            sink<-Noble::data.pull(site = sites.req[s], bgn.month = bgn.month, end.month = end.month,
-                                   dpID = dpID, time.agr = time.agr, package = package, save.dir = save.dir)
+            sink<-Noble::pull.data(site = sites.req[s], bgn.month = bgn.month, end.month = end.month,
+                                   dp.id = dp.id, time.agr = time.agr, package = package, save.dir = save.dir)
         }
         rm(sink) # get rid of environment data
 
@@ -90,14 +98,14 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
 
         # Read the requested data back in
         print(paste("Reading and plotting", sites.req[s], "data."))
-        commData <- data.frame(read.csv(fullPath, header = TRUE))
+        commData <- data.frame(utils::read.csv(fullPath, header = TRUE))
 
-        if(dpID=="DP1.00024.001"){
+        if(dp.id=="DP1.00024.001"){
             commData=commData[,-which(grepl(pattern = "outPAR*", x = colnames(commData)))]
         }
 
         QFindex <- grep(pattern = "*finalQF\\.", colnames(commData), ignore.case = T)
-        if(dpID=="DP1.00001.001"){
+        if(dp.id=="DP1.00001.001"){
             if(grepl(pattern = "*speed*", data.field, ignore.case = T)){
                 QFindex = grep(pattern = "windSpeedFinalQF\\.", colnames(commData), ignore.case = T)
             }else if(grepl(pattern = "*dir*", data.field, ignore.case = T)){
@@ -107,7 +115,7 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
         dataIndex <- grep(paste0(data.field), colnames(commData), ignore.case = T)
         timeStmp <- as.POSIXct(strptime(commData[,1], format="%Y-%m-%d %H:%M:%S", tz="UTC"))
 
-        {pdf(file=paste0(save.dir, "/", sites.req[s], "_", dpID, "_", package, "_", data.field, ".pdf", sep=""), paper = "us")}
+        {grDevices::pdf(file=paste0(save.dir, "/", sites.req[s], "_", dp.id, "_", package, "_", data.field, ".pdf", sep=""), paper = "us")}
 
         niceColors<- c("0"="#41f299", "1"="#f25841", "NA"="black")
 
@@ -144,7 +152,7 @@ pull.n.plot <- function(sites.req, bgn.month, end.month, dpID, save.dir, data.fi
             gridExtra::grid.arrange(grobData,nrow=1) # plot it
 
         } ##Plotting code
-        {graphics.off()}
+        {grDevices::graphics.off()}
         print(paste(sites.req[s], "complete."))
     }
 }

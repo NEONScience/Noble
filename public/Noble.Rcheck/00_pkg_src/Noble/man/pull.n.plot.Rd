@@ -4,21 +4,23 @@
 \alias{pull.n.plot}
 \title{Returns PDF(s) of data for the specified site and data product}
 \usage{
-\method{pull}{n.plot}(sites.req, bgn.month, end.month, dpID, save.dir,
-  data.field, package)
+pull.n.plot(sites.req, bgn.month, end.month, dp.id, save.dir, data.field,
+  package)
 }
 \arguments{
-\item{\code{sites.req}}{The site, or character list of sites to return plots of.}
+\item{sites.req}{The site, or character list of sites to return plots of.}
 
-\item{\code{bgn.month}}{The start month to plot data for.}
+\item{bgn.month}{The start month to plot data for.}
 
-\item{\code{end.month}}{The end month to plot data for.}
+\item{end.month}{The end month to plot data for.}
 
-\item{\code{dpID}}{Parameter of class character. The NEON data product code of the data product of interest.}
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of interest.}
 
-\item{\code{save.dir}}{The directory for data files and output PDFs to be saved to.}
+\item{save.dir}{The directory for data files and output PDFs to be saved to.}
 
-\item{\code{data.field}}{Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.}
+\item{data.field}{Optional. The name of the measurement vaiable to plot. Defaults to the 'core' measurement for most products.}
+
+\item{package}{Optional. The package type ("basic" or "expanded") to be downloaded.}
 }
 \value{
 Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
@@ -28,36 +30,22 @@ For a specified data product ID, a data frame of the availabilty of that product
 for all NEON instrumented sites is returned. The output of data product availability is best
 interpreted with the base \code{View()} function.
 }
-\seealso{
-Currently none
+\examples{
+\dontrun{
+# for a variable, "test.dir", holding a valid file path:
+pull.n.plot(bgn.month = "2017-04",
+end.month = "2017-05",
+dp.id = "DP1.00001.001",
+sites.req = "BLAN",
+save.dir = getwd(),
+ data.field = "windDirMean")
+}
 }
 \author{
 Cove Sturdevant
 }
-\keyword{"2017-04",}
-\keyword{"2017-05",}
-\keyword{"BLAN",}
-\keyword{"DP1.00001.001",}
-\keyword{"test.dir",}
-\keyword{"windDirMean")}
-\keyword{#}
-\keyword{=}
-\keyword{a}
 \keyword{commissioning}
 \keyword{data}
-\keyword{data.field}
-\keyword{dpID}
-\keyword{end.month}
-\keyword{file}
-\keyword{for}
 \keyword{gaps,}
-\keyword{getwd(),}
-\keyword{holding}
-\keyword{path:}
 \keyword{process}
-\keyword{pull.n.plot(bgn.month}
 \keyword{quality,}
-\keyword{save.dir}
-\keyword{sites.req}
-\keyword{valid}
-\keyword{variable,}

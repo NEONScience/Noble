@@ -11,9 +11,9 @@ air.temp.cnst.plot(site, bgn.month, end.month, save.dir)
 
 \item{bgn.month}{The fisrt month of data to use in plotting.}
 
-\item{save.dir}{The save directory for the output plot.}
+\item{end.month}{The last month of data to use in plotting.}
 
-\item{end.date}{The last month of data to use in plotting.}
+\item{save.dir}{The save directory for the output plot.}
 }
 \value{
 A PNG of level-by-level comparison plots in the specified \code{save.dir}.
@@ -24,7 +24,7 @@ Plots are of temperature readings from ML-n versus readings from ML-n+1. The raw
 plot are not saved.
 }
 \examples{
-\dontrun{
+\donttest{
 air.temp.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
 }
 

@@ -6,12 +6,13 @@
 #' @description For data downloaded by Noble, and a specified soil plot location, data only
 #' from the location are returned as a data frame.
 #'
-#' @param data A data frame of instrumented data pulled with \code{data.pull}.
+#' @param data A data frame of instrumented pull.dataed with \code{pull.data}.
 #' @param ml Desired measurement level, given as an integer (eg ml=1, corresponding to the first level at a tower)
 #'
 #' @return Returns a data frame of data just from the specified measurement level
 
 #' @keywords process quality, data quality, gaps, commissioning
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)

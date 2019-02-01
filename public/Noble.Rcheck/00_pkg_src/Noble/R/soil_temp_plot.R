@@ -6,8 +6,8 @@
 #' @description At a given site and date-time, a plot of the soil temperature profile for
 #' all five soil plots is produced.
 #'
-#' @param \code{site} Parameter of class character. The TIS site of interest.
-#' @param \code{date} Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.
+#' @param site Parameter of class character. The TIS site of interest.
+#' @param date Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.
 #'
 #' @return A facet plot soil temperature data by depth.
 #'
@@ -18,14 +18,14 @@
 ##############################################################################################
 
 soil.temp.plot=function(site, date){
-    dpID="DP1.00041.001"
+    dp.id="DP1.00041.001"
 
     month=format(zoo::as.yearmon(date), "%Y-%m")
     date=as.POSIXct(date, tz="UTC", format="%Y-%m-%d %H:%M")
 
-    data=Noble::data.pull(site = site, dpID = dpID, bgn.month = month, end.month = month, time.agr = 30, package = "basic", save.dir = tempdir(), complete.times = F)
+    data=Noble::pull.data(site = site, dp.id = dp.id, bgn.month = month, end.month = month, time.agr = 30, package = "basic", save.dir = tempdir(), complete.times = F)
 
-    locs=Noble::pull.dp.locs(site=site, dpID = dpID)
+    locs=Noble::pull.dp.locs(site=site, dp.id = dp.id)
 
     date_ta=data[data$startDateTime==date,]
 

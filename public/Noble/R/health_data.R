@@ -9,15 +9,18 @@
 #'
 #' Because the full period of record for all sites are queried,
 #' this function can take a long time to execute.
+#' @inheritParams dp.survey
 #'
-#'
-#' @param \code{dp.id} Parameter of class character. The NEON data product code of the data product of
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of
 #' interest.
-#' @param \code{site} Parameter of class character. The NEON site of interest.
+#' @param site Parameter of class character. The NEON site of interest.
+#'
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param save.dir The directory for data files to be saved to.
 
-#' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
-#' If only one site is specified, the GGPlot2 object for the summary plot is also returned,
-#' for use in automated report writing.
+
+#' @return A data frame of health statisitcs by month for a given site. Raw NEON data are also saved to the specified save.dir, if supplied.
 
 #' @keywords process quality, data quality, gaps, commissioning, data product, health
 
@@ -25,7 +28,7 @@
 #' # Summarize 2D wind perfomance at CPER:
 #' CPER_wind=dp.survey(dp.id = "DP1.00001.001", site="CPER")
 
-#' @seealso Currently none
+
 #' @export
 
 # changelog and author contributions / copyrights
@@ -57,7 +60,7 @@ if(missing(save.dir)){save.dir=tempdir()}
     }else if(missing(end.month)){
         end.month=Sys.Date()
         info.dates=seq.Date(from=as.Date(paste0(bgn.month, "-01")), to=end.month, by="1 month")
-        run.dates=sunstr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
+        run.dates=base::substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
     }else if(missing(bgn.month)){
         info.dates=seq.Date(from=as.Date("2014-01-01"), to=end.month, by="1 month")
         run.dates=substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)

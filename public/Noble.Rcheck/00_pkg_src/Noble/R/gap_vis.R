@@ -6,12 +6,7 @@
 #' @description For a specified data product ID, this function will produce a visual representation of
 #' data and quality flag gaps for their period of record at a site.
 #'
-#' @param \code{site} A NEON TIS site
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
-#' @param \code{bgn.month} The fisrt month of data to examine for gaps.
-#' @param \code{end.date} The last month of data to examine for gaps.
-#' @param \code{save.dir} The directory to write data files to.
-
+#' @inheritParams gap.report
 
 #' @return Writes a PNG showing the starts and ends of gaps, by ML and gap type
 
@@ -20,22 +15,26 @@
 #' @examples
 #' \dontrun{
 #' # For 2d Wind, save files to the current working directory:
-#' gap.vis(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+#' gap.vis(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
 #' }
 
 #' @seealso gap.find, gap.report
+#' @export
 #'
 ############################################################################################
 
-gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
-    require(ggplot2)
+gap.vis=function(site, bgn.month, end.month, dp.id, save.dir){
 
-    data=Noble::data.pull(dpID = dpID, site = site, bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
-    short.name=Noble::tis_pri_vars$short.name[Noble::tis_pri_vars$dpID==dpID]
+    location=NULL
+    gap.start=NULL
+    gap.end=NULL
+
+    data=Noble::pull.data(dp.id = dp.id, site = site, bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
+    short.name=Noble::tis_pri_vars$short.name[Noble::tis_pri_vars$dp.id==dp.id]
     raw.mls=zoo::na.trim(stringr::str_extract(string = colnames(data), pattern = "\\.\\d\\d\\d\\.\\d\\d\\d"))
     tower.mls=as.numeric(unique(stringr::str_sub(raw.mls, start = 7, end = 7)))
 
-    locs=as.character(na.exclude(unique(stringr::str_extract(string = colnames(data), pattern = "\\d{3}\\.\\d{3}"))))
+    locs=as.character(stats::na.exclude(unique(stringr::str_extract(string = colnames(data), pattern = "\\d{3}\\.\\d{3}"))))
 
     sp.locs=unique(substr(x=locs, start = 3,3))
     sp.locs=sp.locs[!sp.locs==0]
@@ -54,7 +53,7 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
         i <- c(which(y|is.na(y)),n)
 
         data.frame(
-            start_index = as.vector(x[head(c(0L,i)+1L,-1L)]),
+            start_index = as.vector(x[base::head(c(0L,i)+1L,-1L)]),
             stop_index = as.vector(diff(c(0L,i)))
 
         )
@@ -69,7 +68,7 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
         }else if(loc=="ml"){
             l.data=Noble::ml.extract(data=data, ml = l)
         }
-        gaps=Noble::find.gap(data = l.data, time.agr = 30, return = "index")
+        gaps=Noble::gap.find(data = l.data, time.agr = 30, return = "index")
         no.data.times=seq.length(gaps$no.data.indx)
         no.data.times$stop_index=(no.data.times$start_index+no.data.times$stop_index-1)
         location=paste0(toupper(loc),"-", l)
@@ -82,7 +81,7 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
         }else if(loc=="ml"){
             l.data=Noble::ml.extract(data=data, ml = l)
         }
-        gaps=Noble::find.gap(data = l.data, time.agr = 30, return = "index")
+        gaps=Noble::gap.find(data = l.data, time.agr = 30, return = "index")
         no.qf.times=seq.length(gaps$no.qf.indx)
         no.qf.times$stop_index=(no.qf.times$start_index+no.qf.times$stop_index-1)
         location=paste0(toupper(loc),"-", l)
@@ -118,7 +117,7 @@ gap.vis=function(site, bgn.month, end.month, dpID, save.dir){
         ggplot2::scale_x_discrete(name="", breaks=NULL)+
         ggplot2::theme_minimal()+
         ggplot2::guides(fill=FALSE)+
-        ggplot2::ggtitle(label = site, subtitle = paste0(dpID, " Gaps"))+
+        ggplot2::ggtitle(label = site, subtitle = paste0(dp.id, " Gaps"))+
         ggplot2::theme(legend.position="none")
 
     ggplot2::ggsave(filename = paste0(short.name, "_", site, "_Gaps","_", bgn.month, "-", end.month, ".png"),

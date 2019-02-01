@@ -7,7 +7,7 @@
 #' for all NEON instrumented sites is returned. The output of data product availability is best
 #' interpreted with the base \code{View()} function.
 #'
-#' @param \code{dp.id} Parameter of class character. The NEON data product code of the data product of interest.
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of interest.
 
 #' @return Outputs a data frame of data product availability by month, where 'x' indicates availability.
 #'

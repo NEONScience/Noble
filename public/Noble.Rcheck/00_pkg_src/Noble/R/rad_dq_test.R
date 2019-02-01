@@ -9,17 +9,17 @@
 #' in the results.csv files, however expanded test resullts are written in a site-specific folder in
 #' the save directory.
 #'
-#' @param \code{site} The TIS site of interest, as a 4-letter code.
-#' @param \code{save.dir} The save directory for data, results, and other files.
-#' @param \code{bgn.month} The first month of testing, as "YYYY-MM".
-#' @param \code{end.month} The last month of testing, as "YYYY-MM".
+#' @param site The TIS site of interest, as a 4-letter code.
+#' @param save.dir The save directory for data, results, and other files.
+#' @param bgn.month The first month of testing, as "YYYY-MM".
+#' @param end.month The last month of testing, as "YYYY-MM".
 #'
 #' @return Site results in 'results.csv', and raw
 
 #' @keywords process quality, data quality, gaps, commissioning
 
 #'
-#' @seealso Currently none
+
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2018-01-03)
@@ -30,7 +30,13 @@
 
 ## Function start
 rad.dq.test=function(site, save.dir, bgn.month, end.month){
-    library(magrittr)
+
+    startDateTime=NULL
+value=NULL
+variable=NULL
+gloRadMean.000.060=NULL
+UTC_DATE=NULL
+NEON.rad=NULL
 
     ########### GENERAL PARAMETERS ###########
     # if(!(site %in% Noble::rad_dq_info$Site)){
@@ -41,7 +47,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     #Define directories
     domn=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
-    site.dir=Noble:::.data.route(site=site, save.dir=save.dir)
+    site.dir=.data.route(site=site, save.dir=save.dir)
 
     rslt.dir=paste0(save.dir, "/Common/")
     if(!dir.exists(rslt.dir)){
@@ -54,13 +60,13 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     }
 
     #set up DP info
-    test.dpIDs=c("DP1.00014.001",
+    test.dp.ids=c("DP1.00014.001",
                  "DP1.00023.001",
                  "DP1.00024.001",
                  "DP1.00066.001"
     )
     # Add in Primary Pyranometer if Core site
-    if(Noble::tis_site_config$Core.Relocatable[Noble::tis_site_config$SiteID==site]=="Core"){test.dpIDs=c(test.dpIDs, "DP1.00022.001")}
+    if(Noble::tis_site_config$Core.Relocatable[Noble::tis_site_config$SiteID==site]=="Core"){test.dp.ids=c(test.dp.ids, "DP1.00022.001")}
 
 
 
@@ -69,12 +75,12 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     # First week start
     frst.week=c(as.Date(paste0(bgn.month, "-01")), as.Date(paste0(bgn.month, "-01"))+7)
-    last.week=c(as.Date(Noble::end.day.time(end.month = end.month, time.agr = 1))-7, as.Date(Noble::end.day.time(end.month = end.month, time.agr = 1)))
+    last.week=c(as.Date(Noble::last.day.time(end.month = end.month, time.agr = 1))-7, as.Date(Noble::last.day.time(end.month = end.month, time.agr = 1)))
 
     # Pull and refine data to vairance fields only
-    raw.var.data=lapply(test.dpIDs, function(x)
-        try(Noble::data.pull(site = site,
-                             dpID = x,
+    raw.var.data=lapply(test.dp.ids, function(x)
+        try(Noble::pull.data(site = site,
+                             dp.id = x,
                              bgn.month = bgn.month,
                              end.month = end.month,
                              time.agr = 30,
@@ -112,7 +118,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     if(0.01>f.test$p.value){f.test.result="Fail"}else{f.test.result="Pass"} ################################################################
 
     message(paste0("Variance Stability Test: ", f.test.result))
-    write.csv(x = data.frame(value=unlist(f.test)),file = paste0(raw.dir, "variance_stats.csv"))
+    utils::write.csv(x = data.frame(value=unlist(f.test)),file = paste0(raw.dir, "variance_stats.csv"))
 
 
     ############################################
@@ -164,16 +170,16 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     PAR.pairwise=lapply(site.MLs[-1], function(x) c(x-1, x))
     QL.PAR.pairwise=list(c(1,2), c(2,3))
 
-    PAR=try(Noble::data.pull(site = site,
-                             dpID = "DP1.00024.001",
+    PAR=try(Noble::pull.data(site = site,
+                             dp.id = "DP1.00024.001",
                              bgn.month = bgn.month,
                              end.month = end.month,
                              time.agr = 30,
                              package = "basic",
                              save.dir = site.dir)
     )
-    QL.PAR=try(Noble::data.pull(site = site,
-                                dpID = "DP1.00066.001",
+    QL.PAR=try(Noble::pull.data(site = site,
+                                dp.id = "DP1.00066.001",
                                 bgn.month = bgn.month,
                                 end.month = end.month,
                                 time.agr = 30,
@@ -184,8 +190,8 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     PAR=PAR[,grepl(pattern = "^PARMean", x = colnames(PAR))]
     QL.PAR=QL.PAR[,grepl(pattern = "linePARMean", x = colnames(QL.PAR))]
 
-    PAR.rho=unlist(lapply(PAR.pairwise, function(x) round(cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman", exact = F)$estimate, digits=2)))
-    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) round(cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman", exact = F)$estimate, digits = 2)))
+    PAR.rho=unlist(lapply(PAR.pairwise, function(x) round(stats::cor.test(PAR[,x[1]], PAR[,x[2]], method = "spearman", exact = F)$estimate, digits=2)))
+    QL.PAR.rho= unlist(lapply(QL.PAR.pairwise, function(x) round(stats::cor.test(QL.PAR[,x[1]], QL.PAR[,x[2]], method = "spearman", exact = F)$estimate, digits = 2)))
 
     names(PAR.rho)=paste0("PAR-", PAR.pairwise)
     names(QL.PAR.rho)=c("QL PAR 1-3", "QL PAR 3-5")
@@ -201,7 +207,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     ### Write stats out ###
     raw.stats=data.frame(rho.estimate=append(PAR.rho, QL.PAR.rho))
-    write.csv(x = raw.stats, file = paste0(raw.dir,"par_rho_stats.csv"), row.names = T)
+    utils::write.csv(x = raw.stats, file = paste0(raw.dir,"par_rho_stats.csv"), row.names = T)
 
 
     ### Final Results ###
@@ -216,13 +222,13 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     ########### TOWER-TOP CONSISTENCY ###########
     ########### Direct & Diffuse ONLY ###########
 
-    DirDif=try(Noble::data.pull(site = site,
-                                dpID = "DP1.00014.001",
+    DirDif=try(Noble::pull.data(site = site,
+                                dp.id = "DP1.00014.001",
                                 bgn.month = bgn.month,
                                 end.month = end.month,
                                 time.agr = 30,
                                 package = "basic",
-                                save.dir = Noble:::.data.route(site, save.dir = save.dir))
+                                save.dir = .data.route(site, save.dir = save.dir))
     )
 
     DirDif=data.frame(startDateTime=DirDif[,1],
@@ -241,10 +247,15 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     #Only rows with greater than 5 W/m^2 get tested
 
 
-    DirDif$SZA=RAtmosphere::SZA(timein = DirDif$startDateTime,
-                                Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site],
-                                Lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site]
-    )
+DirDif$SZA=GeoLight::zenith(GeoLight::solar(tm=DirDif$startDateTime),
+                 lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site],
+                 lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site]
+                 )
+
+    # DirDif$SZA=RAtmosphere::SZA(timein = DirDif$startDateTime,
+    #                             Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site],
+    #                             Lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site]
+    # )
 
     # Sum up the direct and diffuse rad
     DirDif$total=DirDif$dirRadMean*cos(DirDif$SZA/180*pi)+DirDif$difRadMean
@@ -273,7 +284,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     ### Raw data out
     tower.top=data.frame(sets=c("SZA<75", "75<SZA<93"), ratio=c(ratio1, ratio2), result=c(rat1Result, rat2Result))
-    write.csv(x = tower.top, file = paste0(raw.dir,"gloRad_tower_top_comparison.csv"), row.names = F)
+    utils::write.csv(x = tower.top, file = paste0(raw.dir,"gloRad_tower_top_comparison.csv"), row.names = F)
 
     message(
         paste0("Tower Top (Direct + Diffuse, Global) Consistency Test: ", ratio.result) ##############################################################################################################
@@ -281,10 +292,10 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     ########### GLOBAL RAD STREAMS AT TOWER TOP ###########
 
-    t.top.IDs=test.dpIDs[test.dpIDs %in% c("DP1.00014.001", "DP1.00022.001", "DP1.00023.001")]
+    t.top.IDs=test.dp.ids[test.dp.ids %in% c("DP1.00014.001", "DP1.00022.001", "DP1.00023.001")]
     raw.ttop.data=lapply(t.top.IDs, function(x)
-        try(Noble::data.pull(site = site,
-                             dpID = x,
+        try(Noble::pull.data(site = site,
+                             dp.id = x,
                              bgn.month = bgn.month,
                              end.month = end.month,
                              time.agr = 30,
@@ -301,7 +312,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         startDateTime=as.POSIXct(
             Noble::help.time.seq(
                 from = as.POSIXct(paste0(bgn.month, "-01"), tz = "UTC"),
-                to=as.POSIXct(Noble:::end.day.time(end.month = end.month, time.agr = 30), tz = "UTC"),
+                to=as.POSIXct(last.day.time(end.month = end.month, time.agr = 30), tz = "UTC"),
                 time.agr = 30), tz="UTC"))
 
     big.df$startDateTime=as.POSIXct(big.df$startDateTime, tz="UTC")
@@ -318,9 +329,9 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     if(length(data.indx)==3){
         list=list(
-            pair1=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95, exact = TRUE),
-            pair2=cor.test(x=big.df[,data.indx[2]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE),
-            pair3=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE)
+            pair1=stats::cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95, exact = TRUE),
+            pair2=stats::cor.test(x=big.df[,data.indx[2]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE),
+            pair3=stats::cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[3]], method = "spearman", conf.level = 0.95, exact = TRUE)
         )
 
         tower.top.glo.rad="Fail"
@@ -330,14 +341,14 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
     }
     if(length(data.indx)==2){
-        list=cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95)
+        list=stats::cor.test(x=big.df[,data.indx[1]], y=big.df[,data.indx[2]], method = "spearman", conf.level = 0.95)
 
         tower.top.glo.rad="Fail"
         if(list$estimate>=.9){tower.top.glo.rad="Pass"}
 
     }
 
-    write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "tower_top_ratios.csv"), row.names = T)
+    utils::write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "tower_top_ratios.csv"), row.names = T)
     message(paste0("Tower Top (Global Radiation Measurements) Consistency Test: ", tower.top.glo.rad))
 
     # if(site %in% Noble::tis_site_config$SiteID[Noble::tis_site_config$Core.Relocatable=="Core"]){
@@ -356,18 +367,18 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
                                   site_id = 2069,
                                   timescale = "hourly",
                                   DayBgn =paste0(bgn.month, "-01"),
-                                  DayEnd =stringr::str_sub(string =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1)), start = 1, end = 10)
+                                  DayEnd =stringr::str_sub(string =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)), start = 1, end = 10)
         )
         ext.data=temp
         ext.data$Date=as.POSIXct(ext.data$Date, tz=time.zone)
 
-        int.data=try(Noble::data.pull(site = site,
-                                      dpID = "DP1.00014.001",
+        int.data=try(Noble::pull.data(site = site,
+                                      dp.id = "DP1.00014.001",
                                       bgn.month = bgn.month,
                                       end.month = end.month,
                                       time.agr = 30,
                                       package = "basic",
-                                      save.dir = Noble:::.data.route(site, save.dir = save.dir))
+                                      save.dir = .data.route(site, save.dir = save.dir))
         )
         int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")#-lubridate::hours(offset+2)
 
@@ -379,7 +390,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         all.data=merge(x=int.rad, y=ext.data, by.y = "Date", by.x = "startDateTime")
 
         #qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
-        ext.consist=cor.test(x=all.data$Solar.Radiation.Average..watt.m2., y = all.data$gloRadMean.000.060, conf.level = 0.95, method = "spearman", exact = F)$estimate
+        ext.consist=stats::cor.test(x=all.data$Solar.Radiation.Average..watt.m2., y = all.data$gloRadMean.000.060, conf.level = 0.95, method = "spearman", exact = F)$estimate
 
 
     }else{
@@ -388,23 +399,23 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
         temp=Noble::pull.USCRN.data(timeScale = "subhourly",
                                     stationID = uscrn.site,
                                     TimeBgn = paste0(bgn.month, "-01"),
-                                    TimeEnd =  as.character(Noble::end.day.time(end.month = end.month, time.agr = 1)),
-                                    saveDir = Noble:::.data.route(site = site, save.dir = save.dir)
+                                    TimeEnd =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)),
+                                    saveDir = .data.route(site = site, save.dir = save.dir)
         )
 
         ext.data=temp
         ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
-        write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
+        utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
 
 
         ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
-        int.data=try(Noble::data.pull(site = site,
-                                      dpID = "DP1.00014.001",
+        int.data=try(Noble::pull.data(site = site,
+                                      dp.id = "DP1.00014.001",
                                       bgn.month = bgn.month,
                                       end.month = end.month,
                                       time.agr = 1,
                                       package = "basic",
-                                      save.dir = Noble:::.data.route(site, save.dir = save.dir))
+                                      save.dir = .data.route(site, save.dir = save.dir))
         )
         int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
         int.rad=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
@@ -422,7 +433,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
 
         #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
 
-        spearman.results=cor.test(all.data$NEON.rad, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
+        spearman.results=stats::cor.test(all.data$NEON.rad, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
 
         ext.consist=spearman.results$estimate
 
@@ -432,7 +443,7 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
             ggplot2::coord_fixed()
         ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
 
-        write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
+        utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }
     if(ext.consist>0.90){external.test="Pass"}else{external.test="Fail"}
     message(
@@ -452,12 +463,12 @@ rad.dq.test=function(site, save.dir, bgn.month, end.month){
     ########### WRITE TO RESULTS FILE ###########
 
     if(file.exists(paste(rslt.dir,"results.csv",sep = "/"))){
-        dq.rpt <- read.csv(file = paste(rslt.dir,"results.csv",sep = "/"), header = T, stringsAsFactors = T)
+        dq.rpt <- utils::read.csv(file = paste(rslt.dir,"results.csv",sep = "/"), header = T, stringsAsFactors = T)
         dq.rpt <- rbind(dq.rpt, dq.rslt)
-        write.csv(x = dq.rpt, file = paste(rslt.dir,"results.csv",sep = "/"), row.names = F)
+        utils::write.csv(x = dq.rpt, file = paste(rslt.dir,"results.csv",sep = "/"), row.names = F)
     }
     else{
-        write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
+        utils::write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
     }
 
 }

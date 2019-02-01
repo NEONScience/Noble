@@ -7,14 +7,14 @@
 #' @usage ais_site_config
 #' @format Information on all 36 AIS sites in table/data frame format.
 NULL
-#' @name GHCNDstations
+#' @name USCRN_sites
 #' @docType data
-#' @title GHCND Site List
-#' @description A list of GHCND stations quieriable with \code{Noble::pull.USCRN.data()}. Parsed from
+#' @title USCRN Site List
+#' @description A list of USCRN stations. Parsed from
 #' ghcnd-stations.txt, available on the NCDC/NCEI's FTP server at
 #' \url{ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt}.
 #' @keywords USCRN, GHCND, NCDC, NCEI, metadata
-#' @usage GHCNDstations
+#' @usage USCRN_sites
 #' @format A data frame/table listing site metadata for 242 USCRN sites.
 NULL
 #' @name is_site_config
@@ -26,7 +26,7 @@ NULL
 #' AIS- or TIS-specific database be used instead where possible.
 #' @keywords TIS, AIS, metadata, configuration
 #' @usage is_site_config
-#' @format Information on all 86 IS sites in table/data frame format.
+#' @format Information on all 81 IS sites in table/data frame format.
 NULL
 #' @name rad_dq_info
 #' @docType data
@@ -64,3 +64,4 @@ NULL
 #' @keywords TIS, 2D Wind Speed and Direction, metadata, thresholds, flag, quality
 #' @usage wind_thresholds
 #' @format Thresholds and tower information for 2D wind at all IS sites in table/data frame format.
+NULL

@@ -7,15 +7,15 @@
 pull.eddy.data(site, bgn.month, end.month, package, save.dir)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The 4-letter NEON site code that the data is for.}
+\item{site}{Parameter of class character. The 4-letter NEON site code that the data is for.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
 
-\item{\code{package}}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
+\item{package}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
 
-\item{\code{save.dir}}{Optional. If specified a CSV of the extracted data will be saved to the
+\item{save.dir}{Optional. If specified a CSV of the extracted data will be saved to the
 input directory.}
 }
 \value{
@@ -28,10 +28,13 @@ month basis.
 }
 \examples{
 \dontrun{
+site="CPER"
+bgn.month="2017-04"
+end.month="2017-11"
+package="basic"
+save.dir=tempdir()
+pull.eddy.data(site, bgn.month, end.month, package, save.dir)
 }
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

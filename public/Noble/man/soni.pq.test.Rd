@@ -2,23 +2,23 @@
 % Please edit documentation in R/soni_pq_test.R
 \name{soni.pq.test}
 \alias{soni.pq.test}
-\title{Perform A Commissioning PQ Test on 3D Sonic Anemometer Data
-#' @author Robert Lee \email{rlee@battelleecology.org}\cr}
+\title{Perform A Commissioning PQ Test on 3D Sonic Anemometer Data}
 \usage{
 soni.pq.test(site = "CPER", bgn.month, end.month, save.dir, q.th = 95,
   v.th = 90)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
+\item{site}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first
-month to get data for.}
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last
-month to get data for.}
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
 
-\item{\code{save.dir}}{Parameter of class character. The local directory where data files should
-be saved.}
+\item{save.dir}{Parameter of class character. The local directory where data files should be saved.}
+
+\item{q.th}{Parameter of class character. Optional. The threshold for data availability for a passing test, defaults to 0.95.}
+
+\item{v.th}{Parameter of class character. Optional. The threshold for data validity for a passing test, defaults to 0.9.}
 }
 \value{
 Writes data files to the specified directory.
@@ -38,6 +38,9 @@ package="basic"
 save.dir<-tempdir()
 Noble::tis.pq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
 }
+}
+\author{
+Robert Lee \email{rlee@battelleecology.org}\cr
 }
 \keyword{commissioning}
 \keyword{data}

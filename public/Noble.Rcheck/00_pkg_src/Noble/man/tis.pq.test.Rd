@@ -4,14 +4,14 @@
 \alias{tis.pq.test}
 \title{Downloads and performs process quality checks on NEON data}
 \usage{
-tis.pq.test(site = "CPER", dpID = "DP1.00001.001", prin.vars,
+tis.pq.test(site = "CPER", dp.id = "DP1.00001.001", prin.vars,
   bgn.month = "2012-05", end.month = "2012-06", time.agr = 30,
   package = "basic", save.dir, q.th = 95, v.th = 90)
 }
 \arguments{
 \item{site}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{dpID}{Parameter of class character. The name of the data product to pull data, or a
+\item{dp.id}{Parameter of class character. The name of the data product to pull data, or a
 keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.}
 
 \item{prin.vars}{The principle variables to test (variable names, such as 'windSpeed'). Omit the term 'Mean'.}
@@ -25,6 +25,10 @@ keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind 
 \item{package}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
 
 \item{save.dir}{Parameter of class character. The local directory where data files should be saved.}
+
+\item{q.th}{Parameter of class character. Optional. The threshold for data availability for a passing test, defaults to 0.95.}
+
+\item{v.th}{Parameter of class character. Optional. The threshold for data validity for a passing test, defaults to 0.9.}
 }
 \value{
 Writes data files to the specified directory.
@@ -32,21 +36,6 @@ Writes data files to the specified directory.
 \description{
 For the specified dates, site, variables, and data product or name of family of data products,
 data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
-}
-\examples{
-\dontrun{
-site = "CPER"
-dpID = "DP1.00001.001"
-prin.vars<-c("windSpeed", "windDir")
-bgn.month = "2017-05"
-end.month = "2017-06"
-time.agr = 30
-package="basic"
-save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
-time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
-}
-
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

@@ -7,15 +7,19 @@
 health.data(site, dp.id, bgn.month, end.month, save.dir)
 }
 \arguments{
-\item{\code{dp.id}}{Parameter of class character. The NEON data product code of the data product of
+\item{site}{Parameter of class character. The NEON site of interest.}
+
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of
 interest.}
 
-\item{\code{site}}{Parameter of class character. The NEON site of interest.}
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.}
+
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
+
+\item{save.dir}{The directory for data files to be saved to.}
 }
 \value{
-Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
-If only one site is specified, the GGPlot2 object for the summary plot is also returned,
-for use in automated report writing.
+A data frame of health statisitcs by month for a given site. Raw NEON data are also saved to the specified save.dir, if supplied.
 }
 \description{
 For a specified data product ID, this function will produce a data frame of data
@@ -28,9 +32,6 @@ this function can take a long time to execute.
 \examples{
 # Summarize 2D wind perfomance at CPER:
 CPER_wind=dp.survey(dp.id = "DP1.00001.001", site="CPER")
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

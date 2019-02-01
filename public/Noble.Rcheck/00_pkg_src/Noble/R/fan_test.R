@@ -5,22 +5,21 @@
 
 #' @description For the specified dates and site, will test and report results in a results.csv file.
 #'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first
+#' @param site Parameter of class character. The NEON site data should be downloaded for.
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first
 #' month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last
 #'  month to get data for.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should be
+#' @param save.dir Parameter of class character. The local directory where data files should be
 #' saved.
-#' @param \code{pass.th} Optional, defaults to 95. The percent of data that must be unflagged for the
+#' @param pass.th Optional, defaults to 95. The percent of data that must be unflagged for the
 #' site to pass the test.
 #'
 #' @return Writes results file to the specified directory.
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples Currently none
-#' @seealso Currently none
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2016-12-12)
@@ -57,7 +56,7 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     Kpi <- "Air Temp"
     domn= Noble::tis_site_config$Domain[Noble::tis_site_config$SiteID==site]
 
-    dat_dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    dat_dir=.data.route(site = site, save.dir = save.dir)
 
     SAATnumber <- "DP1.00002.001"
     TAATnumber <- "DP1.00003.001"
@@ -75,21 +74,21 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     # Don't download if the file matching specifications exists in the SCA
     if(!file.exists(SAATfile)){
 
-        sink<-Noble::data.pull(site = site, dpID = SAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
+        sink<-Noble::pull.data(site = site, dp.id = SAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
         rm(sink)
 
     }
 
     if(!file.exists(TAATfile)){
 
-        sink<-Noble::data.pull(site = site, dpID = TAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
+        sink<-Noble::pull.data(site = site, dp.id = TAATnumber, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir=dat_dir)
         rm(sink)
     }
 
     #### Load the files ####
 
-    SAATData<- as.data.frame(read.csv(SAATfile, header = T))
-    TAATData<- as.data.frame(read.csv(TAATfile, header = T))
+    SAATData<- as.data.frame(utils::read.csv(SAATfile, header = T))
+    TAATData<- as.data.frame(utils::read.csv(TAATfile, header = T))
 
     #### Scrape relevant Data ####
     SAATFlowIndx <- grep(pattern = "*flow", colnames(SAATData), ignore.case = T)
@@ -120,7 +119,7 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     nObs <- 0
 
     for(i in 1:length(flowIndx)){
-        temp<-na.omit(fanAspData[flowIndx[i]])
+        temp<-stats::na.omit(fanAspData[flowIndx[i]])
         nObs<-(nObs+length(temp[,1]))
     }
     #pcntFlowPass <- round(sum(flowPass)/(length(fanAspData$`SAATData$POSIXseq`)*mlTAAT), digits = 2)
@@ -144,12 +143,12 @@ fan.test<- function(site=site, bgn.month, end.month, save.dir, pass.th=95){
     }
     ####------####
     if (file.exists(paste(rslt.dir, "results.csv", sep = ""))) {
-        temp=read.csv(file = paste0(rslt.dir, "results.csv"))
+        temp=utils::read.csv(file = paste0(rslt.dir, "results.csv"))
         dataRpt=rbind(temp, dataRpt)
-        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
+        utils::write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
     }
     else {
-        write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
+        utils::write.csv(x = dataRpt, file = paste0(rslt.dir, "results.csv"), row.names = F)
     }
     ####------####
 }

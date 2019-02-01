@@ -7,7 +7,7 @@
 #' data are downloaded and saved to the specifed directory. Process quality calculations are then performed and written to a results file in save.dir.
 #'
 #' @param site Parameter of class character. The NEON site data should be downloaded for.
-#' @param dpID Parameter of class character. The name of the data product to pull data, or a
+#' @param dp.id Parameter of class character. The name of the data product to pull data, or a
 #' keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind data products.
 #' @param prin.vars The principle variables to test (variable names, such as 'windSpeed'). Omit the term 'Mean'.
 #' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
@@ -15,26 +15,14 @@
 #' @param time.agr Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
 #' @param package Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
 #' @param save.dir Parameter of class character. The local directory where data files should be saved.
+#' @param q.th Parameter of class character. Optional. The threshold for data availability for a passing test, defaults to 0.95.
+#' @param v.th Parameter of class character. Optional. The threshold for data validity for a passing test, defaults to 0.9.
 #'
 #' @return Writes data files to the specified directory.
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#' \dontrun{
-#' site = "CPER"
-#' dpID = "DP1.00001.001"
-#' prin.vars<-c("windSpeed", "windDir")
-#' bgn.month = "2017-05"
-#' end.month = "2017-06"
-#' time.agr = 30
-#' package="basic"
-#' save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-#' Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
-#' time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
-#' }
-
-#'
+#'@export
 
 
 # changelog and author contributions / copyrights
@@ -44,7 +32,7 @@
 ##############################################################################################
 
 
-tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90)
+tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90)
 {
     options(stringsAsFactors = FALSE)
     quant_threshold=q.th
@@ -60,11 +48,11 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
     }
 
     #Make domain-specific directory
-    site.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    site.dir=.data.route(site = site, save.dir = save.dir)
 
     #pull data
     test.data=data.frame()
-    test.data=try(Noble::data.pull(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir = site.dir))
+    test.data=try(Noble::pull.data(site = site, dp.id = dp.id, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir = site.dir))
     if(length(test.data)>1){
         for(i in 1:length(prin.vars)){
             data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))
@@ -83,7 +71,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
             }
 
             bgn.day=as.Date(paste0(bgn.month, "-01"))
-            end.day=as.POSIXct(Noble::end.day.time(end.month = end.month, time.agr = 1440))
+            end.day=as.POSIXct(Noble::last.day.time(end.month = end.month, time.agr = 1440))
 
             days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
             end.day=lubridate::round_date(end.day, "day")
@@ -116,7 +104,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                                 begin_month=bgn.month,
                                 end_month=end.month,
                                 days_tested=days,
-                                data_product= dpID,
+                                data_product= dp.id,
                                 variable_tested=prin.vars[i],
                                 data_quantity=data.quant,
                                 data_validity=data.valid,
@@ -124,13 +112,13 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                                 valid_threshold=valid_threshold
             )
 
-            if(file.exists(Noble:::.result.route(save.dir))){
-                dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+            if(file.exists(.result.route(save.dir))){
+                dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
                 dq.rpt <- rbind(dq.rpt, dq.rslt)
-                write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+                write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
             }
             else{
-                write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+                write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
             }
         }
     }else{
@@ -146,7 +134,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
         }
 
         bgn.day=as.Date(paste0(bgn.month, "-01"))
-        end.day=as.POSIXct(Noble::end.day.time(end.month = end.month, time.agr = 1440))
+        end.day=as.POSIXct(Noble::last.day.time(end.month = end.month, time.agr = 1440))
 
         days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
         ##### WRITE RESULTS
@@ -155,7 +143,7 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                             begin_month=bgn.month,
                             end_month=end.month,
                             days_tested=days,
-                            data_product= dpID,
+                            data_product= dp.id,
                             variable_tested=prin.vars[i],
                             data_quantity=0,
                             data_validity=0,
@@ -163,13 +151,13 @@ tis.pq.test<-function(site = "CPER", dpID = "DP1.00001.001", prin.vars,  bgn.mon
                             valid_threshold=valid_threshold
         )
 
-        if(file.exists(Noble:::.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+        if(file.exists(.result.route(save.dir))){
+            dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+            write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }
         else{
-            write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+            write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }}
     }
 }

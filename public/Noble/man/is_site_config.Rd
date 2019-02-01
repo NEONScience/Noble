@@ -4,7 +4,7 @@
 \name{is_site_config}
 \alias{is_site_config}
 \title{Site Configuration for NEON IS Stations}
-\format{Information on all 86 IS sites in table/data frame format.}
+\format{Information on all 81 IS sites in table/data frame format.}
 \usage{
 is_site_config
 }

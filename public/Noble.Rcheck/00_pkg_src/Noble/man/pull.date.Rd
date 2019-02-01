@@ -4,29 +4,28 @@
 \alias{pull.date}
 \title{Return TIS Data in a Specific Date-time Range}
 \usage{
-\method{pull}{date}(site, dpID, bgn.date, end.date, time.agr, package,
-  save.dir)
+pull.date(site, dp.id, bgn.date, end.date, time.agr, package, save.dir)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
+\item{site}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{\code{dpID}}{Parameter of class character. The data product code in question. See
+\item{dp.id}{Parameter of class character. The data product code in question. See
 \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
 \url{http://data.neonscience.org/data-product-catalog} for a complete list.}
 
-\item{\code{bgn.date}}{Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
+\item{bgn.date}{Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
 representing the first timestamp to return data for.}
 
-\item{\code{end.date}}{Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
+\item{end.date}{Parameter of class character. A date/time in the format yyyy-mm-dd HH:MM:SS,
 representing the last timestamp to return data for.}
 
-\item{\code{time.agr}}{Parameter of class numeric. The data agregation interval requested, must be
+\item{time.agr}{Parameter of class numeric. The data agregation interval requested, must be
 1, 2, 5, or 30.}
 
-\item{\code{package}}{Parameter of class character. Optional. The type of data package to be
+\item{package}{Parameter of class character. Optional. The type of data package to be
 returned If not specified, defaults to "basic".}
 
-\item{\code{save.dir}}{Parameter of class character. Optional. The local directory where data files
+\item{save.dir}{Parameter of class character. Optional. The local directory where data files
 should be saved. If unspecified, defaults to a temporariy directory given by \code{base::tempdir()}.}
 }
 \value{
@@ -41,12 +40,9 @@ dates will be saved to the \code{save.dir}, if specified.
 \dontrun{
 #Make a temporary direcotry for the example:
 tempDir<- tempdir()
-pull.date(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-03-15 00:00:00",
+pull.date(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-03-15 00:00:00",
 end.month = "2017-03-16 00:00:00", time.agr = 30, package="basic", save.dir= tempDir)
 }
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

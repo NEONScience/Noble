@@ -22,21 +22,7 @@
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#' \dontrun{
-#' site = "CPER"
-#' dp.id = "DP1.00001.001"
-#' prin.vars<-c("windSpeed", "windDir")
-#' bgn.month = "2017-05"
-#' end.month = "2017-06"
-#' time.agr = 30
-#' package="basic"
-#' save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-#' Noble::tis.pq.test(site = site, dp.id = dp.id, bgn.month = bgn.month, end.month = end.month,
-#' time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
-#' }
-
-#'
+#'@export
 
 
 # changelog and author contributions / copyrights
@@ -62,7 +48,7 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
     }
 
     #Make domain-specific directory
-    site.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    site.dir=.data.route(site = site, save.dir = save.dir)
 
     #pull data
     test.data=data.frame()
@@ -126,13 +112,13 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
                                 valid_threshold=valid_threshold
             )
 
-            if(file.exists(Noble:::.result.route(save.dir))){
-                dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+            if(file.exists(.result.route(save.dir))){
+                dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
                 dq.rpt <- rbind(dq.rpt, dq.rslt)
-                write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+                write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
             }
             else{
-                write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+                write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
             }
         }
     }else{
@@ -165,13 +151,13 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
                             valid_threshold=valid_threshold
         )
 
-        if(file.exists(Noble:::.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+        if(file.exists(.result.route(save.dir))){
+            dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+            write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }
         else{
-            write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+            write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }}
     }
 }

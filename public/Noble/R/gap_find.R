@@ -3,7 +3,7 @@
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description Given a data frame of NEON data, \code{find.gap} will return either a list rows or
+#' @description Given a data frame of NEON data, \code{gap.find} will return either a list rows or
 #' list of timestamps. Each returned list is list of missing timestamps, missing data (all NAs),
 #' and data with no values, but that are still quality flagged.\cr
 #'
@@ -20,10 +20,10 @@
 #'     na.data.times - The times where all data and QFs were 'NA'\cr
 #'     no.qf.times - The times where data are missing, but are quality flagged\cr
 #'
-#' @param \code{data} A data frame of NEON data returned from the API or SOM tool.
-#' @param \code{time.agr} Optional, but recommended. The data aggregation period of the input data
+#' @param data A data frame of NEON data returned from the API or SOM tool.
+#' @param time.agr Optional, but recommended. The data aggregation period of the input data
 #' (difference between timestamps in minutes), if not specified it will guess at the value.
-#' @param \code{return} Optional. Used to specifiy whether row numbers ("index") or timestamps
+#' @param return Optional. Used to specifiy whether row numbers ("index") or timestamps
 #' ("times") are returned. Defaults to row numbers if not specified.
 
 #' @return Outputs a list of lists of row numbers or timestamps where data is missing.
@@ -31,10 +31,6 @@
 
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#' Currently none
-
-#' @seealso Currently none
 #' @export
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-10)
@@ -46,7 +42,7 @@
 #
 ##############################################################################################
 
-find.gap<-function(data, time.agr, return){
+gap.find<-function(data, time.agr, return){
 
     valid.returns <- c("index", "times")
 

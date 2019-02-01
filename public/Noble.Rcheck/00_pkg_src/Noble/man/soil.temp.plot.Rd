@@ -7,9 +7,9 @@
 soil.temp.plot(site, date)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The TIS site of interest.}
+\item{site}{Parameter of class character. The TIS site of interest.}
 
-\item{\code{date}}{Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.}
+\item{date}{Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.}
 }
 \value{
 A facet plot soil temperature data by depth.

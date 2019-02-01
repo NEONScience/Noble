@@ -7,7 +7,7 @@
 neon.avail(dp.id = "DP1.00001.001")
 }
 \arguments{
-\item{\code{dp.id}}{Parameter of class character. The NEON data product code of the data product of interest.}
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of interest.}
 }
 \value{
 Outputs a data frame of data product availability by month, where 'x' indicates availability.

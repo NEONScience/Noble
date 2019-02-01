@@ -8,28 +8,21 @@
 #' sites with data product availability are generated and saved to the specified directory. If
 #' \code{site} is specified, only plots for the site(s) passed to that parameter are generated and saved.
 #'
-#'
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of interest.
+#' @param save.dir The directory for data files and output PNGs to be saved to.
+#' @param site Optional. Can specify single site or list of sites of interest.
+#' @param pri.var Optional. Can specify the data product field of interest (e.g. "windDirMean" for 2D wind direction).
 #'
 #' Because the full period of record for all sites are queried,
 #' this function can take a long time to execute.
 #'
-#'
-#' @param \code{dp.id} Parameter of class character. The NEON data product code of the data product of interest.
-#' @param \code{save.dir} The directory for data files and output PNGs to be saved to.
-#' @param \code{site} Optional. Can specify single site or list of sites of interest; otherwise all valid sites are run (may take a while)
-#' @param \code{pri.var} Optional. Defaults to the priamry data product field if not specified.
-
 #' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
 #' If only one site is specified, the GGPlot2 object for the summary plot is also returned,
 #' for use in automated report writing.
 
 #' @keywords process quality, data quality, gaps, commissioning, data product, health
 
-#' @examples
-#' # For 2d Wind, save all plots to the current working directory:
-#' dp.survey(dp.id = "DP1.00001.001", save.dir = getwd())
 
-#' @seealso Currently none
 #' @export
 #'
 # changelog and author contributions / copyrights

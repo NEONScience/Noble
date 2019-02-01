@@ -21,10 +21,10 @@ Extract data between specified start and end times.
 }
 \examples{
 \dontrun{
-data=Noble::data.pull(site = "CPER", dpID = "DP1.00001.001", bgn.month = "2017-08",
+data=Noble::pull.data(site = "CPER", dp.id = "DP1.00001.001", bgn.month = "2017-08",
 end.month = "2017-08", time.agr = 30, save.dir = tempdir())
 ## Extract data from Aug 8th, UTC.
-aug8=ml.extract(data=data, bgn.date = "2017-08-08", end.date = "2017-08-09")
+aug8=date.extract(data=data, bgn.date = "2017-08-08", end.date = "2017-08-09")
 }
 
 }

@@ -8,10 +8,10 @@
 #' Plots are of PAR readings from ML-n versus readings from ML-n+1. The raw data used in the
 #' plot are not saved.
 #'
-#' @param \code{site} The 4-letter NEON site code.
-#' @param \code{bgn.month} The fisrt month of data to use in plotting.
-#' @param \code{end.date} The last month of data to use in plotting.
-#' @param \code{save.dir} The save directory for the output plot.
+#' @param site The 4-letter NEON site code.
+#' @param bgn.month The fisrt month of data to use in plotting.
+#' @param end.month The last month of data to use in plotting.
+#' @param save.dir The save directory for the output plot.
 #'
 #' @return A PNG of level-by-level comparison plots in the specified \code{save.dir}.
 #'
@@ -21,7 +21,7 @@
 #' \dontrun{
 #' par.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
 #' }
-#' @seealso Currently none
+
 #'
 
 # changelog and author contributions / copyrights
@@ -31,6 +31,9 @@
 ##############################################################################################
 
 par.cnst.plot=function(site, bgn.month, end.month, save.dir){
+    T1=NULL
+    T2=NULL
+
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
     par.data=Noble::pull.data(site = site, dp.id = "DP1.00024.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
@@ -77,7 +80,7 @@ par.cnst.plot=function(site, bgn.month, end.month, save.dir){
                      )
     )
     combo=do.call(gridExtra::grid.arrange, lapply(plots, ggplot2::ggplotGrob))
-    graphics.off()
+    grDevices::graphics.off()
 
-    ggsave(filename = paste0(site, "_", bgn.month,"-", end.month,  "_ML_AT_comparisons.png"), plot = combo, device = "png", path = save.dir, width = 7.5, height = 10, units = "in")
+    ggplot2::ggsave(filename = paste0(site, "_", bgn.month,"-", end.month,  "_ML_AT_comparisons.png"), plot = combo, device = "png", path = save.dir, width = 7.5, height = 10, units = "in")
 }

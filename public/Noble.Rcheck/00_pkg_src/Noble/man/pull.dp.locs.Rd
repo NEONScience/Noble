@@ -4,13 +4,13 @@
 \alias{pull.dp.locs}
 \title{Return the Current Sensor Location Information for a Given Data Product}
 \usage{
-\method{pull}{dp.locs}(site, dpID)
+pull.dp.locs(site, dp.id)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The 4-letter site code for the NEON
+\item{site}{Parameter of class character. The 4-letter site code for the NEON
 site of interest.}
 
-\item{\code{dpId}}{Parameter of class character. The data product ID of interest,
+\item{dp.id}{Parameter of class character. The data product ID of interest,
 must be in code format, eg. "DP1.00001.001"}
 }
 \value{
@@ -22,12 +22,13 @@ For a given data product ID and site, a data frame of sensor location
 information is returned.
 }
 \examples{
-2d_wind_locs=Noble::pull.dp.locs(site="CPER", dpID="DP1.00001.001")
-
+\dontrun{
+2d_wind_locs=Noble::pull.dp.locs(site="CPER", dp.id="DP1.00001.001")
+}
 }
 \seealso{
 \itemize{
-\item\code{\link{NEON.avail}}, which returns a data frame of data product availability by site and month.
+\item\code{\link{neon.avail}}, which returns a data frame of data product availability by site and month.
 \item\code{\link{test.sites}}, which produces a list of sites that have a given data product installed.
 }
 }

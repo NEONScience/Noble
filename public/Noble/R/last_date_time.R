@@ -5,8 +5,8 @@
 
 #' @description For a temporal agregation, the function will return the latest date and time of that aggregation. For example, when December 2017 is specified with a 30 minute agregation, the function will return "2017-12-31 23:30:00".
 #'
-#' @param \code{end.month} Parameter of class character. The month in which the latest date and time should be returned.
-#' @param \code{time.agr} What the temporal agregation of the returned time shoule be, in minutes.
+#' @param end.month Parameter of class character. The month in which the latest date and time should be returned.
+#' @param time.agr What the temporal agregation of the returned time shoule be, in minutes.
 #'
 #' @return Latest date and time in the input month, offset from midnight by the input temporal agregation.
 #'
@@ -15,7 +15,7 @@
 #' @examples
 #'
 
-#' @seealso Currently none
+
 #' @export
 
 # changelog and author contributions / copyrights

@@ -9,23 +9,27 @@
 #'
 #' Because the full period of record for all sites are queried,
 #' this function can take a long time to execute.
+#' @inheritParams dp.survey
 #'
-#'
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of
 #' interest.
-#' @param \code{site} Parameter of class character. The NEON site of interest.
+#' @param site Parameter of class character. The NEON site of interest.
+#'
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param save.dir The directory for data files to be saved to.
 
-#' @return Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
-#' If only one site is specified, the GGPlot2 object for the summary plot is also returned,
-#' for use in automated report writing.
+
+#' @return A data frame of health statisitcs by month for a given site. Raw NEON data are also saved to the specified save.dir, if supplied.
 
 #' @keywords process quality, data quality, gaps, commissioning, data product, health
 
 #' @examples
 #' # Summarize 2D wind perfomance at CPER:
-#' CPER_wind=dp.survey(dpID = "DP1.00001.001", site="CPER")
+#' CPER_wind=dp.survey(dp.id = "DP1.00001.001", site="CPER")
 
-#' @seealso Currently none
+
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-11-21)
@@ -33,14 +37,14 @@
 #
 ##############################################################################################
 
-health.data= function(site, dpID, bgn.month, end.month, save.dir){
+health.data= function(site, dp.id, bgn.month, end.month, save.dir){
 
 if(missing(save.dir)){save.dir=tempdir()}
 
-    pri.var=Noble::tis_pri_vars$data.field[which(Noble::tis_pri_vars$dpID==dpID)]
+    pri.var=Noble::tis_pri_vars$data.field[which(Noble::tis_pri_vars$dp.id==dp.id)]
     var.name=gsub(pattern = "mean", replacement = "", x = pri.var, ignore.case = T)
 
-    dp.avail = NEON.avail(dpID = dpID)
+    dp.avail = neon.avail(dp.id = dp.id)
     dp.avail = cbind(Month=dp.avail[,1],  dp.avail[,which(colnames(dp.avail) %in% Noble::tis_site_config$SiteID)])
 
     temp.dates = zoo::as.Date(dp.avail$Month[
@@ -56,7 +60,7 @@ if(missing(save.dir)){save.dir=tempdir()}
     }else if(missing(end.month)){
         end.month=Sys.Date()
         info.dates=seq.Date(from=as.Date(paste0(bgn.month, "-01")), to=end.month, by="1 month")
-        run.dates=sunstr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
+        run.dates=base::substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
     }else if(missing(bgn.month)){
         info.dates=seq.Date(from=as.Date("2014-01-01"), to=end.month, by="1 month")
         run.dates=substr(temp.dates[temp.dates %in% info.dates], start = 0, stop = 7)
@@ -71,7 +75,7 @@ if(missing(save.dir)){save.dir=tempdir()}
 if(length(run.dates)>0){
     for(d in 1:length(run.dates)){
         message(paste0("Downloading ", run.dates[d]))
-        month.data<-try(Noble::data.pull(site = site, dpID = dpID, bgn.month = run.dates[d], end.month = run.dates[d], time.agr = 30, package = "basic", save.dir = save.dir))
+        month.data<-try(Noble::pull.data(site = site, dp.id = dp.id, bgn.month = run.dates[d], end.month = run.dates[d], time.agr = 30, package = "basic", save.dir = save.dir))
 
         if(!length(month.data)==0){
             priData=data.frame(month.data[,grepl(pattern = pri.var, x = colnames(month.data), ignore.case = T)])

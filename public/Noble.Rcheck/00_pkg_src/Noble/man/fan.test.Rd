@@ -7,18 +7,18 @@
 fan.test(site = site, bgn.month, end.month, save.dir, pass.th = 95)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}
+\item{site}{Parameter of class character. The NEON site data should be downloaded for.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first
 month to get data for.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last
 month to get data for.}
 
-\item{\code{save.dir}}{Parameter of class character. The local directory where data files should be
+\item{save.dir}{Parameter of class character. The local directory where data files should be
 saved.}
 
-\item{\code{pass.th}}{Optional, defaults to 95. The percent of data that must be unflagged for the
+\item{pass.th}{Optional, defaults to 95. The percent of data that must be unflagged for the
 site to pass the test.}
 }
 \value{
@@ -26,12 +26,6 @@ Writes results file to the specified directory.
 }
 \description{
 For the specified dates and site, will test and report results in a results.csv file.
-}
-\examples{
-Currently none
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

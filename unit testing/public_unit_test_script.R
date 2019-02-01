@@ -74,9 +74,9 @@ quoted.code="Noble::distorted.field(site)"
 make.log(quoted.code = quoted.code, result = if(class(out)=="list"&length(out)==3){"PASS"}else{"FAIL"})
 
 ## dp.survey - takes a long time to run
-quoted.code="Noble::dp.survey(dp.id=dp.id, save.dir = save.dir, site = 'YELL')"
-out=Noble::dp.survey(dp.id=dp.id, save.dir = save.dir, site = 'YELL')
-make.log(quoted.code = quoted.code, result = if(is.data.frame(out)){"PASS"}else{"FAIL"})
+#quoted.code="Noble::dp.survey(dp.id=dp.id, save.dir = save.dir, site = 'YELL')"
+#out=Noble::dp.survey(dp.id=dp.id, save.dir = save.dir, site = 'YELL')
+#make.log(quoted.code = quoted.code, result = if(is.data.frame(out)){"PASS"}else{"FAIL"})
 
 #last.day.time
 out=Noble::last.day.time(end.month = end.month, time.agr = 30)
@@ -88,6 +88,16 @@ quoted.code="Noble::fan.test(site, bgn.month, end.month, save.dir)"
 make.log(quoted.code, result = if(file.exists(paste0(save.dir, "/common/results.csv"))){"PASS"}else{"FAIL"})
 
 # gap.find
-out=Noble::find.gap(data=data, time.agr = 30, 'times')
-quoted.code="Noble::find.gap(data=data, time.agr = 30, 'times')"
+out=Noble::gap.find(data=data, time.agr = 30, 'times')
+quoted.code="Noble::gap.find(data=data, time.agr = 30, 'times')"
 make.log(quoted.code = quoted.code, result = if(class(out)=="list"){"PASS"}else{"FAIL"})
+
+# gap.report
+quoted.code="Noble::gap.report(site = site, bgn.month = bgn.month, end.month = end.month, dp.id = dp.id, save.dir = save.dir)"
+make.log(quoted.code = quoted.code, result = if(file.exists(paste0(save.dir, "CPER_2018-09-2018-09_2DWind_NO_DATA.csv"))){"PASS"}else{"FAIL"})
+
+# gap.vis
+quoted.code="Noble::gap.vis(site = site, bgn.month = bgn.month, end.month = end.month, dp.id = dp.id, save.dir = save.dir)"
+make.log(quoted.code = quoted.code, result = if(file.exists(paste0(save.dir, "2DWind_CPER_Gaps_2018-09-2018-09.png"))){"PASS"}else{"FAIL"})
+
+Noble::health.data

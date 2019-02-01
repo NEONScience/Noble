@@ -7,11 +7,11 @@
 test.sites(dp.id, bgn.month, end.month)
 }
 \arguments{
-\item{\code{dpId}}{Parameter of class character. The data product ID of interest, must be in code format, eg. "DP1.00001.001"}
+\item{dp.id}{Parameter of class character. The data product ID of interest, must be in code format, eg. "DP1.00001.001"}
 
-\item{\code{bgn.month}}{Parameter of class character. The start month of the sequence of interest.}
+\item{bgn.month}{Parameter of class character. The start month of the sequence of interest.}
 
-\item{\code{end.month}}{Parameter of class character. The (inclusive) end month of the sequence of interest.}
+\item{end.month}{Parameter of class character. The (inclusive) end month of the sequence of interest.}
 }
 \value{
 A list of sites where the data product is available between the two input months.
@@ -21,7 +21,7 @@ For a given data product ID and the start and end months, a list of sites where 
 }
 \examples{
 \dontrun{
-2d_wind=test.sites(dpId="DP1.00001.001")
+wind=test.sites(dpId="DP1.00001.001")
 }
 
 }

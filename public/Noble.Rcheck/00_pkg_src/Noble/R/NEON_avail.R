@@ -7,7 +7,7 @@
 #' for all NEON instrumented sites is returned. The output of data product availability is best
 #' interpreted with the base \code{View()} function.
 #'
-#' @param \code{dpID} Parameter of class character. The NEON data product code of the data product of interest.
+#' @param dp.id Parameter of class character. The NEON data product code of the data product of interest.
 
 #' @return Outputs a data frame of data product availability by month, where 'x' indicates availability.
 #'
@@ -16,8 +16,9 @@
 
 #' @examples
 #' \dontrun{
-#' wind<-NEON.avail(dpID = "DP1.00001.001")
+#' wind<-neon.avail(dp.id = "DP1.00001.001")
 #' }
+#' @export
 #'
 
 
@@ -33,7 +34,7 @@
 #
 ##############################################################################################
 
-NEON.avail<-function(dpID = "DP1.00001.001") {
+neon.avail<-function(dp.id = "DP1.00001.001") {
     # dpInfo <- base::data.frame(utils::read.csv(
     #     "https://raw.githubusercontent.com/rhlee12/Data-Products/master/kpiList.csv",
     #     header = TRUE))
@@ -52,10 +53,10 @@ NEON.avail<-function(dpID = "DP1.00001.001") {
     refMonths <- zoo::as.yearmon(months)
 
     # Return the availaiblity of a data product, as far as the API is concerned
-    availability=data.frame(do.call(rbind, jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data$siteCodes))
+    availability=data.frame(do.call(rbind, jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dp.id))$data$siteCodes))
 
     availDF <-data.frame(refMonths)
-    dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dpID, tis_pri_vars$dpID)])
+    dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dp.id, tis_pri_vars$dp.id)])
     dfNames <- c("Month", unlist(availability$siteCode))
 
     #Wrap around the API availability by site, to make data frame

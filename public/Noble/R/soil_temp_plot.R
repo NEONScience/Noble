@@ -6,8 +6,8 @@
 #' @description At a given site and date-time, a plot of the soil temperature profile for
 #' all five soil plots is produced.
 #'
-#' @param \code{site} Parameter of class character. The TIS site of interest.
-#' @param \code{date} Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.
+#' @param site Parameter of class character. The TIS site of interest.
+#' @param date Parameter of class character. The date and time of interest, \strong{to the nearest half hour in UTC}. Format should be \code{YYYY-MM-DD HH:MM}.
 #'
 #' @return A facet plot soil temperature data by depth.
 #'

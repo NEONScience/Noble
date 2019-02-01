@@ -7,10 +7,10 @@
 pull.dp.locs(site, dp.id)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The 4-letter site code for the NEON
+\item{site}{Parameter of class character. The 4-letter site code for the NEON
 site of interest.}
 
-\item{\code{dpId}}{Parameter of class character. The data product ID of interest,
+\item{dp.id}{Parameter of class character. The data product ID of interest,
 must be in code format, eg. "DP1.00001.001"}
 }
 \value{
@@ -22,8 +22,9 @@ For a given data product ID and site, a data frame of sensor location
 information is returned.
 }
 \examples{
+\dontrun{
 2d_wind_locs=Noble::pull.dp.locs(site="CPER", dp.id="DP1.00001.001")
-
+}
 }
 \seealso{
 \itemize{

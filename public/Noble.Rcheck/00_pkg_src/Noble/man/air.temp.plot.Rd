@@ -7,13 +7,13 @@
 air.temp.plot(bgn.month, end.month, site, save.dir)
 }
 \arguments{
-\item{\code{site}}{The NEON TIS site to generate plots for.}
+\item{bgn.month}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to plot.}
 
-\item{\code{bgn.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the first month to plot.}
+\item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to plot.}
 
-\item{\code{end.month}}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to plot.}
+\item{site}{The NEON TIS site to generate plots for.}
 
-\item{\code{save.dir}}{Directory where plots should be written.}
+\item{save.dir}{Directory where plots should be written.}
 }
 \value{
 A data frame with data collected between \code{bgn.time} and \code{end.time}.

@@ -7,13 +7,13 @@
 rad.dq.test(site, save.dir, bgn.month, end.month)
 }
 \arguments{
-\item{\code{site}}{The TIS site of interest, as a 4-letter code.}
+\item{site}{The TIS site of interest, as a 4-letter code.}
 
-\item{\code{save.dir}}{The save directory for data, results, and other files.}
+\item{save.dir}{The save directory for data, results, and other files.}
 
-\item{\code{bgn.month}}{The first month of testing, as "YYYY-MM".}
+\item{bgn.month}{The first month of testing, as "YYYY-MM".}
 
-\item{\code{end.month}}{The last month of testing, as "YYYY-MM".}
+\item{end.month}{The last month of testing, as "YYYY-MM".}
 }
 \value{
 Site results in 'results.csv', and raw
@@ -24,9 +24,6 @@ Run 4 checks on radiation data quality for TIS sites: (1) Internal Correlation,
 (4) External Correlation with a Non-NEON Site. Test results are written as simple pass/fail entries
 in the results.csv files, however expanded test resullts are written in a site-specific folder in
 the save directory.
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

@@ -7,15 +7,15 @@
 gap.vis(site, bgn.month, end.month, dp.id, save.dir)
 }
 \arguments{
-\item{\code{site}}{A NEON TIS site}
+\item{site}{A NEON TIS site}
 
-\item{\code{dp.id}}{Parameter of class character. The NEON data product code of the data product of interest.}
+\item{bgn.month}{The fisrt month of data to examine for gaps.}
 
-\item{\code{bgn.month}}{The fisrt month of data to examine for gaps.}
+\item{end.month}{The last month of data to examine for gaps.}
 
-\item{\code{end.date}}{The last month of data to examine for gaps.}
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of interest.}
 
-\item{\code{save.dir}}{The directory to write data files to.}
+\item{save.dir}{The directory to write data files to.}
 }
 \value{
 Writes a PNG showing the starts and ends of gaps, by ML and gap type

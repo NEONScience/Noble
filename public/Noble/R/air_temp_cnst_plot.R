@@ -9,7 +9,7 @@
 #'
 #' @param site The 4-letter NEON site code.
 #' @param bgn.month The fisrt month of data to use in plotting.
-#' @param end.date The last month of data to use in plotting.
+#' @param end.month The last month of data to use in plotting.
 #' @param save.dir The save directory for the output plot.
 #'
 #' @return A PNG of level-by-level comparison plots in the specified \code{save.dir}.
@@ -30,6 +30,9 @@
 ##############################################################################################
 
 air.temp.cnst.plot=function(site, bgn.month, end.month, save.dir){
+    T1=NULL
+    T2=NULL
+
     num.mls=Noble::tis_site_config$Num.of.MLs[site==Noble::tis_site_config$SiteID]
 
     saat.test.data=Noble::pull.data(site = site, dp.id = "DP1.00002.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = save.dir)
@@ -52,13 +55,19 @@ air.temp.cnst.plot=function(site, bgn.month, end.month, save.dir){
                 ggplot2::xlab(paste0("ML", i))+
                 ggplot2::ylab(paste0("ML", i+1))+
                 ggplot2::ggtitle(paste0("ML-", i, " vs ML-", i+1, " Air Temperature"), subtitle = paste0(site, ", ", zoo::as.yearmon(bgn.month), " to ", zoo::as.yearmon(end.month)))
-           # graphics.off()
+
         }
 
     )
     combo=do.call(gridExtra::grid.arrange, lapply(plots, ggplot2::ggplotGrob))
-    graphics.off()
+    grDevices::graphics.off()
 
-        ggsave(filename = paste0(site, "_", bgn.month,"-", end.month,  "_ML_AT_comparisons.png"), plot = combo, device = "png", path = save.dir, width = 7.5, height = 10, units = "in")
+    ggplot2::ggsave(filename = paste0(site, "_", bgn.month,"-", end.month,  "_ML_AT_comparisons.png"),
+                    plot = combo,
+                    device = "png",
+                    path = save.dir,
+                    width = 7.5,
+                    height = 10,
+                    units = "in")
 
 }

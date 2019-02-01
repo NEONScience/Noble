@@ -1,32 +1,42 @@
 ############################################################################################
-#' @title  Downloads data for a specified data product or products, and saves the data to a specified directory
+#' @title  Downloads data for a specified data product or products,
+#'  and saves the data to a specified directory
 
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
-#' @description For the specified dates, site, package parameters, and data product or name of family of data products,
+#' @description For the specified dates, site, package parameters,
+#' and data product or name of family of data products,
 #' data are downloaded and saved to the specifed directory.
 #'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{dpID} Parameter of class character. The data product code in question. See
+#' @param site Parameter of class character. The NEON site data should be downloaded for.
+#' @param dp.id Parameter of class character. The data product code in question. See
 #' \code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
 #' \url{http://data.neonscience.org/data-product-catalog} for a complete list.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{time.agr} Parameter of class numeric. The data agregation interval requested, must be 1, 2, or 30.
-#' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should be saved.
-#' @param \code{complete.times} Optional. Parameter of class logical. Should gaps in the endDateTime column be filled? Defaults to FALSE (No gap filling).
+#' @param bgn.month Parameter of class character.
+#' The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param end.month Parameter of class character.
+#' The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param time.agr Parameter of class numeric.
+#' The data agregation interval requested, must be 1, 2, or 30.
+#' @param package Parameter of class character. Optional.
+#' The type of data package to be returned If not specified, defaults to basic.
+#' @param save.dir Parameter of class character.
+#' The local directory where data files should be saved.
+#' @param complete.times Optional. Parameter of class logical.
+#' Should gaps in the endDateTime column be filled? Defaults to FALSE (No gap filling).
 #'
 #' @return Writes data files to the specified directory.
 
 #' @keywords process quality, data quality, gaps, commissioning
-
-#' #Make a temporary direcotry for the example:
+#' @examples
+#' \dontrun{
+#' #Make a temporary directory for the example:
 #' tempDir<- tempdir()
-#' data.pull(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
+#' pull.data(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05",
+#' time.agr = 30, package="basic", save.dir= tempDir)}
 
 
-#' @export data.pull
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
@@ -34,17 +44,7 @@
 #
 ##############################################################################################
 
-
-# ###TEST BLOCK####
-# site="MLBS"
-# dpID="DP1.00040.001"
-# bgn.month="2018-02"
-# end.month="2018-03"
-# time.agr=30
-# package="basic"
-
-
-data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F){
+pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F){
     options(stringsAsFactors = FALSE)
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
@@ -66,9 +66,9 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
     if(!package %in% valid.pack){stop("Please specify a package of 'basic' or 'expaned'")}
 
     #figure out if a code or keyword for a data product has been passed to the fucntion.
-    if(!grepl(pattern = "^DP1.*", x=dpID)){
+    if(!grepl(pattern = "^DP1.*", x=dp.id)){
 
-        stop("Please enter a data product code, eg: dpID='DP1.00001.001'.")
+        stop("Please enter a data product code, eg: dp.id='DP1.00001.001'.")
     }
 
     # Make a sequence of dates and times for the requested period
@@ -81,9 +81,9 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
     ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp+lubridate::seconds(1), time.agr = time.agr)
 
     # Get site metadata
-    call.df=as.data.frame(Noble:::.gen.call.df(bgn.month=bgn.month,
+    call.df=as.data.frame(.gen.call.df(bgn.month=bgn.month,
                                  end.month=end.month,
-                                 site=site, dpID=dpID,
+                                 site=site, dp.id=dp.id,
                                  time.agr=time.agr,
                                  package=package))
 
@@ -92,12 +92,12 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
 
     ##### Data Pull section #####
     #Set the expected data filename for the data product
-    file.name<- paste0("NEON.", curr_site_config$Domain,".", site, ".", dpID, "_REQ_", bgn_temp, "_", as.character(as.Date(end_temp)), "_", time.agr, "min_", package,".csv.gz")
+    file.name<- paste0("NEON.", curr_site_config$Domain,".", site, ".", dp.id, "_REQ_", bgn_temp, "_", as.character(as.Date(end_temp)), "_", time.agr, "min_", package,".csv.gz")
 
     ## If the file isn't there, get it
     if(!file.exists(paste0(save.dir, file.name))){
         data.wad=lapply(date_range, function(m) lapply(call.df$url_list[grepl(x=call.df$url_list, pattern = m)],
-                                                       function(l) as.data.frame(read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
+                                                       function(l) as.data.frame(utils::read.csv(as.character(l)), stringsAsFactors = F))) #Get all data in one lump, (list of lists of data frames)
         data.lump=do.call(rbind, data.wad) #make into data frame of lists, with dimensions nrow=n_months, ncol=n_measurementLocations
         data.chunk=lapply(seq(length(data.lump[1,])), function(x) do.call(plyr::rbind.fill, data.lump[,x])) # merge down rows, so that only data frames of measurement levels exist
 
@@ -139,7 +139,7 @@ data.pull = function(site, dpID, bgn.month, end.month, time.agr, package="basic"
         write.csv(x=data.out, file=zip.dir, row.names = F)
         close(zip.dir)
     }else{#if the file is there, read it
-        data.out<-read.csv(paste0(save.dir, file.name))
+        data.out<-utils::read.csv(paste0(save.dir, file.name))
     }
     ## Return to parent environment
     return(data.out)

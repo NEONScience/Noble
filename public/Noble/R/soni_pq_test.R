@@ -1,19 +1,13 @@
 ############################################################################################
 #' @title  Perform A Commissioning PQ Test on 3D Sonic Anemometer Data
 
-#'#' @author Robert Lee \email{rlee@battelleecology.org}\cr
+#' @author Robert Lee \email{rlee@battelleecology.org}\cr
 
 #' @description For the specified dates, site, variables, and data product or name of family of data
 #' products, data are downloaded and saved to the specifed directory. Process quality calculations are
 #'  then performed and written to a results file in save.dir.
+#' @inheritParams tis.pq.test
 #'
-#' @param \code{site} Parameter of class character. The NEON site data should be downloaded for.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first
-#'  month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last
-#'  month to get data for.
-#' @param \code{save.dir} Parameter of class character. The local directory where data files should
-#' be saved.
 #'
 #' @return Writes data files to the specified directory.
 
@@ -40,7 +34,7 @@
 soni.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v.th=90){
     time.agr = 30
     files=Noble::pull.eddy.data(site, bgn.month, end.month, package="basic", save.dir)
-    file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    file.dir=.data.route(site = site, save.dir = save.dir)
     soni.raw=lapply(files, function(x) Noble::hdf5.to.df(site, hdf5.file=paste0(file.dir,x), meas.name="soni", time.agr, save.dir))
     soni.df=do.call(rbind, soni.raw)
     soni.df$timeBgn=gsub(x = soni.df$timeBgn, pattern = "T", replacement = " ")
@@ -93,12 +87,12 @@ soni.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v
                             valid_threshold=v.th
         )
 
-        if(file.exists(Noble:::.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = Noble:::.result.route(save.dir), header = T, stringsAsFactors = T))
+        if(file.exists(.result.route(save.dir))){
+            dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = Noble:::.result.route(save.dir), row.names = F)
+            write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }else{
-            write.csv(x = dq.rslt, file = Noble:::.result.route(save.dir), col.names = T, row.names = F)
+            write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }
     }
 }

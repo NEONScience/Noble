@@ -3,7 +3,7 @@
 #'
 #' @description Produces the boundaries of the distorted flow fields for 2D Wind Speed and Direction at
 #' TIS sites
-#' @param \code{site} The NEON TIS site of interest
+#' @param site The NEON TIS site of interest
 #'
 #' @return A list of distorted field mins and maxes, as well as the corresponding upper and lower
 #' buffer field mins and maxes.

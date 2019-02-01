@@ -7,16 +7,16 @@
 hdf5.to.df(site, hdf5.file, meas.name, time.agr, save.dir)
 }
 \arguments{
-\item{\code{site}}{Parameter of class character. The 4-letter NEON site code that the data is for.}
+\item{site}{Parameter of class character. The 4-letter NEON site code that the data is for.}
 
-\item{\code{hdf5.file}}{Parameter of class character. The path to the hdf5 file to convert.}
+\item{hdf5.file}{Parameter of class character. The path to the hdf5 file to convert.}
 
-\item{\code{meas.name}}{Parameter of class character. The name of the measurement in the hdf5 file
+\item{meas.name}{Parameter of class character. The name of the measurement in the hdf5 file
 to be extracted.}
 
-\item{\code{time.agr}}{What the time difference between sequence values should be, in minutes.}
+\item{time.agr}{What the time difference between sequence values should be, in minutes.}
 
-\item{\code{save.dir}}{Optional. If specified a CSV of the extracted data will be saved to the
+\item{save.dir}{Optional. If specified a CSV of the extracted data will be saved to the
 input directory.}
 }
 \value{
@@ -30,9 +30,6 @@ data will also be saved.
 \examples{
 \dontrun{
 }
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

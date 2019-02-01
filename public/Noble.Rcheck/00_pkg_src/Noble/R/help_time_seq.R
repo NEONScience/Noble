@@ -13,6 +13,8 @@
 #' @return A time sequence over the specified interval.
 #'
 #' @keywords process quality, data quality, gaps, commissioning
+#'
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)

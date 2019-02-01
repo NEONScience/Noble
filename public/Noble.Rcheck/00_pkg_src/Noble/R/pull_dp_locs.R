@@ -6,9 +6,9 @@
 #' @description For a given data product ID and site, a data frame of sensor location
 #' information is returned.
 #'
-#' @param \code{site} Parameter of class character. The 4-letter site code for the NEON
+#' @param site Parameter of class character. The 4-letter site code for the NEON
 #'  site of interest.
-#' @param \code{dpId} Parameter of class character. The data product ID of interest,
+#' @param dp.id Parameter of class character. The data product ID of interest,
 #' must be in code format, eg. "DP1.00001.001"
 #'
 #' @return A data frame of location information for sensors used in the data product
@@ -17,12 +17,14 @@
 #' @keywords spatial, meta data, sensor, position
 
 #' @examples
-#' 2d_wind_locs=Noble::pull.dp.locs(site="CPER", dpID="DP1.00001.001")
-#'
+#' \dontrun{
+#' 2d_wind_locs=Noble::pull.dp.locs(site="CPER", dp.id="DP1.00001.001")
+#'}
 #' @seealso \itemize{
-#' \item\code{\link{NEON.avail}}, which returns a data frame of data product availability by site and month.
+#' \item\code{\link{neon.avail}}, which returns a data frame of data product availability by site and month.
 #' \item\code{\link{test.sites}}, which produces a list of sites that have a given data product installed.
 #' }
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2018-04-26)
@@ -30,9 +32,9 @@
 #
 ##############################################################################################
 
-pull.dp.locs=function(site, dpID){
+pull.dp.locs=function(site, dp.id){
     month=format(zoo::as.yearmon(Sys.Date()-lubridate::weeks(8)), "%Y-%m")
-    out=jsonlite::read_json(path=paste0("http://data.neonscience.org/api/v0/data/", dpID, "/", site, "/", month))
+    out=jsonlite::read_json(path=paste0("http://data.neonscience.org/api/v0/data/", dp.id, "/", site, "/", month))
     files=unlist(lapply(out$data$files, "[[", "name"))
     loc.url=out$data$files[[grep(pattern = "sensor", x = files)[1]]]$url
     loc.info=read.csv(file = loc.url)

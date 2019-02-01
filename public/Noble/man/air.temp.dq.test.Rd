@@ -15,14 +15,6 @@ air.temp.dq.test(site, bgn.month, end.month, save.dir)
 \item{end.month}{Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.}
 
 \item{save.dir}{Parameter of class character. The local directory where data files should be saved.}
-
-\item{dp.id}{Parameter of class character. The data product code in question. See
-\code{Noble::tis_pri_vars} for a selected list of data product names and codes, or
-\url{http://data.neonscience.org/data-product-catalog} for a complete list.}
-
-\item{time.agr}{Parameter of class numeric. The data agregation interval requested, must be 1, 2, 5, or 30.}
-
-\item{package}{Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.}
 }
 \value{
 Writes data files to the specified directory.
@@ -35,8 +27,14 @@ For the specified dates and site, the function will perform variance stability t
 \examples{
 \dontrun{
 #Make a temporary direcotry for the example:
-tempDir<- tempdir()
-data.pull(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
+tempDir= tempdir()
+pull.data(site = "CPER",
+dp.id = "DP1.00002.001",
+bgn.month = "2017-04",
+end.month = "2017-05",
+time.agr = 30,
+package="basic",
+save.dir= tempDir)
 }
 }
 \author{

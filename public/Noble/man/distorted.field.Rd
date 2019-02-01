@@ -7,7 +7,7 @@
 distorted.field(site)
 }
 \arguments{
-\item{\code{site}}{The NEON TIS site of interest}
+\item{site}{The NEON TIS site of interest}
 }
 \value{
 A list of distorted field mins and maxes, as well as the corresponding upper and lower

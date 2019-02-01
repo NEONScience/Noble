@@ -18,29 +18,6 @@ library('Noble')
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
 cleanEx()
-nameEx("NEON.avail")
-### * NEON.avail
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: NEON.avail
-### Title: Returns a data frame of data product availability by month
-### Aliases: NEON.avail
-### Keywords: commissioning data gaps, process quality,
-
-### ** Examples
-
-## Not run: 
-##D wind<-NEON.avail(dpID = "DP1.00001.001")
-## End(Not run)
-
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("NEON.avail", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
 nameEx("air.temp.cnst.plot")
 ### * air.temp.cnst.plot
 
@@ -55,7 +32,6 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 ### ** Examples
 
-air.temp.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
 
 
 
@@ -79,8 +55,14 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 ## Not run: 
 ##D #Make a temporary direcotry for the example:
-##D tempDir<- tempdir()
-##D data.pull(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05", time.agr = 30, package="basic", save.dir= tempDir)
+##D tempDir= tempdir()
+##D pull.data(site = "CPER",
+##D dp.id = "DP1.00002.001",
+##D bgn.month = "2017-04",
+##D end.month = "2017-05",
+##D time.agr = 30,
+##D package="basic",
+##D save.dir= tempDir)
 ## End(Not run)
 
 
@@ -112,33 +94,6 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("air.temp.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
-nameEx("co2.pq.test")
-### * co2.pq.test
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: co2.pq.test
-### Title: Perform A Commissioning PQ Test on IRGA CO2 Concentration Data
-###   #' @author Robert Lee <email: rlee@battelleecology.org>
-### Aliases: co2.pq.test
-### Keywords: commissioning data gaps, process quality,
-
-### ** Examples
-
-site = "CPER"
-bgn.month = "2017-05"
-end.month = "2017-06"
-time.agr = 30
-package="basic"
-save.dir<-tempdir()
-Noble::tis.pq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("co2.pq.test", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
 nameEx("date.extract")
 ### * date.extract
 
@@ -153,10 +108,10 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### ** Examples
 
 ## Not run: 
-##D data=Noble::data.pull(site = "CPER", dpID = "DP1.00001.001", bgn.month = "2017-08",
+##D data=Noble::pull.data(site = "CPER", dp.id = "DP1.00001.001", bgn.month = "2017-08",
 ##D end.month = "2017-08", time.agr = 30, save.dir = tempdir())
 ##D ## Extract data from Aug 8th, UTC.
-##D aug8=ml.extract(data=data, bgn.date = "2017-08-08", end.date = "2017-08-09")
+##D aug8=date.extract(data=data, bgn.date = "2017-08-08", end.date = "2017-08-09")
 ## End(Not run)
 
 
@@ -187,66 +142,28 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("distorted.field", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
-nameEx("dp.survey")
-### * dp.survey
+nameEx("dp.survey.plot")
+### * dp.survey.plot
 
 flush(stderr()); flush(stdout())
 
 base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: dp.survey
+### Name: dp.survey.plot
 ### Title: Save Summary Graphs of Data Product Health by Month
-### Aliases: dp.survey
+### Aliases: dp.survey.plot
 ### Keywords: commissioning, data gaps, health process product, quality,
 
 ### ** Examples
 
-# For 2d Wind, save all plots to the current working directory:
-dp.survey(dpID = "DP1.00001.001", save.dir = getwd())
+## Not run: 
+##D # For 2d Wind, save all plots to the current working directory:
+##D dp.survey(dp.id = "DP1.00001.001", save.dir = getwd())
+## End(Not run)
 
 
 
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("dp.survey", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("fan.test")
-### * fan.test
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: fan.test
-### Title: Tests fan aspiration system performance
-### Aliases: fan.test
-### Keywords: commissioning data gaps, process quality,
-
-### ** Examples
-
-Currently none
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("fan.test", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("find.gap")
-### * find.gap
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: find.gap
-### Title: Returns indicies for missing NEON data
-### Aliases: find.gap
-### Keywords: commissioning data gaps, process quality,
-
-### ** Examples
-
-Currently none
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("find.gap", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+base::cat("dp.survey.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("gap.report")
 ### * gap.report
@@ -261,8 +178,10 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 ### ** Examples
 
-# For 2d Wind, save files to the current working directory:
-gap.report(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+## Not run: 
+##D # For 2d Wind, save files to the current working directory:
+##D gap.report(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+## End(Not run)
 
 
 
@@ -284,7 +203,7 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 ## Not run: 
 ##D # For 2d Wind, save files to the current working directory:
-##D gap.vis(site="CPER", dpID = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+##D gap.vis(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
 ## End(Not run)
 
 
@@ -306,12 +225,34 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### ** Examples
 
 # Summarize 2D wind perfomance at CPER:
-CPER_wind=dp.survey(dpID = "DP1.00001.001", site="CPER")
+CPER_wind=dp.survey(dp.id = "DP1.00001.001", site="CPER")
 
 
 
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("health.data", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("neon.avail")
+### * neon.avail
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: neon.avail
+### Title: Returns a data frame of data product availability by month
+### Aliases: neon.avail
+### Keywords: commissioning data gaps, process quality,
+
+### ** Examples
+
+## Not run: 
+##D wind<-neon.avail(dp.id = "DP1.00001.001")
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("neon.avail", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("par.cnst.plot")
 ### * par.cnst.plot
@@ -333,127 +274,35 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 
 
+
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("par.cnst.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
-nameEx("parse.results")
-### * parse.results
+nameEx("pull.data")
+### * pull.data
 
 flush(stderr()); flush(stdout())
 
 base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: parse.results
-### Title: Parse a Raw Commissioning Results File for Most Recent Results
-### Aliases: parse.results
-### Keywords: commissioning data gaps, process quality,
-
-### ** Examples
-
-None
-
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("parse.results", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("plot.dp.survey")
-### * plot.dp.survey
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: plot.dp.survey
-### Title: Save Summary Graphs of Data Product Health by Month
-### Aliases: plot.dp.survey
-### Keywords: commissioning, data gaps, health process product, quality,
-
-### ** Examples
-
-# For 2d Wind, save all plots to the current working directory:
-dp.survey(dpID = "DP1.00001.001", save.dir = getwd())
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("plot.dp.survey", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("plot.wind.dir.hist")
-### * plot.wind.dir.hist
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: plot.wind.dir.hist
-### Title: Plot 2D Wind Direction Histograms
-### Aliases: plot.wind.dir.hist
-### Keywords: air commissioning, consistency, data process quality,
-###   temperature
-
-### ** Examples
-
-## Not run: 
-##D plot.wind.dir.hist(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
-## End(Not run)
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("plot.wind.dir.hist", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("plot.wind.rose")
-### * plot.wind.rose
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: plot.wind.rose
-### Title: Create wind roses for NEON instrumented sites
-### Aliases: plot.wind.rose
+### Name: pull.data
+### Title: Downloads data for a specified data product or products, and
+###   saves the data to a specified directory
+### Aliases: pull.data
 ### Keywords: commissioning data gaps, process quality,
 
 ### ** Examples
 
 ## Not run: 
-##D CPER<-plot.wind.rose(site="CPER",
-##D bgn.month="2017-01",
-##D end.month="2017-02",
-##D ml=2,
-##D speed.bins=10,
-##D dir.bins=36)
+##D #Make a temporary directory for the example:
+##D tempDir<- tempdir()
+##D pull.data(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-04", end.month = "2017-05",
+##D time.agr = 30, package="basic", save.dir= tempDir)
 ## End(Not run)
 
 
 
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("plot.wind.rose", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
-cleanEx()
-nameEx("pull.USCRN.data")
-### * pull.USCRN.data
-
-flush(stderr()); flush(stdout())
-
-base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: pull.USCRN.data
-### Title: Pull data from meterologic stations in the USCRN network
-### Aliases: pull.USCRN.data
-### Keywords: USCRN, commissioning data data, gaps, process quality,
-
-### ** Examples
-
-## Not run: 
-##D timeScale <- "subhourly"
-##D stationID <- "USW00003047"
-##D TimeBgn <- as.POSIXct("2014-04-01 00:00:01", format="%Y-%m-%d %H:%M:%S", tz="UTC")
-##D TimeEnd <- as.POSIXct("2015-02-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz="UCT")
-##D 
-##D grabUSCRN(timeScale = timeScale, TimeBgn = TimeBgn, TimeEnd = TimeEnd, stationID = stationID)
-## End(Not run)
-
-
-
-base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("pull.USCRN.data", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+base::cat("pull.data", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("pull.date")
 ### * pull.date
@@ -471,7 +320,7 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ## Not run: 
 ##D #Make a temporary direcotry for the example:
 ##D tempDir<- tempdir()
-##D pull.date(site = "CPER", dpID = "DP1.00002.001", bgn.month = "2017-03-15 00:00:00",
+##D pull.date(site = "CPER", dp.id = "DP1.00002.001", bgn.month = "2017-03-15 00:00:00",
 ##D end.month = "2017-03-16 00:00:00", time.agr = 30, package="basic", save.dir= tempDir)
 ## End(Not run)
 
@@ -494,13 +343,70 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 
 ### ** Examples
 
-2d_wind_locs=Noble::pull.dp.locs(site="CPER", dpID="DP1.00001.001")
-
+## Not run: 
+##D 2d_wind_locs=Noble::pull.dp.locs(site="CPER", dp.id="DP1.00001.001")
+## End(Not run)
 
 
 
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("pull.dp.locs", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("pull.eddy.data")
+### * pull.eddy.data
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: pull.eddy.data
+### Title: Download NEON Eddy Covaraince Data
+### Aliases: pull.eddy.data
+### Keywords: commissioning covariance, data eddy gaps, hdf5, process
+###   quality,
+
+### ** Examples
+
+## Not run: 
+##D site="CPER"
+##D bgn.month="2017-04"
+##D end.month="2017-11"
+##D package="basic"
+##D save.dir=tempdir()
+##D pull.eddy.data(site, bgn.month, end.month, package, save.dir)
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("pull.eddy.data", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("pull.n.plot")
+### * pull.n.plot
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: pull.n.plot
+### Title: Returns PDF(s) of data for the specified site and data product
+### Aliases: pull.n.plot
+### Keywords: commissioning data gaps, process quality,
+
+### ** Examples
+
+## Not run: 
+##D # for a variable, "test.dir", holding a valid file path:
+##D pull.n.plot(bgn.month = "2017-04",
+##D end.month = "2017-05",
+##D dp.id = "DP1.00001.001",
+##D sites.req = "BLAN",
+##D save.dir = getwd(),
+##D  data.field = "windDirMean")
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("pull.n.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("soil.temp.plot")
 ### * soil.temp.plot
@@ -529,8 +435,7 @@ flush(stderr()); flush(stdout())
 
 base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: soni.pq.test
-### Title: Perform A Commissioning PQ Test on 3D Sonic Anemometer Data #'
-###   @author Robert Lee <email: rlee@battelleecology.org>
+### Title: Perform A Commissioning PQ Test on 3D Sonic Anemometer Data
 ### Aliases: soni.pq.test
 ### Keywords: commissioning data gaps, process quality,
 
@@ -566,7 +471,7 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### ** Examples
 
 ## Not run: 
-##D 2d_wind=test.sites(dpId="DP1.00001.001")
+##D wind=test.sites(dpId="DP1.00001.001")
 ## End(Not run)
 
 
@@ -575,37 +480,55 @@ base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("test.sites", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
-nameEx("tis.pq.test")
-### * tis.pq.test
+nameEx("wind.dir.hist")
+### * wind.dir.hist
 
 flush(stderr()); flush(stdout())
 
 base::assign(".ptime", proc.time(), pos = "CheckExEnv")
-### Name: tis.pq.test
-### Title: Downloads and performs process quality checks on NEON data
-### Aliases: tis.pq.test
+### Name: wind.dir.hist
+### Title: Plot 2D Wind Direction Histograms
+### Aliases: wind.dir.hist
+### Keywords: air commissioning, consistency, data process quality,
+###   temperature
+
+### ** Examples
+
+## Not run: 
+##D plot.wind.dir.hist(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("wind.dir.hist", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("wind.rose.plot")
+### * wind.rose.plot
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: wind.rose.plot
+### Title: Create wind roses for NEON instrumented sites
+### Aliases: wind.rose.plot
 ### Keywords: commissioning data gaps, process quality,
 
 ### ** Examples
 
 ## Not run: 
-##D site = "CPER"
-##D dpID = "DP1.00001.001"
-##D prin.vars<-c("windSpeed", "windDir")
-##D bgn.month = "2017-05"
-##D end.month = "2017-06"
-##D time.agr = 30
-##D package="basic"
-##D save.dir<-"/Users/rlee/Dropbox/GitHub/Commissioning-TIS-rhlee12/Tis2DWindPQ_test"
-##D Noble::tis.pq.test(site = site, dpID = dpID, bgn.month = bgn.month, end.month = end.month,
-##D time.agr = time.agr, package=package, save.dir=save.dir, prin.vars=prin.vars)
+##D CPER<-plot.wind.rose(site="CPER",
+##D bgn.month="2017-01",
+##D end.month="2017-02",
+##D ml=2,
+##D speed.bins=10,
+##D dir.bins=36)
 ## End(Not run)
 
 
 
-
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-base::cat("tis.pq.test", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+base::cat("wind.rose.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 ### * <FOOTER>
 ###
 cleanEx()

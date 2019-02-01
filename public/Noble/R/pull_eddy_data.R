@@ -7,11 +7,11 @@
 #' directory. Files are not collated together by month currently, instead they are saved on a site and
 #' month basis.
 #'
-#' @param \code{site} Parameter of class character. The 4-letter NEON site code that the data is for.
-#' @param \code{bgn.month} Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
-#' @param \code{end.month} Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
-#' @param \code{package} Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
-#' @param \code{save.dir} Optional. If specified a CSV of the extracted data will be saved to the
+#' @param site Parameter of class character. The 4-letter NEON site code that the data is for.
+#' @param bgn.month Parameter of class character. The year-month (e.g. "2017-01") of the first month to get data for.
+#' @param end.month Parameter of class character. The year-month (e.g. "2017-01") of the last month to get data for.
+#' @param package Parameter of class character. Optional. The type of data package to be returned If not specified, defaults to basic.
+#' @param save.dir Optional. If specified a CSV of the extracted data will be saved to the
 #' input directory.
 #'
 #' @return HDF5 data files are saved to the specified directory.
@@ -20,9 +20,15 @@
 
 #' @examples
 #' \dontrun{
-#' }
 
-#' @seealso Currently none
+#' site="CPER"
+#' bgn.month="2017-04"
+#' end.month="2017-11"
+#' package="basic"
+#' save.dir=tempdir()
+
+#' pull.eddy.data(site, bgn.month, end.month, package, save.dir)
+#' }
 #' @export
 #'
 # changelog and author contributions / copyrights
@@ -41,8 +47,9 @@
 
 
 pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
+    download.file=NULL
 
-    file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+    file.dir=.data.route(site = site, save.dir = save.dir)
 
     dp.data=jsonlite::read_json(path="http://data.neonscience.org/api/v0/products/DP4.00200.001/")$data
     deployed.sites=unlist(lapply(seq(length(dp.data$siteCodes)), function(x) dp.data$siteCodes[[x]]$siteCode))

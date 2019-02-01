@@ -7,7 +7,7 @@
 ml.extract(data, ml)
 }
 \arguments{
-\item{data}{A data frame of instrumented data pulled with \code{data.pull}.}
+\item{data}{A data frame of instrumented pull.dataed with \code{pull.data}.}
 
 \item{ml}{Desired measurement level, given as an integer (eg ml=1, corresponding to the first level at a tower)}
 }

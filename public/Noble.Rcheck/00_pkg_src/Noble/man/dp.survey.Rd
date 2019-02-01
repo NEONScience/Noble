@@ -4,14 +4,19 @@
 \alias{dp.survey}
 \title{Save Summary Graphs of Data Product Health by Month}
 \usage{
-dp.survey(dpID, save.dir, site, pri.var)
+dp.survey(dp.id, save.dir, site, pri.var)
 }
 \arguments{
-\item{\code{dpID}}{Parameter of class character. The NEON data product code of the data product of interest.}
+\item{dp.id}{Parameter of class character. The NEON data product code of the data product of interest.}
 
-\item{\code{save.dir}}{The directory for data files and output PNGs to be saved to.}
+\item{save.dir}{The directory for data files and output PNGs to be saved to.}
 
-\item{\code{site}}{Optional. Can specify single site or list of sites of interest.}
+\item{site}{Optional. Can specify single site or list of sites of interest.}
+
+\item{pri.var}{Optional. Can specify the data product field of interest (e.g. "windDirMean" for 2D wind direction).
+
+Because the full period of record for all sites are queried,
+this function can take a long time to execute.}
 }
 \value{
 Outputs a a PDF of plots data on of all measurement levesl, with one PDF per site.
@@ -23,18 +28,6 @@ For a specified data product ID, this function will produce summary plots of dat
 product availability and validity for their period of record at a site. By default, plots for all
 sites with data product availability are generated and saved to the specified directory. If
 \code{site} is specified, only plots for the site(s) passed to that parameter are generated and saved.
-
-
-
-Because the full period of record for all sites are queried,
-this function can take a long time to execute.
-}
-\examples{
-# For 2d Wind, save all plots to the current working directory:
-dp.survey(dpID = "DP1.00001.001", save.dir = getwd())
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr

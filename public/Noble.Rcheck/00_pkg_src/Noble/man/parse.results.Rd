@@ -7,9 +7,9 @@
 parse.results(test.dir, write.summary = T)
 }
 \arguments{
-\item{\code{test.dir}}{The top level of a given test directory in the SCA (not the "Common" folder).}
+\item{test.dir}{The top level of a given test directory in the SCA (not the "Common" folder).}
 
-\item{\code{write.summary}}{Logical, refering to if a simplified test summary should be written in
+\item{write.summary}{Logical, refering to if a simplified test summary should be written in
 the Common folder of the specified directory. If TRUE, a summary_results.csv will be generated.}
 }
 \value{
@@ -18,13 +18,6 @@ The most recent test results from the 'results.csv' file in the
 \description{
 Given a directory in the SCA, this function output only the most recent test results
 from the 'results.csv' file in the
-}
-\examples{
-None
-
-}
-\seealso{
-Currently none
 }
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
