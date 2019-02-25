@@ -20,7 +20,8 @@
 #' @examples
 #' \dontrun{
 #' # For 2d Wind, save files to the current working directory:
-#' gap.report(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+#' gap.report(site="CPER", dp.id = "DP1.00001.001",
+#' bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
 #' }
 
 #' @seealso gap.find

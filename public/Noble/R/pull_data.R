@@ -136,7 +136,7 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
         #Zip and write the files
         file.path<-paste0(save.dir, file.name)
         zip.dir<-base::gzfile(file.path, open = "wb")
-        write.csv(x=data.out, file=zip.dir, row.names = F)
+        utils::write.csv(x=data.out, file=zip.dir, row.names = F)
         close(zip.dir)
     }else{#if the file is there, read it
         data.out<-utils::read.csv(paste0(save.dir, file.name))

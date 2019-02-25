@@ -24,7 +24,7 @@ Plots are of temperature readings from ML-n versus readings from ML-n+1. The raw
 plot are not saved.
 }
 \examples{
-\donttest{
+\dontrun{
 air.temp.cnst.plot(site="CPER", bgn.month="2017-05", end.month="2017-05", save.dir=getwd())
 }
 

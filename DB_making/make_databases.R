@@ -38,9 +38,9 @@ save(rad_dq_info, file = "../Noble/data/rad_dq_info.rda")
 
 
 ## Make the USCRN site data table
-USCRN_sites = data.frame(read.csv("../DB_making/raw_DBs/uscrn_sites.csv", stringsAsFactors = F))
+USCRN_sites = data.frame(read.csv("../../DB_making/raw_DBs/uscrn_sites.csv", stringsAsFactors = F))
 # write.csv(USCRN_sites, file = "../DB_making/raw_DBs/uscrn_sites.csv", row.names = F)
-save(USCRN_sites, file="../Noble/data/uscrn_sites.rda")
+save(USCRN_sites, file="./data/uscrn_sites.rda")
 
 #AIS Site config
 ais_site_config=read.csv(file="../../DB_making/raw_DBs/ais_sites.csv")

@@ -27,10 +27,6 @@ This function will extract a given dataset ('meas.name') from the nested hdf5
 data structure, and convert it to a data frame. If a save location is specified, a csv of the
 data will also be saved.
 }
-\examples{
-\dontrun{
-}
-}
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
 }

@@ -113,12 +113,12 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
             )
 
             if(file.exists(.result.route(save.dir))){
-                dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
+                dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
                 dq.rpt <- rbind(dq.rpt, dq.rslt)
-                write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
+                utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
             }
             else{
-                write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
+                utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
             }
         }
     }else{
@@ -152,12 +152,12 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
         )
 
         if(file.exists(.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
+            dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
+            utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }
         else{
-            write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
+            utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }}
     }
 }

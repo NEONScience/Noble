@@ -37,7 +37,7 @@ pull.dp.locs=function(site, dp.id){
     out=jsonlite::read_json(path=paste0("http://data.neonscience.org/api/v0/data/", dp.id, "/", site, "/", month))
     files=unlist(lapply(out$data$files, "[[", "name"))
     loc.url=out$data$files[[grep(pattern = "sensor", x = files)[1]]]$url
-    loc.info=read.csv(file = loc.url)
+    loc.info=utils::read.csv(file = loc.url)
     raw.hor.vers=stringr::str_split(loc.info$HOR.VER, "\\.")
 
     loc.parse=function(x){

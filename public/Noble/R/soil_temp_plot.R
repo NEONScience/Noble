@@ -19,6 +19,8 @@
 
 soil.temp.plot=function(site, date){
     dp.id="DP1.00041.001"
+    value=NULL
+    depth=NULL
 
     month=format(zoo::as.yearmon(date), "%Y-%m")
     date=as.POSIXct(date, tz="UTC", format="%Y-%m-%d %H:%M")

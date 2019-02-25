@@ -55,6 +55,7 @@ UTC_DATE=NULL
 NEON.dir=NULL
 windSpeedMean.000.050=NULL
 startDateTime=NULL
+spearman.results=NA
 
     valid.sites=c("BART", "JERC", "KONZ", "KONA", "WOOD", "CPER", "JORN", "BARR", "HEAL")
 
@@ -119,55 +120,56 @@ startDateTime=NULL
 
         #qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
         ext.consist=stats::cor.test(x=speed.data$Wind.Speed.Average..mph., y = speed.data$windSpeedMean.000.050, conf.level = 0.95, method = "spearman", exact = F)$estimate
-    }else{
-        uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
-        temp=Noble::pull.USCRN.data(timeScale = "subhourly",
-                                    stationID = uscrn.site,
-                                    TimeBgn = paste0(bgn.month, "-01"),
-                                    TimeEnd =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)),
-                                    saveDir = .data.route(site = site, save.dir = save.dir)
-        )
-
-        ext.data=temp
-        ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
-        utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
-
-
-        ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
-        int.dir=try(Noble::pull.data(site = site,
-                                      dp.id = "DP1.00001.001",
-                                      bgn.month = bgn.month,
-                                      end.month = end.month,
-                                      time.agr = 2,
-                                      package = "basic",
-                                      save.dir = .data.route(site, save.dir = save.dir))
-        )
-        int.dir$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
-        int.dir=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.dir=int.dir[,max(which(grepl(x = colnames(int.dir), pattern = "windDirMean")))])
-        int.dir=data.frame(int.dir[-(1:4),] %>%
-                               dplyr::group_by(UTC_DATE = cut(UTC_DATE, breaks="5 min")) %>%
-                               dplyr::summarize(NEON.dir = mean(NEON.dir)))
-        int.rad$UTC_DATE=as.POSIXct(int.rad$UTC_DATE, tz="UTC")
-
-        ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
-
-        all.data=merge(x=int.rad, y=ext.rad, by= "UTC_DATE")
-        all.data=all.data[all.data$USCRN.rad>-5,]
-
-
-
-        #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
-
-        spearman.results=stats::cor.test(all.data$NEON.dir, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
-
-        ext.consist=spearman.results$estimate
-
-        corr.plot=ggplot2::qplot(x=all.data$NEON.rad, y=all.data$USCRN.rad)+
-            ggplot2::ggtitle(label = paste0(site, "-", uscrn.site, " Rho: ", round(ext.consist, digits = 2)))+
-            ggplot2::geom_abline(slope = 1, color='red')+
-            ggplot2::coord_fixed()
-        ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
-
-        utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }
+    # }else{
+    #     uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
+    #     temp=Noble::pull.USCRN.data(timeScale = "subhourly",
+    #                                 stationID = uscrn.site,
+    #                                 TimeBgn = paste0(bgn.month, "-01"),
+    #                                 TimeEnd =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)),
+    #                                 saveDir = .data.route(site = site, save.dir = save.dir)
+    #     )
+    #
+    #     ext.data=temp
+    #     ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
+    #     utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
+    #
+    #
+    #     ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
+    #     int.dir=try(Noble::pull.data(site = site,
+    #                                   dp.id = "DP1.00001.001",
+    #                                   bgn.month = bgn.month,
+    #                                   end.month = end.month,
+    #                                   time.agr = 2,
+    #                                   package = "basic",
+    #                                   save.dir = .data.route(site, save.dir = save.dir))
+    #     )
+    #     int.dir$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
+    #     int.dir=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.dir=int.dir[,max(which(grepl(x = colnames(int.dir), pattern = "windDirMean")))])
+    #     int.dir=data.frame(int.dir[-(1:4),] %>%
+    #                            dplyr::group_by(UTC_DATE = cut(UTC_DATE, breaks="5 min")) %>%
+    #                            dplyr::summarize(NEON.dir = mean(NEON.dir)))
+    #     int.rad$UTC_DATE=as.POSIXct(int.rad$UTC_DATE, tz="UTC")
+    #
+    #     ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
+    #
+    #     all.data=merge(x=int.rad, y=ext.rad, by= "UTC_DATE")
+    #     all.data=all.data[all.data$USCRN.rad>-5,]
+    #
+    #
+    #
+    #     #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
+    #
+    #     spearman.results=stats::cor.test(all.data$NEON.dir, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
+    #
+    #     ext.consist=spearman.results$estimate
+    #
+    #     corr.plot=ggplot2::qplot(x=all.data$NEON.rad, y=all.data$USCRN.rad)+
+    #         ggplot2::ggtitle(label = paste0(site, "-", uscrn.site, " Rho: ", round(ext.consist, digits = 2)))+
+    #         ggplot2::geom_abline(slope = 1, color='red')+
+    #         ggplot2::coord_fixed()
+    #     ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
+    # }
+        utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
+
 }

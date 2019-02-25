@@ -19,11 +19,6 @@
 #'
 #' @keywords eddy covariance, hdf5, process quality, data quality, gaps, commissioning
 
-#' @examples
-#' \dontrun{
-#' }
-
-
 #' @export
 
 # changelog and author contributions / copyrights

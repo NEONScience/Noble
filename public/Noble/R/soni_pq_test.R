@@ -88,11 +88,11 @@ soni.pq.test=function(site = "CPER",  bgn.month, end.month, save.dir, q.th=95, v
         )
 
         if(file.exists(.result.route(save.dir))){
-            dq.rpt <- data.frame(read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
+            dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
             dq.rpt <- rbind(dq.rpt, dq.rslt)
-            write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
+            utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
         }else{
-            write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
+            utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
         }
     }
 }

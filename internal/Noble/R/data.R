@@ -7,16 +7,6 @@
 #' @usage ais_site_config
 #' @format Information on all 36 AIS sites in table/data frame format.
 NULL
-#' @name GHCNDstations
-#' @docType data
-#' @title GHCND Site List
-#' @description A list of GHCND stations quieriable with \code{Noble::pull.USCRN.data()}. Parsed from
-#' ghcnd-stations.txt, available on the NCDC/NCEI's FTP server at
-#' \url{ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt}.
-#' @keywords USCRN, GHCND, NCDC, NCEI, metadata
-#' @usage GHCNDstations
-#' @format A data frame/table listing site metadata for 242 USCRN sites.
-NULL
 #' @name is_site_config
 #' @docType data
 #' @title Site Configuration for NEON IS Stations

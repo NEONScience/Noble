@@ -27,7 +27,8 @@ data and quality flag gaps for their period of record at a site.
 \examples{
 \dontrun{
 # For 2d Wind, save files to the current working directory:
-gap.vis(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+gap.vis(site="CPER", dp.id = "DP1.00001.001",
+ bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
 }
 }
 \seealso{

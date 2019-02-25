@@ -46,6 +46,7 @@
 # save.dir="/Volumes/neon/Science/Science Commissioning Archive/SiteAndPayload/TisAirTempDataQuality/"
 
 air.temp.dq.test=function(site, bgn.month, end.month, save.dir){
+    neon.temp=NULL
     options(stringsAsFactors = FALSE)
 
     T1=NULL

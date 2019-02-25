@@ -20,6 +20,8 @@
 #' }
 #'
 #' @seealso \code{\link{neon.avail}}, which returns a data frame of data product availability by site and month.
+#'
+#' @export
 
 # changelog and author contributions / copyrights
 #   Robert Lee (2017-07-18)
@@ -37,7 +39,7 @@ test.sites = function(dp.id, bgn.month, end.month){
 
     indx.test.sites=c()
     for(i in 2:length(colnames(test.avail))){
-        if(all(complete.cases(test.avail[,i]))){
+        if(all(stats::complete.cases(test.avail[,i]))){
             temp=test.avail[,i]
             indx.test.sites=append(indx.test.sites, i)
         }

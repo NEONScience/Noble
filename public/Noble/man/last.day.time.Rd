@@ -17,9 +17,6 @@ Latest date and time in the input month, offset from midnight by the input tempo
 \description{
 For a temporal agregation, the function will return the latest date and time of that aggregation. For example, when December 2017 is specified with a 30 minute agregation, the function will return "2017-12-31 23:30:00".
 }
-\examples{
-
-}
 \author{
 Robert Lee \email{rlee@battelleecology.org}\cr
 }

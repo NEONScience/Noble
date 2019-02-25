@@ -11,6 +11,7 @@ LazyData: true
 RoxygenNote: 6.1.1
 biocViews:
 Imports: 
+    circular,
     gridExtra, 
     gtools,
     plyr, 
@@ -19,6 +20,7 @@ Imports:
     GeoLight,
     geosphere,
     metScanR,
+    Rhdf5lib,
     rhdf5,
     lubridate,
     jsonlite,

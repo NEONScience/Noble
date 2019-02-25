@@ -15,7 +15,8 @@
 #' @examples
 #' \dontrun{
 #' # For 2d Wind, save files to the current working directory:
-#' gap.vis(site="CPER", dp.id = "DP1.00001.001", bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
+#' gap.vis(site="CPER", dp.id = "DP1.00001.001",
+#'  bgn.month="2017-07", end.month="2017-07", save.dir = getwd())
 #' }
 
 #' @seealso gap.find, gap.report
@@ -53,7 +54,7 @@ gap.vis=function(site, bgn.month, end.month, dp.id, save.dir){
         i <- c(which(y|is.na(y)),n)
 
         data.frame(
-            start_index = as.vector(x[base::head(c(0L,i)+1L,-1L)]),
+            start_index = as.vector(x[utils::head(c(0L,i)+1L,-1L)]),
             stop_index = as.vector(diff(c(0L,i)))
 
         )

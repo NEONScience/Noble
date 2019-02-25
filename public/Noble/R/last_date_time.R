@@ -12,10 +12,6 @@
 #'
 #' @keywords process quality, data quality, gaps, commissioning
 
-#' @examples
-#'
-
-
 #' @export
 
 # changelog and author contributions / copyrights
