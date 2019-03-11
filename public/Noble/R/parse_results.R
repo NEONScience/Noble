@@ -9,18 +9,23 @@
 #' @param test.dir The top level of a given test directory in the SCA (not the "Common" folder).
 #' @param write.summary Logical, refering to if a simplified test summary should be written in
 #' the Common folder of the specified directory. If TRUE, a summary_results.csv will be generated.
+#' @param target_bgn Optional- if specified the parsed results will be restricted to the date range defined by target_bgn and target_end. Both must be entered, and in the format "YYYY-MM".
+#' @param target_end Optional- if specified the parsed results will be restricted to the date range defined by target_bgn and target_end. Both must be entered, and in the format "YYYY-MM".
 #'
 #' @return The most recent test results from the 'results.csv' file in the
-
+#' @export
 #' @keywords process quality, data quality, gaps, commissioning
 # changelog and author contributions / copyrights
 #   Robert Lee (2018-01-15)
 #     original creation
+#   Robert Lee (2019-03-06)
+#     Adding target date vars
 #
 ##############################################################################################
 
-parse.results=function(test.dir, write.summary=T){
+parse.results=function(test.dir, write.summary=T, target_bgn, target_end){
     options(stringsAsFactors=FALSE)
+    if(!missing(target_bgn)&!missing(target_end)){target_dates=TRUE}else{target_dates=FALSE}
     if(!is.logical(write.summary)){write.summary=TRUE}
     results = data.frame(utils::read.csv(.result.route(save.dir = test.dir), stringsAsFactors = FALSE))
 
@@ -36,12 +41,17 @@ parse.results=function(test.dir, write.summary=T){
     for (k in 1:numbSites) {
         siteIndex=grep(pattern = siteList[k], results$site)
         siteOnly =results[siteIndex,]
+        if(target_dates){
+            siteOnly$begin_month=strtrim(siteOnly$begin_month, 7)
+            siteOnly$end_month=strtrim(siteOnly$end_month, 7)
+            siteOnly=siteOnly[siteOnly$begin_month==target_bgn&siteOnly$end_month==target_end,]
+        }
 
         varList = (unique(siteOnly$variable_tested))
 
         for(v in 1:length(varList)){
             varOnly=siteOnly[which(siteOnly$variable_tested==varList[v]),]
-            varOut=varOnly[which.max(as.POSIXct(varOnly$time_performed)),]
+            varOut=varOnly[which.max(rownames(varOnly)),]
             parsed.results=rbind(parsed.results, varOut)
         }
     }
