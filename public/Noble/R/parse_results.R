@@ -28,6 +28,11 @@ parse.results=function(test.dir, write.summary=T, target_bgn, target_end){
     if(!missing(target_bgn)&!missing(target_end)){target_dates=TRUE}else{target_dates=FALSE}
     if(!is.logical(write.summary)){write.summary=TRUE}
     results = data.frame(utils::read.csv(.result.route(save.dir = test.dir), stringsAsFactors = FALSE))
+    using.locs=FALSE
+    if(any(grepl(pattern = "sensor_location", colnames(results)))){
+        using.locs=TRUE
+        results=data.frame(utils::read.csv(.result.route(save.dir = test.dir), stringsAsFactors = FALSE, colClasses = c("sensor_location"="character")))
+    }
 
     # Important! Only reads the most recent results data per site into the RMD #
     siteList = (unique(results$site))
@@ -47,13 +52,27 @@ parse.results=function(test.dir, write.summary=T, target_bgn, target_end){
             siteOnly=siteOnly[siteOnly$begin_month==target_bgn&siteOnly$end_month==target_end,]
         }
 
-        varList = (unique(siteOnly$variable_tested))
-
-        for(v in 1:length(varList)){
-            varOnly=siteOnly[which(siteOnly$variable_tested==varList[v]),]
-            varOut=varOnly[which.max(rownames(varOnly)),]
-            parsed.results=rbind(parsed.results, varOut)
+        key.cols="variable_tested"
+        if(using.locs){
+            key.cols=c("sensor_location", key.cols)
         }
+
+        ref.params=unique(siteOnly[,colnames(siteOnly) %in% key.cols])
+        ref.params=na.omit(ref.params)
+
+
+        for(r in 1:nrow(ref.params)){
+                keyed.results=na.omit(merge(x = siteOnly, y = ref.params[r,], all.x = F, all.y = T))
+                parsed.results=rbind(parsed.results, keyed.results[nrow(keyed.results),])
+
+        }
+       #varList = (unique(c(siteOnly$variable_tested)))
+        #loc.list=unique(x = siteOnly$sensor_location)
+        # for(v in 1:length(varList)){
+        #     varOnly=siteOnly[which(siteOnly$variable_tested==varList[v]),]
+        #     varOut=varOnly[which.max(rownames(varOnly)),]
+        #     parsed.results=rbind(parsed.results, varOut)
+        # }
     }
     if(write.summary==T){
         site=unique(parsed.results$site)
@@ -66,12 +85,12 @@ parse.results=function(test.dir, write.summary=T, target_bgn, target_end){
                                                          parsed.results$quant_threshold[parsed.results$site==x]
                                                  )&all(
                                                      parsed.results$data_validity[parsed.results$site==x]>=
-                                                           parsed.results$valid_threshold[parsed.results$site==x])
+                                                         parsed.results$valid_threshold[parsed.results$site==x])
                                              )
                                          ),
                                          bgn=unlist(lapply(site, function(x) unique(parsed.results$begin_month[parsed.results$site==x][1]))),
                                          end=unlist(lapply(site, function(x) unique(parsed.results$end_month[parsed.results$site==x])[1]))
-         )
+        )
         )
 
         utils::write.csv(x = summary.results, file =  paste0(test.dir,"/Common/summary_results.csv"), row.names = F, append = F)

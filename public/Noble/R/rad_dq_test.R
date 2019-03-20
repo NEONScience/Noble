@@ -46,7 +46,7 @@ NEON.rad=NULL
     message(paste0("Testing ", site))
 
     #Define directories
-    domn=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
+    domn=Noble::is_site_config$domain[Noble::is_site_config$site.id==site]
     site.dir=.data.route(site=site, save.dir=save.dir)
 
     rslt.dir=paste0(save.dir, "/Common/")
@@ -66,7 +66,7 @@ NEON.rad=NULL
                  "DP1.00066.001"
     )
     # Add in Primary Pyranometer if Core site
-    if(Noble::tis_site_config$Core.Relocatable[Noble::tis_site_config$SiteID==site]=="Core"){test.dp.ids=c(test.dp.ids, "DP1.00022.001")}
+    if(Noble::tis_site_config$core.relocatable[Noble::tis_site_config$site.id==site]=="Core"){test.dp.ids=c(test.dp.ids, "DP1.00022.001")}
 
 
 
@@ -94,7 +94,7 @@ NEON.rad=NULL
     var.data=var.data[,-which(grepl(pattern = "*LW*", x = colnames(var.data)))]
 
     # Convert to local time
-    time.zone=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]
+    time.zone=Noble::tis_site_config$time.zone[Noble::tis_site_config$site.id==site]
     var.data$startDateTime=as.POSIXct(var.data$startDateTime, tz="UTC")
     var.data$startDateTime=as.POSIXct(format(var.data$startDateTime, tz=time.zone, usetz = T), tz=time.zone, usetz = T)
 
@@ -164,7 +164,7 @@ NEON.rad=NULL
 
     ########### INTERNAL CONSISTENCY ###########
     ########### PAR and QL PAR ONLY ############
-    site.MLs=1:Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]
+    site.MLs=1:Noble::tis_site_config$num.of.mls[Noble::tis_site_config$site.id==site]
     if(Noble::rad_dq_info$classification[Noble::rad_dq_info$Site==site]=="forest"){rho.TH=.65}else{rho.TH=.9}
 
     PAR.pairwise=lapply(site.MLs[-1], function(x) c(x-1, x))
@@ -240,7 +240,7 @@ NEON.rad=NULL
 
 
     # Convert to local time
-    time.zone=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]
+    time.zone=Noble::tis_site_config$time.zone[Noble::tis_site_config$site.id==site]
     DirDif$startDateTime=as.POSIXct(DirDif$startDateTime, tz="UTC")
     DirDif$startDateTime=as.POSIXct(format(DirDif$startDateTime, tz=time.zone, usetz = T), tz=time.zone, usetz = T)
 
@@ -248,13 +248,13 @@ NEON.rad=NULL
 
 
 DirDif$SZA=GeoLight::zenith(GeoLight::solar(tm=DirDif$startDateTime),
-                 lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site],
-                 lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site]
+                 lon = Noble::tis_site_config$longitude[Noble::tis_site_config$site.id==site],
+                 lat = Noble::tis_site_config$latitude[Noble::tis_site_config$site.id==site]
                  )
 
     # DirDif$SZA=RAtmosphere::SZA(timein = DirDif$startDateTime,
-    #                             Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$SiteID==site],
-    #                             Lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$SiteID==site]
+    #                             Lat = Noble::tis_site_config$Latitude[Noble::tis_site_config$site.id==site],
+    #                             Lon = Noble::tis_site_config$Longitude[Noble::tis_site_config$site.id==site]
     # )
 
     # Sum up the direct and diffuse rad
@@ -351,7 +351,7 @@ DirDif$SZA=GeoLight::zenith(GeoLight::solar(tm=DirDif$startDateTime),
     utils::write.csv(x = data.frame(unlist(list)), file = paste0(raw.dir, "tower_top_ratios.csv"), row.names = T)
     message(paste0("Tower Top (Global Radiation Measurements) Consistency Test: ", tower.top.glo.rad))
 
-    # if(site %in% Noble::tis_site_config$SiteID[Noble::tis_site_config$Core.Relocatable=="Core"]){
+    # if(site %in% Noble::tis_site_config$site.id[Noble::tis_site_config$core.relocatable=="Core"]){
     #
     # }
 
@@ -359,7 +359,7 @@ DirDif$SZA=GeoLight::zenith(GeoLight::solar(tm=DirDif$startDateTime),
     ######## ALL GLORAD DATA ########
 
     if(site=="BART"){
-        time.zone=Noble::tis_site_config$Time.Zone[Noble::tis_site_config$SiteID==site]
+        time.zone=Noble::tis_site_config$time.zone[Noble::tis_site_config$site.id==site]
 
         offset=difftime(time1 = as.POSIXct("2018-01-01", tz=time.zone), time2=as.POSIXct("2018-01-01", tz="UTC"))
 
@@ -392,59 +392,67 @@ DirDif$SZA=GeoLight::zenith(GeoLight::solar(tm=DirDif$startDateTime),
         #qplot(x=all.data$Solar.Radiation.Average..watt.m2., y=all.data$gloRadMean.000.060)
         ext.consist=stats::cor.test(x=all.data$Solar.Radiation.Average..watt.m2., y = all.data$gloRadMean.000.060, conf.level = 0.95, method = "spearman", exact = F)$estimate
 
+    #}
+    }else{
+
+        uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
+        uscrn.save.loc=paste0(.data.route(site = site, save.dir = save.dir), "/",uscrn.site, "_", bgn.month, "-", end.month, ".csv")
+        if(!file.exists(uscrn.save.loc)){
+        temp=metget::getUSCRNData(temp_agg = "subhourly",
+                                    sid = uscrn.site,
+                                    start_date =  paste0(bgn.month, "-01"),
+                                    end_date =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1))
+        )
+        utils::write.csv(x=temp, file = uscrn.save.loc, row.names = F)
+        }else{
+            temp=utils::read.csv(file=uscrn.save.loc, stringsAsFactors = F, colClasses = "character")
+        }
+
+
+
+
+        ext.data=temp
+        ext.data$UTC_DATE=as.POSIXct(paste0(ext.data$UTC_DATE, ext.data$UTC_TIME), format="%Y%m%d%H%M", tz="UTC")
+        #utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
+
+
+        ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
+        int.data=try(Noble::pull.data(site = site,
+                                      dp.id = "DP1.00014.001",
+                                      bgn.month = bgn.month,
+                                      end.month = end.month,
+                                      time.agr = 1,
+                                      package = "basic",
+                                      save.dir = .data.route(site, save.dir = save.dir))
+        )
+        int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
+        int.rad=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
+        int.rad=data.frame(int.rad[-(1:4),] %>%
+                               dplyr::group_by(UTC_DATE = cut(UTC_DATE, breaks="5 min")) %>%
+                               dplyr::summarize(NEON.rad = mean(NEON.rad)))
+        int.rad$UTC_DATE=as.POSIXct(int.rad$UTC_DATE, tz="UTC")
+
+        ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
+
+        all.data=merge(x=int.rad, y=ext.rad, by= "UTC_DATE")
+        all.data=all.data[all.data$USCRN.rad>-5,]
+
+
+
+        #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
+#browser()
+        spearman.results=stats::cor.test(all.data$NEON.rad, as.numeric(all.data$USCRN.rad), method = "spearman", conf.level = 0.95, exact = F)
+
+        ext.consist=spearman.results$estimate
+
+        corr.plot=ggplot2::qplot(x=all.data$NEON.rad, y=all.data$USCRN.rad)+
+            ggplot2::ggtitle(label = paste0(site, "-", uscrn.site, " Rho: ", round(ext.consist, digits = 2)))+
+            ggplot2::geom_abline(slope = 1, color='red')+
+            ggplot2::coord_fixed()
+        ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
+
+        utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
     }
-    # }else{
-    #
-    #     uscrn.site=as.character(Noble::rad_dq_info$nearestUSCRN[Noble::rad_dq_info$Site==site])
-    #     temp=Noble::pull.USCRN.data(timeScale = "subhourly",
-    #                                 stationID = uscrn.site,
-    #                                 TimeBgn = paste0(bgn.month, "-01"),
-    #                                 TimeEnd =  as.character(Noble::last.day.time(end.month = end.month, time.agr = 1)),
-    #                                 saveDir = .data.route(site = site, save.dir = save.dir)
-    #     )
-    #
-    #     ext.data=temp
-    #     ext.data$UTC_DATE=as.POSIXct(ext.data$UTC_DATE, tz="UTC")
-    #     utils::write.csv(x = ext.data, file = paste0(raw.dir, "USCRN_", uscrn.site, ".csv"), row.names = F)
-    #
-    #
-    #     ext.rad=data.frame(UTC_DATE=ext.data$UTC_DATE, USCRN.rad=ext.data$SOLAR_RADIATION)
-    #     int.data=try(Noble::pull.data(site = site,
-    #                                   dp.id = "DP1.00014.001",
-    #                                   bgn.month = bgn.month,
-    #                                   end.month = end.month,
-    #                                   time.agr = 1,
-    #                                   package = "basic",
-    #                                   save.dir = .data.route(site, save.dir = save.dir))
-    #     )
-    #     int.data$startDateTime=as.POSIXct(int.data$startDateTime, tz="UTC")
-    #     int.rad=data.frame(UTC_DATE=as.POSIXct(int.data$endDateTime, format="%Y-%m-%dT%H:%M:%SZ"), NEON.rad=int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")])
-    #     int.rad=data.frame(int.rad[-(1:4),] %>%
-    #                            dplyr::group_by(UTC_DATE = cut(UTC_DATE, breaks="5 min")) %>%
-    #                            dplyr::summarize(NEON.rad = mean(NEON.rad)))
-    #     int.rad$UTC_DATE=as.POSIXct(int.rad$UTC_DATE, tz="UTC")
-    #
-    #     ext.rad$UTC_DATE=as.POSIXct(ext.rad$UTC_DATE, tz="UTC")
-    #
-    #     all.data=merge(x=int.rad, y=ext.rad, by= "UTC_DATE")
-    #     all.data=all.data[all.data$USCRN.rad>-5,]
-    #
-    #
-    #
-    #     #bothRad<-data.frame(cbind(extRad, int.data[,grepl(x = colnames(int.data), pattern = "gloRadMean")]))
-    #
-    #     spearman.results=stats::cor.test(all.data$NEON.rad, all.data$USCRN.rad, method = "spearman", conf.level = 0.95, exact = F)
-    #
-    #     ext.consist=spearman.results$estimate
-    #
-    #     corr.plot=ggplot2::qplot(x=all.data$NEON.rad, y=all.data$USCRN.rad)+
-    #         ggplot2::ggtitle(label = paste0(site, "-", uscrn.site, " Rho: ", round(ext.consist, digits = 2)))+
-    #         ggplot2::geom_abline(slope = 1, color='red')+
-    #         ggplot2::coord_fixed()
-    #     ggplot2::ggsave(filename = paste0(raw.dir, "raw_corr_plot.pdf"), plot = corr.plot, device = "pdf", width = 7.5, height = 10, units = "in", dpi = 300)
-    #
-    #     utils::write.csv(x = data.frame(unlist(spearman.results)), file = paste0(raw.dir, "external_comparison.csv"), row.names = T)
-    # }
     if(ext.consist>0.90){external.test="Pass"}else{external.test="Fail"}
     message(
         paste0("External Consistency Test: ", external.test)
