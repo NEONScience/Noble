@@ -33,8 +33,8 @@ save(wind_thresholds, file = "./data/wind_thresholds.rda")
 
 
 ## Make the radiation DQ testing info DB
-rad_dq_info=data.frame(read.csv(file="../DB_making/raw_DBs/rad_dq_info.csv"))
-save(rad_dq_info, file = "../Noble/data/rad_dq_info.rda")
+rad_dq_info=data.frame(read.csv(file="../../DB_making/raw_DBs/rad_dq_info.csv"))
+save(rad_dq_info, file = "./data/rad_dq_info.rda")
 
 
 ## Make the USCRN site data table
