@@ -528,8 +528,44 @@
 }
 
 ############################################################################################
-# Downloads and performs process quality checks on NEON data, given specifc dates
+# Print human-readable location names
+.translate.hor.ver=function(h.v){
+    h.v=stringr::str_extract(h.v, pattern = "[0-9]{3}\\.[0-9]{3}")
 
+    split.hv=unlist(strsplit(h.v, split = "\\."), recursive = F)
+    hor=unlist(strsplit(x = split.hv[1], split = "|"))
+    ver=unlist(strsplit(x = split.hv[2], split = "|"))
+    location="NULL"
+    if(all(hor=="0")){
+        if(all(ver[c(1,3)]=="0")){
+            location=paste0("Measurement Level ", ver[2])
+        }else if(ver[2]!="0"&ver[3]!="0"){
+            location=paste0("Measurement Level ", ver[2], ".", ver[3])
+        }
+    }else if(all(hor[1:2]=="0")&hor[3]!="0"){
+        if(all(ver=="0")){
+            location=paste0("Soil Plot ", hor[3])
+        }else if(ver[1]=="5"){
+            location=paste0("Soil Plot ", hor[3], ", depth ", ver[3])
+        }
+    }else if(hor[1]!="0"&all(ver=="0")){
+        if(hor[1]=="2"){
+            location="On-shore MET station"
+        }else if(hor[1]=="9"){
+            location="DFIR"
+        }else if(h.v=="220.000"){
+            location="Secondary tipping bucket"
+        }else if(hor[1]=="3"&all(ver=="0")){
+            location=paste0("Ground water well ", hor[3])
+        }
+    }
+
+    return(location)
+}
+
+
+############################################################################################
+# Downloads and performs process quality checks on NEON data, given specifc dates
 .tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.date = "2017-05-15", end.date = "2017-06-15", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
 
     bgn.month=substr(bgn.date, 0, 7)
