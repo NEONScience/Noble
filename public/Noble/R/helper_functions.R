@@ -426,7 +426,6 @@
 
 ############################################################################################
 # Create wind roses for NEON instrumented sites binned by quality flag
-
 .plot.qf.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
 
     DirCut=NULL
@@ -559,10 +558,8 @@
             location=paste0("Ground water well ", hor[3])
         }
     }
-
     return(location)
 }
-
 
 ############################################################################################
 # Downloads and performs process quality checks on NEON data, given specifc dates
@@ -679,8 +676,6 @@
         else{
             utils::write.csv(x = dq.rslt, file = paste(rslt.dir,"results.csv",sep = "/"), col.names = T, row.names = F)
         }
-
-
     }
 }
 
@@ -736,12 +731,8 @@
     }else{
         slope=NA
     }
-
-
     out=c(stream=colnames(night.vars)[2], slope=slope)
-
     return(out)
-
 }
 
 ##############################################################################################
