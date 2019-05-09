@@ -1,5 +1,5 @@
 #Helper Functions
-##############################################################################################
+#..........................................................................................#
 .air.var.plotting=function(test.data, save.dir){
     test.time = c("00:00:00", "00:30:00", "01:00:00", "01:30:00", "02:00:00", "02:30:00", "03:00:00",
                   "03:30:00", "04:00:00")
@@ -37,7 +37,7 @@
 
 }
 
-##############################################################################################
+#..........................................................................................#
 # Puts free-range data into a tidy file structure by site.
 .data.org=function(dir){
 
@@ -76,7 +76,7 @@
     return(result.route)
 }
 
-##############################################################################################
+#..........................................................................................#
 #generate call.df####
 .gen.call.df=function(bgn.month, end.month, site=site, dp.id=dp.id, time.agr=time.agr, package=package){
 
@@ -159,8 +159,15 @@
 
     return(call.df)
 }
+#..........................................................................................#
+# Private function for returning the domain of a site
+.get.domain=function(site){
+    neon.sites=Noble::is_site_config$SiteID
+    if(!site %in% neon.sites){stop(paste0(site, "is not a valid NEON site. \nPlease input a 4-letter NEON site code/"))}
+    domain=Noble::is_site_config$Domain[Noble::is_site_config$SiteID==site]
+}
 
-##############################################################################################
+#..........................................................................................#
 # Private function for calculating the percent of wind measurements falling due to wind coming
 # through the buffers on either side of the distorted flow field
 .percent.buffer=function(site, bgn.month, end.month, save.dir){
@@ -205,7 +212,7 @@
     return(pcnt.in.buffer)
 }
 
-##############################################################################################
+#..........................................................................................####
 # Private function for calculating the percent of wind measurements falling due to wind coming
 # through the buffers on either side of the distorted flow field
 .percent.distorted=function(site, bgn.month, end.month, save.dir){
@@ -250,7 +257,7 @@
 }
 
 
-############################################################################################
+#..........................................................................................##
 # Returns PNGs of data for the specified site and data product
 .pull.n.plot.png <- function(sites.req, bgn.month, end.month, dp.id, save.dir, data.field, package){
 
@@ -364,7 +371,7 @@
     }
 }
 
-##############################################################################################
+#..........................................................................................####
 # Saves a plot of flow metrics, and returns the percent of records with good flow
 # (percent of flow metrics where flowPassQM=100)
 
@@ -424,7 +431,18 @@
 
 }
 
-############################################################################################
+##..........................................................................................#
+# Make a sequence of months between bgn.month and end.month
+.month.seq=function(bgn.month, end.month){
+    time1=zoo::as.Date.yearmon(zoo::as.yearmon(bgn.month))
+    time2=zoo::as.Date.yearmon(zoo::as.yearmon(end.month))
+    temp.seq=seq.Date(from=time1, to = time2, by="1 month")
+
+    out=substr(temp.seq, start = 1, stop=7)
+    return(out)
+}
+
+#..........................................................................................##
 # Create wind roses for NEON instrumented sites binned by quality flag
 .plot.qf.wind.rose = function(site, bgn.month, end.month, ml, speed.bins, dir.bins){
 
@@ -526,7 +544,7 @@
     return(plot)
 }
 
-############################################################################################
+#..........................................................................................##
 # Print human-readable location names
 .translate.hor.ver=function(h.v){
     h.v=stringr::str_extract(h.v, pattern = "[0-9]{3}\\.[0-9]{3}")
@@ -561,7 +579,7 @@
     return(location)
 }
 
-############################################################################################
+#..........................................................................................##
 # Downloads and performs process quality checks on NEON data, given specifc dates
 .tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.date = "2017-05-15", end.date = "2017-06-15", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90){
 
@@ -679,7 +697,7 @@
     }
 }
 
-##############################################################################################
+#..........................................................................................#
 #Average individual tower-based measurements accross all MLs
 .un.ml.ize=function(data, keep.na){
     if(missing(keep.na)){keep.na=T}
@@ -694,7 +712,7 @@
     return(data.out)
 }
 
-##############################################################################################
+#..........................................................................................####
 # Variance drift testing
 .var.drift.test=function(single.var.data, raw.dir, site, plot=FALSE){
 
@@ -735,7 +753,7 @@
     return(out)
 }
 
-##############################################################################################
+#..........................................................................................####
 #Define two time periods for variance testing - Used with old Levene test of ratio of variances
 .var.periods=function(bgn.month, end.month){
     if(bgn.month==end.month){
@@ -752,7 +770,7 @@
     return(out)
 }
 
-##############################################################################################
+#..........................................................................................####
 # Summarize the QMs contributing to flagging of 2D wind DIRECTION data
 .wind.qm.summary=function(site, bgn.month, end.month, save.dir){
     if(missing(save.dir)){save.dir=tempdir()}
@@ -774,7 +792,7 @@
     return(qm.count.percent)
 }
 
-##############################################################################################
+#..........................................................................................####
 # 2D wind validity (for PQ testing) that ommits Dist. Flow
 .wind.validity=function(data.quant, data){
     wind.qms=colnames(data)[grep(pattern = "QM", ignore.case = F, x = colnames(data))]
@@ -793,7 +811,7 @@
     return(out)
 }
 
-##############################################################################################
+##..........................................................................................#
 #writes results files out
 .write.results=function(result, save.dir){
     if(file.exists(.result.route(save.dir))){

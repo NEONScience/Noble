@@ -2,6 +2,7 @@
 
 export(air.temp.cnst.plot)
 export(air.temp.dq.test)
+export(co2.dq.test)
 export(co2.pq.test)
 export(date.extract)
 export(distorted.field)
