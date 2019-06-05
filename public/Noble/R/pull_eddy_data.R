@@ -113,7 +113,8 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
                 try(download.file(url = hdf5.info[x,1], destfile = paste0(file.dir, "/", hdf5.info[x,3])))
             }
         }else{
-            for(x in 1:length(hdf5.info[,1])){
+            for(x in 1:length(unique(hdf5.info$file.dates))){
+                month=unique(hdf5.info$file.dates)[x]
                 zip.save=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.zip")
                 hdf5.file=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.h5")
                 hdf5.info=hdf5.info[hdf5.info$zip %in% needed.files,]

@@ -5,7 +5,7 @@
 \title{Perform A Commissioning DQ Test on CO2 Concentration Data
 #' @author Robert Lee \email{rlee@battelleecology.org}\cr}
 \usage{
-co2.dq.test(site = site, bgn.month, end.month, save.dir)
+co2.dq.test(site = site, bgn.month, end.month, save.dir, overwrite = F)
 }
 \arguments{
 \item{\code{site}}{Parameter of class character. The NEON site data should be downloaded for.}

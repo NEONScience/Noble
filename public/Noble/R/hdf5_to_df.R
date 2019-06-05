@@ -27,7 +27,7 @@
 #
 ##############################################################################################
 
-hdf5.to.df=function(site, files, data.type, meas.name, var.name, bgn.month, end.month, time.agr, save.dir, overwrite=FALSE){
+hdf5.to.df=function(site, files, data.type, meas.name, var.name, ml, bgn.month, end.month, time.agr, save.dir, overwrite=FALSE){
     library(magrittr)
 
     ### INPUT CHECKING
@@ -37,6 +37,13 @@ hdf5.to.df=function(site, files, data.type, meas.name, var.name, bgn.month, end.
               "h2oTurb", "isoCo2", "isoH2o", "presBaro", "radiNet", "soni",
               "tempAirLvl", "tempAirTop", "tempSoil")
     #ok.vars=c()
+
+    if(missing(ml)){
+
+        top.ml=Noble::tis_site_config$num.of.mls[Noble::tis_site_config$site.id==site]
+        # GENERATE H.V.T GROUP MEETING
+        ml=top.ml
+    }
 
     if(!meas.name %in% ok.meas){
         message("Invalid measurement name selected. Please enter one of the following:")
@@ -50,17 +57,17 @@ hdf5.to.df=function(site, files, data.type, meas.name, var.name, bgn.month, end.
     start.date=paste0(bgn.month, "-01")
     end.date=Noble::last.day.time(end.month = end.month, time.agr = time.agr)
 
-    file.out=paste0(save.dir, "/", "EC_", data.type,"_", meas.name, "_", var.name, "_", start.date, "-", substr(end.date, start = 1, stop = 10), ".csv")
-
+    file.out=paste0(save.dir, "/", "EC_", data.type,"_", meas.name, "_", var.name, "_", start.date, "-", substr(end.date, start = 1, stop = 10), "_ML", ml, ".csv")
+    print(file.out)
     ### GENERATE NEW FLAT DF
     if(!file.exists(file.out)|all(file.exists(file.out), overwrite)){
 
-        top.ml=Noble::tis_site_config$num.of.mls[Noble::tis_site_config$site.id==site]
-        # GENERATE H.V.T GROUP MEETING
-
-        hor.ver.tmi=paste0("000_0", top.ml, "0_", stringr::str_pad(string = time.agr, width = 2, side = "left", pad = "0"), "m")
-
-        ec.list=lapply(files, function(hdf5.file) try(rhdf5::h5read(file=hdf5.file, paste0(site,'/dp01/', data.type, '/',meas.name,'/', hor.ver.tmi, "/", var.name))))
+        hor.ver.tmi=paste0("000_0", ml, "0_", stringr::str_pad(string = time.agr, width = 2, side = "left", pad = "0"), "m")
+        troubleshoot=function(hdf5.file){
+            print(hdf5.file)
+            try(rhdf5::h5read(file=hdf5.file, paste0(site,'/dp01/', data.type, '/',meas.name,'/', hor.ver.tmi, "/", var.name)))
+        }
+        ec.list=lapply(files, troubleshoot)
 
         ec.list=ec.list[lapply(ec.list, class)=="data.frame"]
 

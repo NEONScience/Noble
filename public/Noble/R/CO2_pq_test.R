@@ -32,7 +32,7 @@
 #
 ##############################################################################################
 
-co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=90, v.th=80){
+co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=90, v.th=80, overwrite=FALSE){
     time.agr = 30
 
     files=Noble::pull.eddy.data(site, bgn.month, end.month, package="expanded", save.dir)
@@ -49,7 +49,7 @@ co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=90, v.th
                              end.month = end.month,
                              time.agr = time.agr,
                              save.dir = file.dir,
-                             overwrite = TRUE)
+                             overwrite = overwrite)
     # GENERATE STATISTIC
     co2.valid=round(sum(co2.qm$qfFinl==0, na.rm = TRUE)/nrow(co2.qm)*100, digits=2)
 
@@ -64,7 +64,7 @@ co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=90, v.th
                               end.month = end.month,
                               time.agr = time.agr,
                               save.dir = file.dir,
-                              overwrite = TRUE)
+                              overwrite = overwrite)
     # GENERATE STATISTIC
     cor.uptime=round(sum(!is.na(co2.cor$mean))/nrow(co2.cor)*100, digits=2)
 
@@ -79,7 +79,7 @@ co2.pq.test=function(site = site,  bgn.month, end.month, save.dir, q.th=90, v.th
                               end.month = end.month,
                               time.agr = time.agr,
                               save.dir = file.dir,
-                              overwrite = TRUE)
+                              overwrite = overwrite)
     # GENERATE STATISTIC
     raw.uptime=round(sum(!is.na(co2.raw$mean))/nrow(co2.raw)*100, digits=2)
     print(paste(site, nrow(co2.raw)))

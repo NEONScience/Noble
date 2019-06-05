@@ -36,16 +36,18 @@
 #
 ##############################################################################################
 
-co2.dq.test=function(site = site,  bgn.month, end.month, save.dir){
+co2.dq.test=function(site = site,  bgn.month, end.month, save.dir, overwrite=F){
+    library(magrittr)
     options(stringsAsFactors = FALSE)
 
     # Validation checking
     time.agr = 30
-    files=Noble::pull.eddy.data(site, bgn.month, end.month, package="basic", save.dir=save.dir)
-    file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
-    temp=cbind(files, dates=c(bgn.month, end.month))
-    all.data=lapply(files, function(x) rhdf5::h5read(file = paste0(file.dir, "/", x), name = site))
-    names(all.data)=c(bgn.month, end.month)
+    files=Noble::pull.eddy.data(site = site, bgn.month = bgn.month, end.month = end.month, package="expanded", save.dir=save.dir)
+   # file.dir=Noble:::.data.route(site = site, save.dir = save.dir)
+
+
+    #all.data=lapply(files, function(x) rhdf5::h5read(file = paste0(file.dir, "/", x), name = site))
+    #names(all.data)=c(bgn.month, end.month)
 # Validation Checking -- This Code tests STORAGE Exchange, not the Turbulent Exchange (as required).
 # Updates needed once TE has published validation measurements.
     # high=data.frame(cbind(
@@ -87,18 +89,40 @@ co2.dq.test=function(site = site,  bgn.month, end.month, save.dir){
 
     # Cross check LICOR v Picarro
     mls=Noble::tis_site_config$num.of.mls[Noble::tis_site_config$site.id==site]
+    picarro=lapply(seq(mls), function(x) Noble::hdf5.to.df(site=site,
+                                                           files = files,
+                                                           data.type = "data",
+                                                           var.name = "rtioMoleDryCo2",
+                                                           meas.name="isoCo2",
+                                                           bgn.month = bgn.month,
+                                                           end.month = end.month,
+                                                           time.agr = time.agr,
+                                                           save.dir = save.dir,
+                                                           ml=x,
+                                                           overwrite = overwrite)
+    )
+    licor=lapply(seq(mls), function(x) Noble::hdf5.to.df(site=site,
+                                                           files = files,
+                                                           data.type = "data",
+                                                           var.name = "rtioMoleDryCo2",
+                                                           meas.name="co2Stor",
+                                                           bgn.month = bgn.month,
+                                                           end.month = end.month,
+                                                           time.agr = time.agr,
+                                                           save.dir = save.dir,
+                                                           ml=x,
+                                                           overwrite = overwrite)
+    )
+    # Perform Spearman's test, ML to ML comparison
+    lapply(1:mls, function(i) try(RVAideMemoire::spearman.ci(var1 = picarro[[i]]$mean,var2 = licor[[i]]$mean, nrep = 1000, conf.level = .975)$conf.int[1])) %>%
+        unlist() %>%
+        `names<-`(value = paste("ML", 1:mls)) -> cors
 
-    picarro=lapply(seq(mls), function(x) rbind(all.data[[1]]$dp01$data$isoCo2[grep(x = names(all.data[[1]]$dp01$data$isoCo2), pattern = "_30m")][[x]]$rtioMoleDryCo2, all.data[[2]]$dp01$data$isoCo2[grep(x = names(all.data[[2]]$dp01$data$isoCo2), pattern = "_30m")][[x]]$rtioMoleDryCo2))  #`000_010_09m`$rtioMoleDryCo2
-    licor=lapply(seq(mls), function(x) rbind(all.data[[1]]$dp01$data$co2Stor[grep(x = names(all.data[[1]]$dp01$data$co2Stor), pattern = "_30m")][[x]]$rtioMoleDryCo2, all.data[[2]]$dp01$data$co2Stor[grep(x = names(all.data[[2]]$dp01$data$co2Stor), pattern = "_30m")][[x]]$rtioMoleDryCo2))  #`000_010_09m`$rtioMoleDryCo2
-    cors=unlist(lapply(1:mls, function(i) try(RVAideMemoire::spearman.ci(var1 = picarro[[i]]$mean,var2 = licor[[i]]$mean, nrep = 1000, conf.level = .975)$conf.int[1])))
-
-    #cors[unlist(lapply(cors, function(x) class(x)=="try-error"))]=list(list(estimate="NA"))
-    #rho=unlist(lapply(cors, "[[", "estimate"))
-
+    # if there were issues, coerce to NA
     cors[grepl(pattern = "^Error", x = cors)]=NA
     rho=cors
 
-    rho.stats=data.frame(ml=seq(mls), rho)
+    rho.stats=data.frame(ml=names(rho), rho)
 
     write.csv(x=rho.stats, file = paste0(Noble:::.data.route(site, save.dir), "/picarro-licor.csv"), row.names = F)
 
