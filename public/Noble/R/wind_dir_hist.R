@@ -40,7 +40,7 @@ wind.dir.hist=function(site, bgn.month, end.month, save.dir, dir.bins=72){
 
     wind.data=Noble::pull.data(site = site, dp.id = "DP1.00001.001", bgn.month = bgn.month, end.month = end.month, time.agr = 30, package = "basic", save.dir = tempdir())
 
-    sensor.locs=seq(1, Noble::tis_site_config$Num.of.MLs[Noble::tis_site_config$SiteID==site]-1, by=1)
+    sensor.locs=seq(1, Noble::tis_site_config$num.of.mls[Noble::tis_site_config$site.id==site]-1, by=1)
 
     data.by.ml=lapply(sensor.locs, function(x) Noble::ml.extract(wind.data, ml=x))
     names(data.by.ml)=sensor.locs

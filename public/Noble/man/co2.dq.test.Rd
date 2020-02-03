@@ -32,7 +32,7 @@ site = "BART"
 bgn.month = "2017-09"
 end.month = "2017-10"
 save.dir<-"~/Desktop/"
-Noble::tis.dq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
+Noble:::tis.dq.test(site = site, bgn.month = bgn.month, end.month = end.month, save.dir=save.dir)
 }
 \seealso{
 Currently none

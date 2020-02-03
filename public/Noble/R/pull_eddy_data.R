@@ -72,6 +72,7 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
     needed.files=expected.files[!expected.files %in% existing]
 
     if(length(needed.files)!=0){
+        #browser()
         dp.data=jsonlite::read_json(path="http://data.neonscience.org/api/v0/products/DP4.00200.001/")$data
         deployed.sites=unlist(lapply(seq(length(dp.data$siteCodes)), function(x) dp.data$siteCodes[[x]]$siteCode))
         if(site %in% deployed.sites){
@@ -90,7 +91,7 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
 
         data.links=lapply(seq(length(data.links)), function(x) data.links[[x]]$data$files)
 
-        hdf5.links=unlist(lapply(data.links, function(x) lapply(seq(length(x)), function(y) if(grepl(pattern = ".zip||.h5", x = x[[y]]$name)){x[[y]]$url})))#, function(y) )))
+        hdf5.links=unlist(lapply(data.links, function(x) lapply(seq(length(x)), function(y) if(grepl(pattern = ".zip|.h5", x = x[[y]]$name)){x[[y]]$url})))#, function(y) )))
 
         hdf5.links=hdf5.links[grepl(pattern = package, x = hdf5.links)]
 
@@ -114,6 +115,7 @@ pull.eddy.data=function(site, bgn.month, end.month, package, save.dir){
             }
         }else{
             for(x in 1:length(unique(hdf5.info$file.dates))){
+                browser()
                 month=unique(hdf5.info$file.dates)[x]
                 zip.save=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.zip")
                 hdf5.file=paste0(file.dir, site, "_", hdf5.info[x,2], "_DP4.00200.001.h5")

@@ -1,5 +1,19 @@
 #Helper Functions
 #..........................................................................................#
+# Properly parse out the JSON returned from API calls
+.api.return=function(url){
+    apiReturn=httr::GET(url = url)
+    parsedData=NULL
+    if(apiReturn$status_code==200){
+        parsedData=apiReturn$content %>%
+            rawToChar() %>%
+            jsonlite::fromJSON()
+    }
+    return(parsedData)
+}
+
+
+#..........................................................................................#
 .air.var.plotting=function(test.data, save.dir){
     test.time = c("00:00:00", "00:30:00", "01:00:00", "01:30:00", "02:00:00", "02:30:00", "03:00:00",
                   "03:30:00", "04:00:00")
@@ -85,18 +99,21 @@
 
     date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
 
-    site_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/sites/", site), unexpected.escape = "skip")$data
+    site_meta=.api.return(url = paste0("http://data.neonscience.org/api/v0/sites/", site))$data
+    # rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/sites/", site), unexpected.escape = "skip")$data
 
-    prod_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/products/", dp.id), unexpected.escape = "skip")$data
+    prod_meta=.api.return(url = paste0("http://data.neonscience.org/api/v0/products/", dp.id))$data
+    # rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/products/", dp.id), unexpected.escape = "skip")$data
 
-    prod_indx=grep(site_meta$dataProducts, pattern = dp.id)
-    site_indx=grep(prod_meta$siteCodes, pattern = site)
+    prod_indx=grep(site_meta$dataProducts$dataProductCode, pattern = dp.id)
+    site_indx=grep(prod_meta$siteCodes$siteCode, pattern = site)
 
     if(length(prod_indx)==0){
         stop(paste0(dp.id, " is not currently available at ", site, " via the API."))
     }
 
-    site_options=data.frame(avail_months=unlist(site_meta$dataProducts[[prod_indx]]$availableMonths), urls= unlist(site_meta$dataProducts[[prod_indx]]$availableDataUrls))
+    site_options=data.frame(avail_months=unlist(site_meta$dataProducts$availableMonths[prod_indx]),
+                            urls= unlist(site_meta$dataProducts$availableDataUrls[prod_indx]))
 
     # Stop if no data
     if(length(site_options$avail_months)==0){stop(paste0(dp.id, " is missing at ", site))}
@@ -109,7 +126,7 @@
 
     if(length(temp_data_urls)==0){
         stop("Data were missing in specified date range at ", site, ". Check ", dp.id, " avalability with neon.avail")
-        }
+    }
 
     #For found DPs, given the Kpi, pull hosted metadata via API
 

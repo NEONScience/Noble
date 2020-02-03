@@ -1,29 +1,29 @@
 #generate call.df
 
-.gen.call.df=function(bgn.month, end.month, site=site, dpID=dpID, time.agr=time.agr, package=package){
+.gen.call.df=function(bgn.month, end.month, site, dpID, time.agr, package){
 
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
     date_range<-substr(seq.Date(bgn_temp, end_temp, "month"), 0, 7)
 
-    site_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/sites/", site), unexpected.escape = "skip")$data
+    site_meta=.api.return(paste0("http://data.neonscience.org/api/v0/sites/", site))$data #json::fromJSON(file = paste0("http://data.neonscience.org/api/v0/sites/", site), unexpected.escape = "skip")$data
 
-    prod_meta=rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/products/", dpID), unexpected.escape = "skip")$data
+    prod_meta=.api.return(paste0("http://data.neonscience.org/api/v0/products/", dpID))$data #rjson::fromJSON(file = paste0("http://data.neonscience.org/api/v0/products/", dpID), unexpected.escape = "skip")$data
 
-    prod_indx=grep(site_meta$dataProducts, pattern = dpID)
-    site_indx=grep(prod_meta$siteCodes, pattern = site)
+    prod_indx=grep(site_meta$dataProducts$dataProductCode, pattern = dpID)
+    site_indx=grep(prod_meta$siteCodes$siteCode, pattern = site)
 
     if(length(prod_indx)==0){
         stop(paste0(dpID, " is not currently available at ", site, " via the API."))
     }
 
-    site_options=data.frame(avail_months=unlist(site_meta$dataProducts[[prod_indx]]$availableMonths), urls= unlist(site_meta$dataProducts[[prod_indx]]$availableDataUrls))
+    site_options=data.frame(avail_months=unlist(site_meta$dataProducts$availableMonths[prod_indx]), urls= unlist(site_meta$dataProducts$availableDataUrls[prod_indx]))
 
     #####
 
     # Stop if no data
-    if(length(site_options$avail_months)==0){stop(paste0(dpID, " is missing at ", site))}
+    if(nrow(site_options)==0){stop(paste0(dpID, " is missing at ", site))}
 
     all_data_urls <- unlist(unique(site_options$urls))
 

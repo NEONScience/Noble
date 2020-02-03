@@ -41,7 +41,7 @@ neon.avail<-function(dp.id = "DP1.00001.001") {
     # The earliest start date. May want to swithc to earliest date found via API.
     tis_pri_vars=Noble::tis_pri_vars
 
-    NEONstrt <- base::as.POSIXct("2014-01-01",tz="GMT",format="%Y-%m-%d")
+    NEONstrt <- base::as.POSIXct("2013-01-01",tz="GMT",format="%Y-%m-%d")
 
     # Date of the function call, endcap on returned data frame
     currMon <- base::as.POSIXct(base::Sys.Date(),tz="GMT")
@@ -53,7 +53,9 @@ neon.avail<-function(dp.id = "DP1.00001.001") {
     refMonths <- zoo::as.yearmon(months)
 
     # Return the availaiblity of a data product, as far as the API is concerned
-    availability=data.frame(do.call(rbind, jsonlite::read_json(paste0("http://data.neonscience.org/api/v0/products/", dp.id))$data$siteCodes))
+   # browser()
+    availability=data.frame(do.call(cbind,
+                                    .api.return(paste0("http://data.neonscience.org/api/v0/products/", dp.id))$data$siteCodes))
 
     availDF <-data.frame(refMonths)
     dataPrd <- base::unlist(tis_pri_vars$dp.name[match(dp.id, tis_pri_vars$dp.id)])
