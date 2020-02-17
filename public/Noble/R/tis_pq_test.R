@@ -17,6 +17,7 @@
 #' @param save.dir Parameter of class character. The local directory where data files should be saved.
 #' @param q.th Parameter of class character. Optional. The threshold for data availability for a passing test, defaults to 0.95.
 #' @param v.th Parameter of class character. Optional. The threshold for data validity for a passing test, defaults to 0.9.
+#' @param raw.out Logical- return data as they come, or normalized to a reference time series?
 #'
 #' @return Writes data files to the specified directory.
 
@@ -32,7 +33,7 @@
 ##############################################################################################
 
 
-tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90)
+tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.month = "2012-05", end.month = "2012-06", time.agr = 30, package="basic", save.dir, q.th=95, v.th=90, raw.out)
 {
     options(stringsAsFactors = FALSE)
     quant_threshold=q.th
@@ -52,11 +53,14 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
 
     #pull data
     test.data=data.frame()
-    test.data=try(Noble::pull.data(site = site, dp.id = dp.id, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir = site.dir))
+    if(raw.out){message("Raw data being used in testing")}
+    test.data=try(Noble::pull.data(site = site, dp.id = dp.id, bgn.month = bgn.month, end.month = end.month, time.agr = time.agr, package=package, save.dir = site.dir, raw.out=raw.out))
     if(length(test.data)>1){
         for(i in 1:length(prin.vars)){
             data.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "Mean*"))
-
+            if(length(data.indx)==0){
+                data.indx<-grep(x=colnames(test.data), pattern=prin.vars[i])
+            }
             qf.indx<-grep(x=colnames(test.data), pattern=paste0("^", prin.vars[i], "FinalQF*"))
             qf.indx<-append(qf.indx, grep(x=colnames(test.data), pattern="^finalQF*"))
 
@@ -89,7 +93,7 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
 
             data.valid<-round(100*(num.qf.pass/(all.data)), digits = 2)
 
-             if(prin.vars[i]=="SHF"){
+            if(prin.vars[i]=="SHF"){
                 #Soil heat flux specific values
                 quant_threshold=95
                 valid_threshold=(90-15.38)
@@ -123,42 +127,42 @@ tis.pq.test<-function(site = "CPER", dp.id = "DP1.00001.001", prin.vars,  bgn.mo
         }
     }else{
         for(i in 1:length(prin.vars)){
-        if(prin.vars[i]=="SHF"){
-            #Soil heat flux specific values
-            quant_threshold=95
-            valid_threshold=(90-15.38)
-        }
-        if(prin.vars[i]=="soilTemp"){
-            quant_threshold=94.6
-            valid_threshold=89.87
-        }
+            if(prin.vars[i]=="SHF"){
+                #Soil heat flux specific values
+                quant_threshold=95
+                valid_threshold=(90-15.38)
+            }
+            if(prin.vars[i]=="soilTemp"){
+                quant_threshold=94.6
+                valid_threshold=89.87
+            }
 
-        bgn.day=as.Date(paste0(bgn.month, "-01"))
-        end.day=as.POSIXct(Noble::last.day.time(end.month = end.month, time.agr = 1440))
+            bgn.day=as.Date(paste0(bgn.month, "-01"))
+            end.day=as.POSIXct(Noble::last.day.time(end.month = end.month, time.agr = 1440))
 
-        days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
-        ##### WRITE RESULTS
-        dq.rslt<-data.frame(site=site,
-                            time_performed=as.character(Sys.time()),
-                            begin_month=bgn.month,
-                            end_month=end.month,
-                            days_tested=days,
-                            data_product= dp.id,
-                            variable_tested=prin.vars[i],
-                            data_quantity=0,
-                            data_validity=0,
-                            quant_threshold= quant_threshold,
-                            valid_threshold=valid_threshold
-        )
+            days=round(difftime(end.day, bgn.day, units="days"), digits = 2)
+            ##### WRITE RESULTS
+            dq.rslt<-data.frame(site=site,
+                                time_performed=as.character(Sys.time()),
+                                begin_month=bgn.month,
+                                end_month=end.month,
+                                days_tested=days,
+                                data_product= dp.id,
+                                variable_tested=prin.vars[i],
+                                data_quantity=0,
+                                data_validity=0,
+                                quant_threshold= quant_threshold,
+                                valid_threshold=valid_threshold
+            )
 
-        if(file.exists(.result.route(save.dir))){
-            dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
-            dq.rpt <- rbind(dq.rpt, dq.rslt)
-            utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
-        }
-        else{
-            utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
-        }}
+            if(file.exists(.result.route(save.dir))){
+                dq.rpt <- data.frame(utils::read.csv(file = .result.route(save.dir), header = T, stringsAsFactors = T))
+                dq.rpt <- rbind(dq.rpt, dq.rslt)
+                utils::write.csv(x = dq.rpt, file = .result.route(save.dir), row.names = F)
+            }
+            else{
+                utils::write.csv(x = dq.rslt, file = .result.route(save.dir), col.names = T, row.names = F)
+            }}
     }
 }
 

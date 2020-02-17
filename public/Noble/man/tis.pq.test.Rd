@@ -6,7 +6,7 @@
 \usage{
 tis.pq.test(site = "CPER", dp.id = "DP1.00001.001", prin.vars,
   bgn.month = "2012-05", end.month = "2012-06", time.agr = 30,
-  package = "basic", save.dir, q.th = 95, v.th = 90)
+  package = "basic", save.dir, q.th = 95, v.th = 90, raw.out)
 }
 \arguments{
 \item{site}{Parameter of class character. The NEON site data should be downloaded for.}
@@ -29,6 +29,8 @@ keyword for a family of data products, e.g. "wind" will pull for 2D and 3D wind 
 \item{q.th}{Parameter of class character. Optional. The threshold for data availability for a passing test, defaults to 0.95.}
 
 \item{v.th}{Parameter of class character. Optional. The threshold for data validity for a passing test, defaults to 0.9.}
+
+\item{raw.out}{Logical- return data as they come, or normalized to a reference time series?}
 }
 \value{
 Writes data files to the specified directory.

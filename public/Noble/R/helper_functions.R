@@ -93,7 +93,7 @@
 #..........................................................................................#
 #generate call.df####
 .gen.call.df=function(bgn.month, end.month, site=site, dp.id=dp.id, time.agr=time.agr, package=package){
-
+    options(stringsAsFactors = FALSE)
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
 
@@ -150,8 +150,13 @@
     #Try to handle name excpetions
     exceptions=c("DP1.00005.001", "DP1.00041.001")
 
+    # no timing info in file
+    noTMI=c("DP1.20288.001")
+
     if((dp.id %in% exceptions)){ #Why, oh why does bio temp have to be different on the API
         url_list<-url_list[grepl(pattern = paste0(time.agr, "_min*"), x= url_list)]
+    }else if(dp.id %in% noTMI){
+        url_list=url_list[!grepl(pattern = "sensor_positions", x = url_list)]
     }else{
         url_list=url_list[grepl(pattern = paste0(time.agr,"min*"), x= url_list)|grepl(pattern = paste0(time.agr, "_min*"), x= url_list)] #should catch unknown exceptions
     }

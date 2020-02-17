@@ -6,7 +6,7 @@
  and saves the data to a specified directory}
 \usage{
 pull.data(site, dp.id, bgn.month, end.month, time.agr, package = "basic",
-  save.dir, complete.times = F)
+  save.dir, complete.times = F, raw.out)
 }
 \arguments{
 \item{site}{Parameter of class character. The NEON site data should be downloaded for.}

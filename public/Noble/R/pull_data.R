@@ -44,7 +44,7 @@
 #
 ##############################################################################################
 
-pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F){
+pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic", save.dir, complete.times=F, raw.out){
     options(stringsAsFactors = FALSE)
     bgn_temp <- as.Date(paste0(bgn.month, "-01"), tz="UTC")
     end_temp <- as.Date(paste0(end.month, "-01"), tz="UTC")
@@ -75,7 +75,12 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
     bgn_temp <- as.POSIXct(paste0(bgn.month, "-01"), tz="UTC")
     end_temp<- as.POSIXlt(paste0(end_temp, "-01"), tz="UTC")
     end_temp$mon<-end_temp$mon+1
+
+    if(is.null(time.agr)){
+        end_temp<-end_temp-lubridate::seconds(1)
+    }else{
     end_temp<-end_temp-lubridate::minutes(time.agr)-lubridate::seconds(1)
+    }
 
     # make a reference sequence
     ref_seq<-Noble::help.time.seq(from=bgn_temp, to=end_temp+lubridate::seconds(1), time.agr = time.agr)
@@ -112,7 +117,15 @@ pull.data = function(site, dp.id, bgn.month, end.month, time.agr, package="basic
         dates=data.frame(startDateTime=ref_seq)
 
         #Perform the matching
+        if(!raw.out){
         data.raw=data.frame(lapply(data.chunk, function(x) dplyr::left_join(x=dates, y=x, by="startDateTime")))
+        }else{
+            if(length(data.chunk)>1){
+                data.frame(lapply(data.chunk[2:length(data.chunk)], function(x) dplyr::left_join(x=data.chunk[[1]], y=x, by="startDateTime")))
+            }else{
+            data.raw=as.data.frame(unlist(data.chunk, recursive = F))
+            }
+        }
 
         #strip out unneeded datetime columns
         time.index=grep(x = colnames(data.raw), pattern = "time", ignore.case = T)
